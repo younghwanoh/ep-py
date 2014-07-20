@@ -1,10 +1,11 @@
 ep-py
 =====
 
-Personal graph drawing library with python-matplotlib ver. 0.1
-SungKyunKwan Univ. Parallel Architecture and Parallel Language(PAPL) Lab
+Personal graph drawing library with python-matplotlib ver. 0.1<br>
+SungKyunKwan Univ, Suwon, Korea.<br>
+Parallel Architecture and Parallel Language(PAPL) Lab<br>
+Author: Young H. Oh
 
-------------------------------------------------------------------------------------------------------
 
 * Dependent package: numpy, matplotlib
 For Ubuntu 12.04
@@ -44,8 +45,8 @@ sub attribute
 
 ## multiplot.py::
 
-You have manually specify which type of graphs you want to draw
-this python script provides the basic pattern of multiple subplots
+You have manually specify which type of graphs you want to draw<br>
+This python script provides the basic pattern of multiple subplots.<br>
 Data format is similar to GNUplot by default, which plots each column.
 
 e.g.

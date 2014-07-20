@@ -22,7 +22,7 @@ class PatternParser:
         return rowDataTemp
 
     def rowParse(self):
-        # Parse row data with "\n"
+        """Parse col data with \n"""
         self.rowData = self.RAWdata.split("\n")
 
         # If final splitted character is EOF delete that void element
@@ -32,12 +32,13 @@ class PatternParser:
         self.rowData = self.deleteCommentIn(self.rowData)
 
     def colParse(self, delimiter):
-        # Parse col data with the delimiter
+        """Parse col data with delimiter"""
         self.datList = []
         for eachRow in self.rowData:
             self.datList.append(eachRow.split(delimiter))
 
     def ParseWith(self, delimiter):
+        """Parse data with delimiter"""
         self.isParsedBefore = True
         self.colParse(delimiter)
 
@@ -63,7 +64,8 @@ class PatternParser:
     def PickKeyWith(self, *argv):
         """PickKeyWith treats the data with special keys"""
         if self.isParsedBefore is True:
-            print("Alert: You must pick key first and then parse data!"), exit()
+            print("Alert: You must pick key first before parsing data!"), exit()
+        self.isParsedBefore = False
 
         # Parse the denoted row/col key
         if argv[0] is "row":
@@ -83,8 +85,7 @@ class PatternParser:
                 self.keyList.append(keyAndData[0])
                 self.rowData[i] = keyAndData[1];
         else:
-            print("PP::PickKeyWith - Argument type is wrong! Must be string.")
-            exit()
+            print("PP::PickKeyWith - Argument type is wrong! Must be string."), exit()
 
     # Normalize to data denoted by a special key
     # 1) datNormTo("normalizeToThisKey")
@@ -111,4 +112,4 @@ class PatternParser:
                 if self.keyList[i] != skipThis:
                     self.datList[i] = [ calc(dat, norm) for dat, norm in zip(datArr, normArr)]
         else:
-            print("PP::datNormTo - First argument must be key string.")
+            print("PP::datNormTo - First argument must be key string."), exit()
