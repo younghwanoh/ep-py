@@ -17,7 +17,7 @@ from plotter import LinePlotter
 # argument parser
 import argparse
 argparser = argparse.ArgumentParser()
-argparser.add_argument("inFile", help='Specify the name of input data file')
+argparser.add_argument("-i", "--inFile", help='Specify the name of input data file')
 argparser.add_argument("-o","--outFile", help='Specify the name of output PDF file')
 argparser.add_argument("-s","--style", help='Specify the style of graphs')
 args = argparser.parse_args()
@@ -27,11 +27,13 @@ output = "output.pdf"
 if bool(args.outFile) == True:
     output = arg.outFile
 
-text = read(args.inFile)
+if bool(args.outFile) == True:
+    text = read(args.inFile)
 style = args.style
 
 # line.dat
-if style == "line":
+if style == "line1":
+    text = read("line.dat")
 
     PP = PatternParser(text)
     PP.PickKeyWith(": ")
@@ -50,11 +52,12 @@ if style == "line":
     # LP.drawToWindow();
 
 # bar.dat
-elif style == "line-data-plain":
+elif style == "line2":
+    text = read("bar.dat")
 
     PP = PatternParser(text)
-    PP.PickKeyWith("row")
     PP.ParseWith("\t")
+    PP.PickKeyWith("row")
 
     D1 = Group(PP, [1,2,3,4], "seq",      color="red", marker="o")
     D2 = Group(PP, [1,2,3,4], "cpu-only", color="blue", marker="x")
@@ -68,6 +71,36 @@ elif style == "line-data-plain":
 
     LP = LinePlotter(title="LinePlot", xlabel="abc", ylabel="ee")
     LP.setLimitOn(x=[0, 10], y=[0, 10])
+    LP.draw(D1,D2,D3,D4)
+    LP.saveToPdf(output)
+
+# bar.dat
+elif style == "line3":
+    text = read("line-norm.dat")
+# Profile: 10.206269454210997	24.674265095964074	56.017232621088624	66.50465840473771184.878224115818739	109.81756330467761	140.67703363485634	185.6153317168355	234.73950250074267	295.95925606787205	360.76470395550132	474.06574549153447	558.78607768565416
+# dataProfile: 100	150	200	250	300	350	400	450	500	550	600650	700
+# CGCEavg: 15.514176804572344	31.64221397601068	64.45726719684899	76.14890020340681	97.77346760965884	119.37319422140718	151.81329138576984	202.42599304765463	246.63688261061907	312.7707237843424	384.6715443301946	503.694925038144	572.2015670035034
+# data: 100	150	200	250	300	350	400	450	500	550	600	650700
+# SEQiavg: 7.852057414129376	23.690991196781397	53.85806364938617	102.43250601924956172.85463805310428	274.72653980366886	405.56159876286983	574.4705496821553	789.2924030311406	1047.049553412944	1360.3401023894548	1726.5890171285719	2161.971054272726
+# SEQavg: 8.41104295104742	26.232343586161733	55.3335799369961	104.89575900137424175.60677086003125	279.34828200377524	411.6636684164405	583.2676463760436	795.5854004714638	1058.6189130786806	1367.4993370193988	1736.6199331823736	2165.341287245974
+# GPUiavg: 44.9412758462131	50.675274431705475	52.81108464114368	65.21827224642038	83.00119396299124	111.15627507679164	137.3779967892915	186.36428103782237	233.64471779204905	295.92988905496895	362.5715909875	471.5048497542739	553.1684163957834
+
+    PP = PatternParser(text)
+    PP.PickKeyWith(": ")
+    PP.ParseWith("\t")
+    PP.datNormTo("SEQavg", opt="speedup", skip="data") # option: speedup, exetime
+
+    D1 = Group(PP, "data", "Profile", color="red", marker="o")
+    D2 = Group(PP, "data", "CGCEavg", color="blue", marker="x")
+    D3 = Group(PP, "data", "SEQiavg", color="green", marker="o")
+    D4 = Group(PP, "data", "GPUiavg", color="black", marker="x")
+
+    # D1.setLegend("SEQ") 
+    # D2.setLegend("CPU-only") 
+    # D3.setLegend("GPU-only") 
+    # D4.setLegend("CPU+GPU") 
+
+    LP = LinePlotter(title="LinePlot", xlabel="abc", ylabel="ee")
     LP.draw(D1,D2,D3,D4)
     LP.saveToPdf(output)
 
