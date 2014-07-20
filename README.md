@@ -1,10 +1,11 @@
-ep-py
+ep-py ver. 0.1
 =====
+Personal graph drawing library with high-level abstraction of python-matplotlib<br>
 
-Personal graph drawing library with python-matplotlib ver. 0.1<br>
-SungKyunKwan Univ, Suwon, Korea.<br>
-Parallel Architecture and Parallel Language(PAPL) Lab<br>
-Author: Young H. Oh
+* Author information
+  - Young H. Oh.
+  - SungKyunKwan Univ, Suwon, Korea.<br>
+  - Parallel Architecture and Parallel Language(PAPL) Lab<br>
 
 
 * Dependent package: numpy, matplotlib
@@ -16,61 +17,62 @@ apt-get install python-numpy python-matplotlib
 
 Mac may already have built-in python binary and matplotlib
 
+* Library construction
+  1. Front-end Parser
+  2. Middle-end specifier
+  3. Back-end plotter
 
-## graph.py::
+## ep.py::
+Top(or test) module to draw graphs using ep.py APIs
+User should denote specification of data layout and graph's layout.
 
-  1. Clustered Bar (type1 - table. Please refer example bar.dat)
-  2. Clustered Bar (type2 - parseKey with normalized index. Please refer example bar-norm.dat)
-  3. Box (ybegin, yend)
-  4. Line (x, y)
-  5. Line normalized (parseKey with normalized index. Please refer example line-norm.dat)
-
-### Example usages
-
-./graph.py \[input\] \[attributes ...\]
-  1. ./graph.py bar.dat -f bar
-  2. ./graph.py bar-norm.dat -f bar-norm
-  3. ./graph.py box.dat -f box
-  4. ./graph.py line.dat -f line
-  5. ./graph.py line-norm.dat -f line-norm
-
-sub attribute
--f data format
--o output name
--t title
--xl xlabel
--yl ylabel
--lw figure width
--lh figure height
-
-## multiplot.py::
-
-You have manually specify which type of graphs you want to draw<br>
-This python script provides the basic pattern of multiple subplots.<br>
-Data format is similar to GNUplot by default, which plots each column.
-
-e.g.
-<pre>
-d1   d2   d3   d4
-1    2.4  3    4.1
-5.3  2.5  1.2  0.9
-</pre>
-
-to
-
-<pre>
-plot1: (0, 1),   (1, 5.3)
-plot2: (0, 2.4), (1, 2.5) + (0, 3), (1, 1.2) -- two axis on subplot2
-plot3: (0, 4,1), (1, 0.9)
-</pre>
-
+* Supported graph type
+  1. Clustered Bar (...ing)
+  2. Clustered Bar (...ing)
+  3. Box (...ing)
+  4. Line (test with line.dat)
+  5. Line normalized (test with line-norm.dat)
+  6. Multiple subplot (Not yet)
+  7. CDF (Not yet)
+  8. etc...
 
 ### Example usages
 
-./multiplot.py \[input1,input2,...\] \[attributes ...\]
+* ./ep.py -i \[input\] \[attributes ...\]
+  1. ./ep.py -i bar.dat -s bar
+  2. ./ep.py -i bar-norm.dat -s bar-norm
+  3. ./ep.py -i box.dat -s box
+  4. ./ep.py -i line.dat -s line
+  5. ./ep.py -i line-norm.dat -s line-norm
 
-  1. ./multiplot.py opt.dat -f subplot -o out.pdf
+* Sub attributes
+  - -f data format
+  - -o output name
+  - -t title
+  - -xl xlabel
+  - -yl ylabel
+  - -lw figure width
+  - -lh figure height
 
-sub attribute
--f data format
--o output name
+## parser.py
+Front-end parser class module. <b>PatternParser</b> class parses data with row(\n:newline) and col(denoted key). The class receives raw text string as an input of the constructor.<br>
+And then, ParseKeyWith and ParseWith methods parses data and special key respectively. Special key is used as a identifier when grouping correlated data with <b>tools.py</b>.
+
+## tools.py
+Some of data manipulation tools are defined in this file.
+To draw graph, user must inform the program of specific information,
+say, postion of xlabel, which row's data be used as legend, and so on.
+This kind of meta data can be abstracted with <b>Group</b> class
+in <b>tools.py</b>. Middle-end data specification process can be written by these tools.
+
+## plotter.py
+<b>Set of graph drawing class</b> with grouped meta data which mid-end specified already.
+Because, program cannot know which of graph styles the programmer wants to draw,
+all styles of classes must be defined case by case. Here are the list of classes.
+
+  - LinePlotter
+  - BoxPlotter (not yet)
+  - BarPlotter (not yet)
+  - ClusteredBarPlotter (undecided)
+  - CCBarPlotter (undecided)
+  - MultiPlotter (undecided)
