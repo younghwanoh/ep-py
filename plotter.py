@@ -42,7 +42,23 @@ class AbstractPlotter(object):
 
 # Back-end plotter
 class LinePlotter(AbstractPlotter):
-    """Draw graph with grouped data or column-parsed data"""
+    """Draw line graph with grouped data or column-parsed data"""
+    def __init__(self, **kwargs):
+        AbstractPlotter.__init__(self, **kwargs)
+
+    def draw(self, *argv):
+        keyLen = len(argv)
+        pc = range(0, keyLen)
+        legend = []
+        for i in range(0, keyLen):
+            pc[i], = plt.plot(argv[i].X, argv[i].Y, linewidth=1, marker=argv[i].marker, color=argv[i].color)
+            legend.append(argv[i].legend)
+
+        plt.legend(pc, legend)
+        plt.grid()
+
+class BarPlotter(AbstractPlotter):
+    """Draw bar graph with grouped data or column-parsed data"""
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
 

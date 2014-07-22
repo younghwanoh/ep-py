@@ -90,7 +90,6 @@ with open(fname) as inputFile:
         # draw rectangles
         rects = []
         for i in range(0, len(xlabels)):
-            print(data[i])
             rects.append(ax.bar(ind+width*i, data[i], width, color=color[i], hatch=hatch[i]))
 
         # add some
