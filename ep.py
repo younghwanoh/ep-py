@@ -31,8 +31,8 @@ if bool(args.outFile) == True:
     text = read(args.inFile)
 style = args.style
 
-# line.dat
-if style == "line-speckey":
+# line graph with special key
+if style == "line-key":
     text = read("line.dat")
 
     PP = PatternParser(text)
@@ -51,6 +51,7 @@ if style == "line-speckey":
     LP.saveToPdf(output);
     # LP.drawToWindow();
 
+# line graph without special key
 if style == "line-raw":
     text = read("line-raw.dat")
 
@@ -70,7 +71,7 @@ if style == "line-raw":
     LP.saveToPdf(output);
     # LP.drawToWindow();
 
-# bar.dat
+# line graph with single parsed y-array
 elif style == "line-flat":
     text = read("bar.dat")
 
@@ -93,7 +94,7 @@ elif style == "line-flat":
     LP.draw(D1,D2,D3,D4)
     LP.saveToPdf(output)
 
-# bar.dat
+# line graph with normalization to denoted key
 elif style == "line-norm":
     text = read("line-norm.dat")
 
@@ -116,17 +117,9 @@ elif style == "line-norm":
     LP.draw(D1,D2,D3,D4)
     LP.saveToPdf(output)
 
-elif style == "3":
-    text = "# monitoring\n\
-39	29.63501	0-3	2401000\n\
-42	31.03067	0-3	2401000\n\
-41	31.573883000000002	0-3	2401000\n\
-40	30.402679499999998	0-3	2401000\n"
-    PP = PatternParser(text);
-    PP.ParseWith("\t")
-    print(PP.datList)
-
-elif style == "4":
+# box graph
+elif style == "box-key":
+    text = read("box.dat")
     text = "CPU 0 S: 2.01513671875,796.010986328125,1473.43603515625\n\
 CPU 0 E: 795.9951171875,1473.39404296875,2616.083984375\n\
 CPU 1 S: 2.02294921875,347.43896484375,685.344970703125,1339.2451171875\n\
@@ -143,4 +136,14 @@ GPU E: 800.779052734375,2235.4169921875\n"
     PP.ParseWith(",")
     print(PP.keyList)
     print("---------------------------------------------")
+    print(PP.datList)
+
+elif style == "multiplot-skel":
+    text = "# monitoring\n\
+39	29.63501	0-3	2401000\n\
+42	31.03067	0-3	2401000\n\
+41	31.573883000000002	0-3	2401000\n\
+40	30.402679499999998	0-3	2401000\n"
+    PP = PatternParser(text);
+    PP.ParseWith("\t")
     print(PP.datList)
