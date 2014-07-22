@@ -11,34 +11,34 @@ class PatternParser:
         self.RAWdata = argv[0]
         self.rowParse()
 
-    # arguments: target index, opt="row"|"col", deep=boolean
+    # arguments: target index, opt="row"|"col", copy=boolean
     def getDataArr(self, *argv, **kwargs):
         """Get data arrays from PatternParser"""
-        tCheckArgsExists(kwargs, "deep", "opt")
+        tCheckArgsExists(kwargs, "copy", "opt")
 
-        # Deepcopy: pass reference, or not: pass copied value
-        DeepCpyOrNot = lambda x: x if kwargs["deep"] is True else list(x)
+        # copy: pass reference, or not: pass copied value
+        CpyOrNot = lambda x: list(x) if kwargs["copy"] is True else x
         # Transpose for column data or not
         TransOrNot = lambda x: tTranspose(x) if kwargs["opt"] is "col" else x
 
         if len(argv) == 0:
-            return DeepCpyOrNot(self.datList)
+            return CpyOrNot(self.datList)
         else:
-            temp = TransOrNot(DeepCpyOrNot(self.datList))
+            temp = TransOrNot(self.datList)
             return temp[argv[0]]
 
-    # arguments: target index, deep=boolean
+    # arguments: target index, copy=boolean
     def getKeyArr(self, *argv, **kwargs):
         """Get key arrays from PatternParser"""
-        tCheckArgsExists(kwargs, "deep")
+        tCheckArgsExists(kwargs, "copy")
 
-        # Deepcopy: pass reference, or not: pass copied value
-        DeepCpyOrNot = lambda x: x if kwargs["deep"] is True else list(x)
+        # copy: pass reference, or not: pass copied value
+        CpyOrNot = lambda x: list(x) if kwargs["copy"] is True else x
 
         if len(argv) == 0:
-            return DeepCpyOrNot(self.keyList)
+            return CpyOrNot(self.keyList)
         else:
-            return DeepCpyOrNot(self.keyList[argv[0]])
+            return self.keyList[argv[0]]
 
     def deleteCommentIn(self, target):
         """Subtool: delete comment line starting with #"""

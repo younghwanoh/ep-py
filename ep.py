@@ -2,6 +2,8 @@
 
 import sys
 import re
+import csv
+from sys import stdout
 
 sys.dont_write_bytecode = True;
 
@@ -25,8 +27,8 @@ if bool(args.outFile) == True:
 
 if bool(args.outFile) == True:
     text = tRead(args.inFile)
-# style = args.style
-style = "box-key"
+
+style = args.style
 
 # line graph with special key
 if style == "line-key":
@@ -42,7 +44,7 @@ if style == "line-key":
     GPUdata.setLegend("GPU") 
     CPUdata.setLegend("CPU") 
 
-    LP = LinePlotter(width=5, height=5, title="LinePlot", xlabel="abc", ylabel="ee")
+    LP = LinePlotter(width=5, height=5, title="LinePlot with key", xlabel="abc", ylabel="ee")
     # LP.setLimitOn(x=[0, 1000], y=[0, 1000])
     LP.draw(GPUdata, CPUdata)
     LP.saveToPdf(output);
@@ -62,7 +64,7 @@ if style == "line-raw":
     GPUdata.setLegend("GPU") 
     CPUdata.setLegend("CPU") 
 
-    LP = LinePlotter(width=5, height=5, title="LinePlot", xlabel="abc", ylabel="ee")
+    LP = LinePlotter(width=5, height=5, title="LinePlot with raw", xlabel="abc", ylabel="ee")
     # LP.setLimitOn(x=[0, 1000], y=[0, 1000])
     LP.draw(GPUdata, CPUdata)
     LP.saveToPdf(output);
@@ -110,9 +112,37 @@ elif style == "line-norm":
     # D3.setLegend("GPU-only") 
     # D4.setLegend("CPU+GPU") 
 
-    LP = LinePlotter(title="LinePlot", xlabel="abc", ylabel="ee")
+    LP = LinePlotter(title="Normalized LinePlot", xlabel="abc", ylabel="ee")
     LP.draw(D1,D2,D3,D4)
     LP.saveToPdf(output)
+
+# getter test
+elif style == "getter-test":
+    text = tRead("box.dat")
+    writeLine = csv.writer(stdout, delimiter='\n')
+
+    PP = PatternParser(text);
+    PP.PickKeyWith(": ")
+    PP.ParseWith(",")
+    print("Key ---------------------------------------------")
+    print(PP.getKeyArr())
+    print("\nData --------------------------------------------")
+    writeLine.writerow(PP.getDataArr())
+    print("\nKey with index 0 --------------------------------")
+    print(PP.getKeyArr(0))
+    print("\nRow Data with index 0 ---------------------------")
+    print(PP.getDataArr(0, opt="row")) # by default, opt is row
+    print("\nCol Data with index 0 ---------------------------")
+    print(PP.getDataArr(0, opt="col"))
+    print("\nGet Data with Copy ------------------------------")
+    print("Before return value update")
+    print("a = PP.getDataArr(0, copy=True)")
+    a = PP.getDataArr(0, copy=True)
+    print(a)
+    print("\nAfter return value update")
+    print("a[0] = \"I'm Here !\"")
+    a[0] = "I'm Here !"
+    print(PP.getDataArr(0))
 
 # bar graph
 elif style == "bar-key":
