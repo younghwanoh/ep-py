@@ -4,9 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-# Back-end plotter
-class LinePlotter:
-    """Draw graph with grouped data or column-parsed data"""
+class AbstractPlotter(object):
     def __init__(self, **kwargs):
         if "ylabel" in kwargs:
             plt.ylabel(kwargs["ylabel"])
@@ -32,6 +30,22 @@ class LinePlotter:
         else:
             plt.autoscale(enable=True, axis='x', tight=False)
 
+    def saveToPdf(self, output):
+        pp = PdfPages(output)
+        plt.savefig(pp, format='pdf')
+        pp.close()
+        plt.close()
+
+    def showToWindow(self):
+        plt.show()
+        plt.close()
+
+# Back-end plotter
+class LinePlotter(AbstractPlotter):
+    """Draw graph with grouped data or column-parsed data"""
+    def __init__(self, **kwargs):
+        AbstractPlotter.__init__(self, **kwargs)
+
     def draw(self, *argv):
         keyLen = len(argv)
         pc = range(0, keyLen)
@@ -42,13 +56,3 @@ class LinePlotter:
 
         plt.legend(pc, legend)
         plt.grid()
- 
-    def saveToPdf(self, output):
-        pp = PdfPages(output)
-        plt.savefig(pp, format='pdf')
-        pp.close()
-        plt.close()
-
-    def showToWindow(self):
-        plt.show()
-        plt.close()
