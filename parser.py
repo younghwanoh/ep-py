@@ -53,7 +53,6 @@ class PatternParser:
         for i, curDat in enumerate(self.datList):
             self.datList[i] = [float(k) for k in curDat]
 
-
     # Pick specially denoted data to map it to title or legendsi
     # This method should be used after "ParseWith" is called
     # 1) PickKeyWith(SpecialKey) : Find leftmost matched special key from data
