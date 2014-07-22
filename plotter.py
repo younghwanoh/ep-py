@@ -8,8 +8,6 @@ from matplotlib.backends.backend_pdf import PdfPages
 class LinePlotter:
     """Draw graph with grouped data or column-parsed data"""
     def __init__(self, **kwargs):
-
-
         if "ylabel" in kwargs:
             plt.ylabel(kwargs["ylabel"])
         if "xlabel" in kwargs:

@@ -11,35 +11,6 @@ class PatternParser:
         self.RAWdata = argv[0]
         self.rowParse()
 
-    # arguments: target index, opt="row"|"col", copy=boolean
-    def getDataArr(self, *argv, **kwargs):
-        """Get data arrays from PatternParser"""
-        tCheckArgsExists(kwargs, "copy", "opt")
-
-        # copy: pass reference, or not: pass copied value
-        CpyOrNot = lambda x: list(x) if kwargs["copy"] is True else x
-        # Transpose for column data or not
-        TransOrNot = lambda x: tTranspose(x) if kwargs["opt"] is "col" else x
-
-        if len(argv) == 0:
-            return CpyOrNot(self.datList)
-        else:
-            temp = TransOrNot(self.datList)
-            return temp[argv[0]]
-
-    # arguments: target index, copy=boolean
-    def getKeyArr(self, *argv, **kwargs):
-        """Get key arrays from PatternParser"""
-        tCheckArgsExists(kwargs, "copy")
-
-        # copy: pass reference, or not: pass copied value
-        CpyOrNot = lambda x: list(x) if kwargs["copy"] is True else x
-
-        if len(argv) == 0:
-            return CpyOrNot(self.keyList)
-        else:
-            return self.keyList[argv[0]]
-
     def deleteCommentIn(self, target):
         """Subtool: delete comment line starting with #"""
         rowDataTemp = []
@@ -140,3 +111,33 @@ class PatternParser:
                     self.datList[i] = [ calc(dat, norm) for dat, norm in zip(datArr, normArr)]
         else:
             print("PP::datNormTo - First argument must be key string."), exit()
+
+    # arguments: target index, opt="row"|"col", copy=boolean
+    def getDataArr(self, *argv, **kwargs):
+        """Get data arrays from PatternParser"""
+        tCheckArgsExists(kwargs, "copy", "opt")
+
+        # copy: pass reference, or not: pass copied value
+        CpyOrNot = lambda x: list(x) if kwargs["copy"] is True else x
+        # Transpose for column data or not
+        TransOrNot = lambda x: tTranspose(x) if kwargs["opt"] is "col" else x
+
+        if len(argv) == 0:
+            return CpyOrNot(self.datList)
+        else:
+            temp = TransOrNot(self.datList)
+            return temp[argv[0]]
+
+    # arguments: target index, copy=boolean
+    def getKeyArr(self, *argv, **kwargs):
+        """Get key arrays from PatternParser"""
+        tCheckArgsExists(kwargs, "copy")
+
+        # copy: pass reference, or not: pass copied value
+        CpyOrNot = lambda x: list(x) if kwargs["copy"] is True else x
+
+        if len(argv) == 0:
+            return CpyOrNot(self.keyList)
+        else:
+            return self.keyList[argv[0]]
+

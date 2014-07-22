@@ -28,7 +28,9 @@ if bool(args.outFile) == True:
 if bool(args.outFile) == True:
     text = tRead(args.inFile)
 
-style = args.style
+style = "bar-flat"
+if bool(args.style) == True:
+    style = args.style
 
 # line graph with special key
 if style == "line-key":
@@ -145,7 +147,7 @@ elif style == "getter-test":
     print(PP.getDataArr(0))
 
 # bar graph
-elif style == "bar-key":
+elif style == "bar-flat":
     text = tRead("bar.dat")
 
     PP = PatternParser(text)
