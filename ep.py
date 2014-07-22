@@ -117,6 +117,29 @@ elif style == "line-norm":
     LP.draw(D1,D2,D3,D4)
     LP.saveToPdf(output)
 
+# bar graph
+elif style == "bar-key":
+    text = read("bar.dat")
+
+    PP = PatternParser(text)
+    PP.ParseWith("\t")
+    PP.PickKeyWith("row")
+
+    D1 = Group(PP, "seq",      color="red", marker="o")
+    D2 = Group(PP, "cpu-only", color="blue", marker="x")
+    D3 = Group(PP, "gpu-only", color="green", marker="o")
+    D4 = Group(PP, "cpu+gpu",  color="black", marker="x")
+
+    # D1.setLegend("SEQ") 
+    # D2.setLegend("CPU-only") 
+    # D3.setLegend("GPU-only") 
+    # D4.setLegend("CPU+GPU") 
+
+    BP = BarPlotter(title="BarPlot", xlabel="abc", ylabel="ee")
+    BP.setLimitOn(x=[0, 10], y=[0, 10])
+    BP.draw(D1,D2,D3,D4)
+    BP.saveToPdf(output)
+
 # box graph
 elif style == "box-key":
     text = read("box.dat")
