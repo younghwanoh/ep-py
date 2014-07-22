@@ -1,7 +1,5 @@
 #!/usr/bin/python
-from tools import transpose
-from tools import popRow
-from tools import popCol
+from tools import *
 
 # Front-end parser
 class PatternParser:
@@ -13,8 +11,37 @@ class PatternParser:
         self.RAWdata = argv[0]
         self.rowParse()
 
+    # arguments: target index, opt="row"|"col", deep=boolean
+    def getDataArr(self, *argv, **kwargs):
+        """Get data arrays from PatternParser"""
+        tCheckArgsExists(kwargs, "deep", "opt")
+
+        # Deepcopy: pass reference, or not: pass copied value
+        DeepCpyOrNot = lambda x: x if kwargs["deep"] is True else list(x)
+        # Transpose for column data or not
+        TransOrNot = lambda x: tTranspose(x) if kwargs["opt"] is "col" else x
+
+        if len(argv) == 0:
+            return DeepCpyOrNot(self.datList)
+        else:
+            temp = TransOrNot(DeepCpyOrNot(self.datList))
+            return temp[argv[0]]
+
+    # arguments: target index, deep=boolean
+    def getKeyArr(self, *argv, **kwargs):
+        """Get key arrays from PatternParser"""
+        tCheckArgsExists(kwargs, "deep")
+
+        # Deepcopy: pass reference, or not: pass copied value
+        DeepCpyOrNot = lambda x: x if kwargs["deep"] is True else list(x)
+
+        if len(argv) == 0:
+            return DeepCpyOrNot(self.keyList)
+        else:
+            return DeepCpyOrNot(self.keyList[argv[0]])
+
     def deleteCommentIn(self, target):
-        # Delete comment line starting with "#"
+        """Subtool: delete comment line starting with #"""
         rowDataTemp = []
         for eachRow in target:
             if eachRow[0] != "#":
@@ -44,14 +71,15 @@ class PatternParser:
 
         # Lazy key parse for the denoted row/col
         if self.keyParseType is "row":
-            self.datList, self.keyList = popRow(self.datList, self.keyLineNum)
-            self.datList = transpose(self.datList)
+            self.datList, self.keyList = tPopRow(self.datList, self.keyLineNum)
+            self.datList = tTranspose(self.datList)
         elif self.keyParseType is "col":
-            self.datList, self.keyList = popCol(self.datList, self.keyLineNum)
+            self.datList, self.keyList = tPopCol(self.datList, self.keyLineNum)
 
         # Data type change: string to float
         for i, curDat in enumerate(self.datList):
-            self.datList[i] = [float(k) for k in curDat]
+            if self.datList[i][0].isalpha():
+                self.datList[i] = [float(k) for k in curDat]
 
     # Pick specially denoted data to map it to title or legendsi
     # This method should be used after "ParseWith" is called

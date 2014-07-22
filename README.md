@@ -76,3 +76,8 @@ all styles of classes must be defined case by case. Here are the list of classes
   - ClusteredBarPlotter (undecided)
   - CCBarPlotter (undecided)
   - MultiPlotter (undecided)
+
+## tags on GIT log messages
+  - \*: major version update
+  - +: Method or functionality update
+  - none: minor update

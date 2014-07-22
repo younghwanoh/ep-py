@@ -7,11 +7,7 @@ sys.dont_write_bytecode = True;
 
 # library for ep.py
 from parser import PatternParser
-from tools import Group
-from tools import transpose
-from tools import popRow
-from tools import popCol
-from tools import read
+from tools import *
 from plotter import LinePlotter
 
 # argument parser
@@ -28,12 +24,13 @@ if bool(args.outFile) == True:
     output = arg.outFile
 
 if bool(args.outFile) == True:
-    text = read(args.inFile)
-style = args.style
+    text = tRead(args.inFile)
+# style = args.style
+style = "box-key"
 
 # line graph with special key
 if style == "line-key":
-    text = read("line.dat")
+    text = tRead("line.dat")
 
     PP = PatternParser(text)
     PP.PickKeyWith(": ")
@@ -53,7 +50,7 @@ if style == "line-key":
 
 # line graph without special key
 if style == "line-raw":
-    text = read("line-raw.dat")
+    text = tRead("line-raw.dat")
 
     PP = PatternParser(text)
     PP.ParseWith(",")
@@ -73,11 +70,11 @@ if style == "line-raw":
 
 # line graph with single parsed y-array
 elif style == "line-flat":
-    text = read("bar.dat")
+    text = tRead("bar.dat")
 
     PP = PatternParser(text)
-    PP.ParseWith("\t")
     PP.PickKeyWith("row")
+    PP.ParseWith("\t")
 
     D1 = Group(PP, [1,2,3,4], "seq",      color="red", marker="o")
     D2 = Group(PP, [1,2,3,4], "cpu-only", color="blue", marker="x")
@@ -96,7 +93,7 @@ elif style == "line-flat":
 
 # line graph with normalization to denoted key
 elif style == "line-norm":
-    text = read("line-norm.dat")
+    text = tRead("line-norm.dat")
 
     PP = PatternParser(text)
     PP.PickKeyWith(": ")
@@ -119,7 +116,7 @@ elif style == "line-norm":
 
 # bar graph
 elif style == "bar-key":
-    text = read("bar.dat")
+    text = tRead("bar.dat")
 
     PP = PatternParser(text)
     PP.ParseWith("\t")
@@ -142,7 +139,7 @@ elif style == "bar-key":
 
 # box graph
 elif style == "box-key":
-    text = read("box.dat")
+    text = tRead("box.dat")
     text = "CPU 0 S: 2.01513671875,796.010986328125,1473.43603515625\n\
 CPU 0 E: 795.9951171875,1473.39404296875,2616.083984375\n\
 CPU 1 S: 2.02294921875,347.43896484375,685.344970703125,1339.2451171875\n\

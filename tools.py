@@ -2,29 +2,31 @@
 
 # ad-hoc tools
 # Transpose matrix and make list other than tuple
-def transpose(arr):
+def tTranspose(arr):
     result = zip(*arr)
     result = [list(i) for i in result]
     return result
 
-def popRow(arr, idx):
+def tPopRow(arr, idx):
     temp = list(arr)
     popDat = temp.pop(idx)
     return temp, popDat
 
-def popCol(arr, idx):
+def tPopCol(arr, idx):
     temp = transpose(arr)
     popDat = temp.pop(idx)
     temp = transpose(temp)
     return temp, popDat
 
-def pickSingleLine():
-    return 0
-
-def read(inFile):
+def tRead(inFile):
     with open(inFile) as inputFile:
         text = inputFile.read()
     return text
+
+def tCheckArgsExists(kwargs, *argv):
+    """Checking directory arguments are exists and set values on each index"""
+    for key in argv:
+        kwargs[key] = kwargs[key] if key in kwargs else False
 
 # Group class: grouping correlated data and its configuration
 class Group:
