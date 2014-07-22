@@ -30,8 +30,8 @@ User should denote specification of data layout and graph's layout.
   1. Clustered Bar (...ing)
   2. Clustered Bar (...ing)
   3. Box (...ing)
-  4. Line (test with line.dat)
-  5. Line normalized (test with line-norm.dat)
+  4. Line (line-key, line-raw, line-flat)
+  5. Line normalized (line-norm)
   6. Multiple subplot (Not yet)
   7. CDF (Not yet)
   8. etc...
@@ -39,11 +39,11 @@ User should denote specification of data layout and graph's layout.
 ### Example usages
 
 * ./ep.py -i \[input\] \[attributes ...\]
-  1. ./ep.py -i bar.dat -s bar
-  2. ./ep.py -i bar-norm.dat -s bar-norm
-  3. ./ep.py -i box.dat -s box
-  4. ./ep.py -i line.dat -s line
-  5. ./ep.py -i line-norm.dat -s line-norm
+  1. ./ep.py -i dat/bar.dat -s bar-flat
+  2. ./ep.py -i dat/bar-norm.dat -s bar-norm
+  3. ./ep.py -i dat/box.dat -s box-key
+  4. ./ep.py -i dat/line.dat -s line-key
+  5. ./ep.py -i dat/line-norm.dat -s line-norm
 
 * Sub attributes
   - -f data format
@@ -71,13 +71,14 @@ Because, program cannot know which of graph styles the programmer wants to draw,
 all styles of classes must be defined case by case. Here are the list of classes.
 
   - LinePlotter
-  - BoxPlotter (not yet)
-  - BarPlotter (not yet)
-  - ClusteredBarPlotter (undecided)
-  - CCBarPlotter (undecided)
-  - MultiPlotter (undecided)
+  - BoxPlotter (...ing)
+  - BarPlotter (...ing)
+  - ClusteredBarPlotter (...ing)
+  - CCBarPlotter (Not yet)
+  - MultiPlotter (Not yet)
 
-## tags on GIT log messages
-  - \*: major version update
+## Prefix of GIT log messages
+  - \*: Major version update
   - +: Method or functionality update
-  - none: minor update
+  - @: Bug and critical issues
+  - none: Minor update

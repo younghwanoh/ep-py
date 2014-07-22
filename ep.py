@@ -34,7 +34,7 @@ if bool(args.style) == True:
 
 # line graph with special key
 if style == "line-key":
-    text = tRead("line.dat")
+    text = tRead("dat/line.dat")
 
     PP = PatternParser(text)
     PP.PickKeyWith(": ")
@@ -54,7 +54,7 @@ if style == "line-key":
 
 # line graph without special key
 if style == "line-raw":
-    text = tRead("line-raw.dat")
+    text = tRead("dat/line-raw.dat")
 
     PP = PatternParser(text)
     PP.ParseWith(",")
@@ -74,7 +74,7 @@ if style == "line-raw":
 
 # line graph with single parsed y-array
 elif style == "line-flat":
-    text = tRead("bar.dat")
+    text = tRead("dat/bar.dat")
 
     PP = PatternParser(text)
     PP.PickKeyWith("row")
@@ -97,7 +97,7 @@ elif style == "line-flat":
 
 # line graph with normalization to denoted key
 elif style == "line-norm":
-    text = tRead("line-norm.dat")
+    text = tRead("dat/line-norm.dat")
 
     PP = PatternParser(text)
     PP.PickKeyWith(": ")
@@ -120,7 +120,7 @@ elif style == "line-norm":
 
 # getter test
 elif style == "getter-test":
-    text = tRead("box.dat")
+    text = tRead("dat/box.dat")
     writeLine = csv.writer(stdout, delimiter='\n')
 
     PP = PatternParser(text);
@@ -148,7 +148,7 @@ elif style == "getter-test":
 
 # bar graph
 elif style == "bar-flat":
-    text = tRead("bar.dat")
+    text = tRead("dat/bar.dat")
 
     PP = PatternParser(text)
     PP.ParseWith("\t")
@@ -171,7 +171,7 @@ elif style == "bar-flat":
 
 # box graph
 elif style == "box-key":
-    text = tRead("box.dat")
+    text = tRead("dat/box.dat")
     text = "CPU 0 S: 2.01513671875,796.010986328125,1473.43603515625\n\
 CPU 0 E: 795.9951171875,1473.39404296875,2616.083984375\n\
 CPU 1 S: 2.02294921875,347.43896484375,685.344970703125,1339.2451171875\n\
