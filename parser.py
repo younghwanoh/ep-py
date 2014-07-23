@@ -49,7 +49,7 @@ class PatternParser:
 
         # Data type change: string to float
         for i, curDat in enumerate(self.datList):
-            if self.datList[i][0].isalpha() == False:
+            if self.datList[i][-1].isalpha() == False:
                 self.datList[i] = [float(k) for k in curDat]
 
     # Pick specially denoted data to map it to title or legendsi

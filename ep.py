@@ -151,8 +151,8 @@ elif style == "bar-flat":
     text = tRead("dat/bar.dat")
 
     PP = PatternParser(text)
-    PP.ParseWith("\t")
     PP.PickKeyWith("row")
+    PP.ParseWith("\t")
 
     D1 = Group(PP, "seq",      color="red", marker="o")
     D2 = Group(PP, "cpu-only", color="blue", marker="x")

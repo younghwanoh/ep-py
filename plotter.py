@@ -6,16 +6,18 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 class AbstractPlotter(object):
     def __init__(self, **kwargs):
+        self.fig, self.ax = plt.subplots()
         if "ylabel" in kwargs:
-            plt.ylabel(kwargs["ylabel"])
+            self.ax.set_ylabel(kwargs["ylabel"])
         if "xlabel" in kwargs:
-            plt.xlabel(kwargs["xlabel"])
+            self.ax.set_xlabel(kwargs["xlabel"])
         if "title" in kwargs:
-            plt.title(kwargs["title"])
+            self.ax.set_title(kwargs["title"])
 
         if ("width" in kwargs) & ("height" in kwargs):
-            fig = plt.gcf()
-            fig.set_size_inches(kwargs["width"], kwargs["height"])
+            self.fig.set_size_inches(kwargs["width"], kwargs["height"])
+
+        self.ax.grid()
 
     def setLimitOn(self, **kwargs):
         # set y-space
@@ -51,11 +53,10 @@ class LinePlotter(AbstractPlotter):
         pc = range(0, keyLen)
         legend = []
         for i in range(0, keyLen):
-            pc[i], = plt.plot(argv[i].X, argv[i].Y, linewidth=1, marker=argv[i].marker, color=argv[i].color)
+            pc[i], = self.ax.plot(argv[i].X, argv[i].Y, linewidth=1, marker=argv[i].marker, color=argv[i].color)
             legend.append(argv[i].legend)
 
-        plt.legend(pc, legend)
-        plt.grid()
+        self.ax.legend(pc, legend)
 
 class BarPlotter(AbstractPlotter):
     """Draw bar graph with grouped data or column-parsed data"""
@@ -66,9 +67,10 @@ class BarPlotter(AbstractPlotter):
         keyLen = len(argv)
         pc = range(0, keyLen)
         legend = []
-        for i in range(0, keyLen):
-            pc[i], = plt.plot(argv[i].X, argv[i].Y, linewidth=1, marker=argv[i].marker, color=argv[i].color)
+        rects = []
+        for i in range(0, keLen):
+            rects.append(self.ax.bar(3*i, argv[i].dat, 2, marker=argv[i].marker, color=argv[i].color))
             legend.append(argv[i].legend)
 
-        plt.legend(pc, legend)
-        plt.grid()
+        self.ax.legend(rects, legend)
+
