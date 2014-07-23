@@ -10,7 +10,7 @@ sys.dont_write_bytecode = True;
 # library for ep.py
 from parser import PatternParser
 from tools import *
-from plotter import LinePlotter
+from plotter import *
 
 # argument parser
 import argparse

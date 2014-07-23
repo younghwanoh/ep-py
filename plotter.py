@@ -50,9 +50,9 @@ class LinePlotter(AbstractPlotter):
 
     def draw(self, *argv):
         keyLen = len(argv)
-        pc = range(0, keyLen)
+        pc = range(keyLen)
         legend = []
-        for i in range(0, keyLen):
+        for i in range(keyLen):
             pc[i], = self.ax.plot(argv[i].X, argv[i].Y, linewidth=1, marker=argv[i].marker, color=argv[i].color)
             legend.append(argv[i].legend)
 
@@ -65,11 +65,13 @@ class BarPlotter(AbstractPlotter):
 
     def draw(self, *argv):
         keyLen = len(argv)
-        pc = range(0, keyLen)
+        pc = range(keyLen)
+        ind = np.arange(len(argv[0].dat))
         legend = []
         rects = []
-        for i in range(0, keLen):
-            rects.append(self.ax.bar(3*i, argv[i].dat, 2, marker=argv[i].marker, color=argv[i].color))
+        for i in range(keyLen):
+            print(argv[i].dat)
+            rects.append(self.ax.bar(3*ind, argv[i].dat, 2, color=argv[i].color))
             legend.append(argv[i].legend)
 
         self.ax.legend(rects, legend)

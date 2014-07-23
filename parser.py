@@ -48,9 +48,9 @@ class PatternParser:
             self.datList, self.keyList = tPopCol(self.datList, self.keyLineNum)
 
         # Data type change: string to float
+        toFloat = lambda x: float(x) if tIsfloat(x) == True else x
         for i, curDat in enumerate(self.datList):
-            if self.datList[i][-1].isalpha() == False:
-                self.datList[i] = [float(k) for k in curDat]
+            self.datList[i] = [toFloat(k) for k in curDat]
 
     # Pick specially denoted data to map it to title or legendsi
     # This method should be used after "ParseWith" is called

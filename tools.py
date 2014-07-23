@@ -28,6 +28,13 @@ def tCheckArgsExists(kwargs, *argv):
     for key in argv:
         kwargs[key] = kwargs[key] if key in kwargs else False
 
+def tIsfloat(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
 # Group class: grouping correlated data and its configuration
 class Group:
     """Group data to plot each correlated data"""
@@ -45,7 +52,14 @@ class Group:
 
         if len(argv) == 1:
             # Single data array
-            print("Single data array")
+            if type(argv[0]) is str:
+                self.key = argv[0]
+                idx = PP.keyList.index(argv[0])
+                self.dat = PP.datList[idx] 
+            elif type(argv[0]) is list:
+                self.dat = argv[0]
+            else:
+                print("Group.dat - Argument type is wrong ! Must be str or list.")
         elif len(argv) == 2:
             # Double(X, Y) data array
             # Group X

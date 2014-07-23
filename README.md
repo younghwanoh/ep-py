@@ -28,10 +28,10 @@ User should denote specification of data layout and graph's layout.
 
 * Supported graph type
   1. Clustered Bar (...ing)
-  2. Clustered Bar (...ing)
+  2. Normalized Clustered Bar (...ing)
   3. Box (...ing)
   4. Line (line-key, line-raw, line-flat)
-  5. Line normalized (line-norm)
+  5. Normalized line (line-norm)
   6. Multiple subplot (Not yet)
   7. CDF (Not yet)
   8. etc...
@@ -73,7 +73,7 @@ all styles of classes must be defined case by case. Here are the list of classes
   - LinePlotter
   - BoxPlotter (...ing)
   - BarPlotter (...ing)
-  - ClusteredBarPlotter (...ing)
+  - CBarPlotter (...ing)
   - CCBarPlotter (Not yet)
   - MultiPlotter (Not yet)
 
