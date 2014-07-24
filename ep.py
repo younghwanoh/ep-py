@@ -74,7 +74,7 @@ if style == "line-raw":
 
 # line graph with single parsed y-array
 elif style == "line-flat":
-    text = tRead("dat/bar.dat")
+    text = tRead("dat/flat.dat")
 
     PP = PatternParser(text)
     PP.PickKeyWith("row")
@@ -102,7 +102,7 @@ elif style == "line-norm":
     PP = PatternParser(text)
     PP.PickKeyWith(": ")
     PP.ParseWith("\t")
-    PP.datNormTo("SEQavg", opt="speedup", skip="data") # option: speedup, exetime
+    PP.datNormTo("SEQavg", opt="speedup") # option: speedup, exetime
 
     D1 = Group(PP, "data", "Profile", color="red", marker="o")
     D2 = Group(PP, "data", "CGCEavg", color="blue", marker="x")
@@ -173,13 +173,83 @@ elif style == "bar-clustered":
     # L1 = TickLabel(None, ["label","1","2",1])
 
     # Draw bar
-    CB = CBarPlotter(title="BarPlot with flattend format", xlabel="Input Size", ylabel="Performance", barwidth=2)
+    CB = CBarPlotter(title="BarPlot with flattend format",
+                     xlabel="Input Size", ylabel="Exe time", barwidth=2)
     # BP.setLimitOn(x=[0, 10], y=[0, 10])
     CB.draw(D1,D2,D3,D4, ticklabel=L1)
     CB.saveToPdf(output)
 
+elif style == "bar-norm-clustered":
+    text = tRead("dat/bar-clustered.dat")
+
+    # Parse text
+    PP = PatternParser(text)
+    PP.PickKeyWith("row")
+    PP.ParseWith("\t")
+    PP.datNormTo("gpu-only", opt="speedup") # option: speedup, exetime
+
+    # Set data
+    D1 = Group(PP, "seq",      color="red", hatch="-")
+    D2 = Group(PP, "cpu-only", color="blue")
+    D3 = Group(PP, "gpu-only", color="green", hatch="||")
+    D4 = Group(PP, "cpu+gpu",  color="black")
+
+    D1.setLegend("SEQ") 
+    D2.setLegend("CPU-only") 
+    D3.setLegend("GPU-only") 
+    D4.setLegend("CPU+GPU") 
+
+    # Set label with key
+    L1 = TickLabel(PP, "label")
+
+    # Set label manually
+    # L1 = TickLabel(None, ["label","1","2",1])
+
+    # Draw bar
+    CB = CBarPlotter(title="Normalized BarPlot with flattend format",
+                     xlabel="Input Size", ylabel="Speedup", barwidth=2)
+    # BP.setLimitOn(x=[0, 10], y=[0, 10])
+    CB.draw(D1,D2,D3,D4, ticklabel=L1)
+    CB.saveToPdf(output)
+
+elif style == "bar-key-clustered":
+    text = tRead("dat/bar-key.dat")
+
+    # Parse text
+    PP = PatternParser(text)
+    PP.PickKeyWith(": ")
+    PP.ParseWith("\t")
+
+    # Set label with key
+    L1 = TickLabel(PP, "data", rotate=45)
+
+    # Normalization must be occured after TickLabel
+    PP.datNormTo("SEQavg", opt="speedup") # option: speedup, exetime
+
+    # Set data
+    D1 = Group(PP, "SEQiavg", color="red", hatch="-")
+    D2 = Group(PP, "GPUiavg", color="blue")
+    D3 = Group(PP, "CGCEavg", color="green", hatch="||")
+    D4 = Group(PP, "Profile", color="black")
+
+    D1.setLegend("CPU-only") 
+    D2.setLegend("GPU-only") 
+    D3.setLegend("CGCE-only") 
+    D4.setLegend("CGCE+profile") 
+
+
+    # Set label manually
+    # L1 = TickLabel(None, ["label","1","2",1])
+
+    # Draw bar
+    CB = CBarPlotter(title="BarPlot with key format",
+                     xlabel="Input Size", ylabel="Speedup", barwidth=2)
+    # BP.setLimitOn(x=[0, 10], y=[0, 10])
+    CB.draw(D1,D2,D3,D4, ticklabel=L1, margin=0.05)
+    CB.saveToPdf(output)
+
 elif style == "bar-single":
-    text = tRead("dat/bar.dat")
+    text = tRead("dat/flat.dat")
 
     # Parse text
     PP = PatternParser(text)

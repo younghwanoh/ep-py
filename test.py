@@ -3,7 +3,8 @@
 import os
 from time import sleep
 
-tests = ["line-key","line-raw","line-norm","getter-test","bar-clustered","bar-single"]
+tests = ["line-key","line-raw","line-norm","getter-test","bar-clustered",
+         "bar-norm-clustered","bar-key-clustered","bar-single"]
 
 for i in tests:
     print("\033[1;31m%s\033[m test !! ============================================" % i)

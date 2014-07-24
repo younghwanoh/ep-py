@@ -96,18 +96,15 @@ class PatternParser:
     # skip : skip nomarlization fpr this key
     def datNormTo(self, where, **kwargs):
         """Normalize data to spcified row or col"""
-        calc = lambda x,y: x/y
+        # calc = lambda x,y: x/y
         if "opt" in kwargs:
-            calc = lambda x,y: x/y if kwargs["opt"] is "exetime" else y/x
-        if "skip" in kwargs:
-            skipThis = kwargs["skip"]
+            calc = lambda x,y: x/y if kwargs["opt"] == "exetime" else y/x
 
         if type(where) is str:
             idx = self.keyList.index(where)
             normArr = self.datList[idx]
             for i, datArr in enumerate(self.datList):
-                # if (type(datArr[0]) is int or float) and (self.keyList[i] != skipThis):
-                if self.keyList[i] != skipThis:
+                if type(datArr[0]) is float:
                     self.datList[i] = [ calc(dat, norm) for dat, norm in zip(datArr, normArr)]
         else:
             print("PP::datNormTo - First argument must be key string."), exit()

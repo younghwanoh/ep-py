@@ -96,14 +96,20 @@ class Group:
 # Label class: grouping correlated data and its configuration
 class TickLabel:
     """Group data to plot each correlated data"""
-    def __init__(self, PP, *argv):
+    def __init__(self, PP, *argv, **kwargs):
+        self.rotate = 0
+        if "rotate" in kwargs:
+            self.rotate = kwargs["rotate"]
+
+        # cut out if label has floating point
+        toint = lambda x: int(x) if type(x) is float else x
         if type(argv[0]) is str:
             self.key = argv[0]
             idx = PP.keyList.index(argv[0])
-            self.content = PP.datList[idx] 
+            self.content = [toint(i) for i in PP.datList[idx]]
         elif type(argv[0]) is list:
-            self.content = argv[0] 
+            self.content = [toint(i) for i in argv[0]]
         elif isinstance(argv[0], Group):
-            print("weg")
+            print("Type Group")
         else:
             print("TickLabel::init - Unexpected argument type")

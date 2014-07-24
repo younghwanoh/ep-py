@@ -75,7 +75,7 @@ class CBarPlotter(AbstractPlotter):
         if "margin" in kwargs:
             PerFigToMargin = kwargs["margin"]
         if "ticklabel" in kwargs:
-            self.tickLabel = kwargs["ticklabel"].content
+            self.tickLabel = kwargs["ticklabel"]
 
         keyLen = len(argv)
         datLen = len(argv[0].Y)
@@ -97,11 +97,8 @@ class CBarPlotter(AbstractPlotter):
 
         # set xtick point and label
         self.ax.set_xticks(begin+(self.barwidth*keyLen)/2)
-        self.ax.set_xticklabels(self.tickLabel)
+        self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickLabel.rotate)
 
 
         LengthOfWholeBar = begin[-1] + self.barwidth*keyLen
         plt.xlim([-LengthOfWholeBar*PerFigToMargin, LengthOfWholeBar*(1+PerFigToMargin)])
-
-    def ticks(self, *tickLabel):
-        self.tickLabel = tickLabel
