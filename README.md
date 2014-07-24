@@ -1,4 +1,4 @@
-ep-py ver. 0.1
+ep-py ver. 0.2
 =====
 Personal graph drawing library with high-level abstraction of python-matplotlib<br>
 
@@ -17,7 +17,7 @@ apt-get install python-numpy python-matplotlib
 
 Mac may already have built-in python binary and matplotlib
 
-* Library construction
+* Library constitution
   1. Front-end Parser
   2. Middle-end specifier
   3. Back-end plotter
@@ -73,7 +73,7 @@ all styles of classes must be defined case by case. Here are the list of classes
   - LinePlotter
   - BoxPlotter (...ing)
   - BarPlotter (...ing)
-  - CBarPlotter (...ing)
+  - CBarPlotter
   - CCBarPlotter (Not yet)
   - MultiPlotter (Not yet)
 

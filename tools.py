@@ -42,6 +42,7 @@ class Group:
         # set default attributes
         self.color = "black"
         self.marker = "o"
+        self.hatch = ""
         self.keyX = None
         self.keyY = None
 
@@ -49,15 +50,17 @@ class Group:
             self.color = kwargs["color"]
         if "marker" in kwargs:
             self.marker = kwargs["marker"]
+        if "hatch" in kwargs:
+            self.hatch = kwargs["hatch"]
 
         if len(argv) == 1:
-            # Single data array
+            # Single data array (for bar)
             if type(argv[0]) is str:
-                self.key = argv[0]
+                self.keyY = argv[0]
                 idx = PP.keyList.index(argv[0])
-                self.dat = PP.datList[idx] 
+                self.Y = PP.datList[idx] 
             elif type(argv[0]) is list:
-                self.dat = argv[0]
+                self.Y = argv[0]
             else:
                 print("Group.dat - Argument type is wrong ! Must be str or list.")
         elif len(argv) == 2:
@@ -85,7 +88,22 @@ class Group:
             # Over-dimensional data array
             print("Group::init - Multi-dimensional data isn't supported yet")
 
-        self.legend = self.keyY if type(self.keyY) is str else "Noname"
+        self.legend = self.keyY if type(self.keyY) is str else None
 
     def setLegend(self, string):
         self.legend = string
+
+# Label class: grouping correlated data and its configuration
+class TickLabel:
+    """Group data to plot each correlated data"""
+    def __init__(self, PP, *argv):
+        if type(argv[0]) is str:
+            self.key = argv[0]
+            idx = PP.keyList.index(argv[0])
+            self.content = PP.datList[idx] 
+        elif type(argv[0]) is list:
+            self.content = argv[0] 
+        elif isinstance(argv[0], Group):
+            print("weg")
+        else:
+            print("TickLabel::init - Unexpected argument type")

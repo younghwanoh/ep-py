@@ -118,7 +118,7 @@ class PatternParser:
         tCheckArgsExists(kwargs, "copy", "opt")
 
         # copy: pass reference, or not: pass copied value
-        CpyOrNot = lambda x: list(x) if kwargs["copy"] is True else x
+        CpyOrNot = lambda x: list(x) if bool(kwargs["copy"]) is True else x
         # Transpose for column data or not
         TransOrNot = lambda x: tTranspose(x) if kwargs["opt"] is "col" else x
 

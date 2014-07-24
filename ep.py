@@ -23,9 +23,9 @@ args = argparser.parse_args()
 # output file name
 output = "output.pdf"
 if bool(args.outFile) == True:
-    output = arg.outFile
+    output = args.outFile
 
-if bool(args.outFile) == True:
+if bool(args.inFile) == True:
     text = tRead(args.inFile)
 
 style = "bar-flat"
@@ -90,7 +90,7 @@ elif style == "line-flat":
     # D3.setLegend("GPU-only") 
     # D4.setLegend("CPU+GPU") 
 
-    LP = LinePlotter(title="LinePlot", xlabel="abc", ylabel="ee")
+    LP = LinePlotter(title="LinePlot with flattend format", xlabel="abc", ylabel="ee")
     LP.setLimitOn(x=[0, 10], y=[0, 10])
     LP.draw(D1,D2,D3,D4)
     LP.saveToPdf(output)
@@ -147,26 +147,56 @@ elif style == "getter-test":
     print(PP.getDataArr(0))
 
 # bar graph
-elif style == "bar-flat":
-    text = tRead("dat/bar.dat")
+elif style == "bar-clustered":
+    text = tRead("dat/bar-clustered.dat")
 
+    # Parse text
     PP = PatternParser(text)
     PP.PickKeyWith("row")
     PP.ParseWith("\t")
 
-    D1 = Group(PP, "seq",      color="red", marker="o")
-    D2 = Group(PP, "cpu-only", color="blue", marker="x")
-    D3 = Group(PP, "gpu-only", color="green", marker="o")
-    D4 = Group(PP, "cpu+gpu",  color="black", marker="x")
+    # Set data
+    D1 = Group(PP, "seq",      color="red", hatch="-")
+    D2 = Group(PP, "cpu-only", color="blue")
+    D3 = Group(PP, "gpu-only", color="green", hatch="||")
+    D4 = Group(PP, "cpu+gpu",  color="black")
 
-    # D1.setLegend("SEQ") 
-    # D2.setLegend("CPU-only") 
-    # D3.setLegend("GPU-only") 
-    # D4.setLegend("CPU+GPU") 
+    D1.setLegend("SEQ") 
+    D2.setLegend("CPU-only") 
+    D3.setLegend("GPU-only") 
+    D4.setLegend("CPU+GPU") 
 
-    BP = BarPlotter(title="BarPlot", xlabel="abc", ylabel="ee")
-    BP.setLimitOn(x=[0, 10], y=[0, 10])
-    BP.draw(D1,D2,D3,D4)
+    # Set label with key
+    L1 = TickLabel(PP, "label")
+
+    # Set label manually
+    # L1 = TickLabel(None, ["label","1","2",1])
+
+    # Draw bar
+    CB = CBarPlotter(title="BarPlot with flattend format", xlabel="Input Size", ylabel="Performance", barwidth=2)
+    # BP.setLimitOn(x=[0, 10], y=[0, 10])
+    CB.draw(D1,D2,D3,D4, ticklabel=L1)
+    CB.saveToPdf(output)
+
+elif style == "bar-single":
+    text = tRead("dat/bar.dat")
+
+    # Parse text
+    PP = PatternParser(text)
+    PP.PickKeyWith("row")
+    PP.ParseWith("\t")
+
+    # Set data
+    D1 = Group(PP, "gpu-only", color="green", hatch="||")
+    D1.setLegend("GPU-only") 
+
+    # Set label with key
+    L1 = TickLabel(PP, "label")
+
+    # Draw bar
+    BP = CBarPlotter(title="BarPlot with flattend format", xlabel="Input Size", ylabel="Performance", barwidth=2)
+    # BP.setLimitOn(x=[0, 10], y=[0, 10])
+    BP.draw(D1, ticklabel=L1, margin=0.3)
     BP.saveToPdf(output)
 
 # box graph
