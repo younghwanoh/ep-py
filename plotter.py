@@ -58,7 +58,54 @@ class LinePlotter(AbstractPlotter):
         self.ax.legend(pc, legend)
 
 class CBarPlotter(AbstractPlotter):
-    """Draw bar graph with grouped data or column-parsed data"""
+    """Draw clustered bar graph with grouped data or column-parsed data"""
+    def __init__(self, **kwargs):
+        AbstractPlotter.__init__(self, **kwargs)
+
+        self.barwidth = 1
+        self.tickLabel = [""]
+
+        if "barwidth" in kwargs:
+            self.barwidth = kwargs["barwidth"]
+
+    def draw(self, *argv, **kwargs):
+        # default 12% margin to entire bar width
+        PerFigToMargin = 0.12 
+
+        if "margin" in kwargs:
+            PerFigToMargin = kwargs["margin"]
+        if "ticklabel" in kwargs:
+            self.tickLabel = kwargs["ticklabel"]
+
+        keyLen = len(argv)
+        datLen = len(argv[0].Y)
+        pc = range(keyLen)
+
+        # Interval between clustered bars: 40% of total width in a clustered group
+        interGlobalOffset = (self.barwidth*keyLen) * 1.4
+        begin = np.arange(datLen) * interGlobalOffset
+
+        legend = []
+        rects = []
+        for i in range(keyLen):
+            rects.append(self.ax.bar(begin+i*self.barwidth, argv[i].Y, self.barwidth, color=argv[i].color, hatch=argv[i].hatch))
+            if bool(argv[i].legend):
+                legend.append(argv[i].legend)
+
+        # set legend
+        self.ax.legend(rects, legend)
+
+        # set xtick point and label
+        self.ax.set_xticks(begin+(self.barwidth*keyLen)/2)
+        self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickLabel.rotate)
+
+
+        LengthOfWholeBar = begin[-1] + self.barwidth*keyLen
+        plt.xlim([-LengthOfWholeBar*PerFigToMargin, LengthOfWholeBar*(1+PerFigToMargin)])
+
+
+class CCBarPlotter(AbstractPlotter):
+    """Draw clustered*2 bar graph with grouped parsed data"""
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
 
