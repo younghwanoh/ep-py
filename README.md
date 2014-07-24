@@ -27,11 +27,11 @@ Top(or test) module to draw graphs using ep.py APIs
 User should denote specification of data layout and graph's layout.
 
 * Supported graph type
-  1. Clustered Bar (...ing)
-  2. Normalized Clustered Bar (...ing)
-  3. Box (...ing)
-  4. Line (line-key, line-raw, line-flat)
-  5. Normalized line (line-norm)
+  1. Line (line-key, line-raw, line-flat)
+  2. Normalized line (line-norm)
+  3. Clustered Bar (bar-clustered, bar-key-clustered)
+  4. Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)
+  5. Box (...ing)
   6. Multiple subplot (Not yet)
   7. CDF (Not yet)
   8. etc...
@@ -39,11 +39,11 @@ User should denote specification of data layout and graph's layout.
 ### Example usages
 
 * ./ep.py -i \[input\] \[attributes ...\]
-  1. ./ep.py -i dat/bar.dat -s bar-flat
-  2. ./ep.py -i dat/bar-norm.dat -s bar-norm
-  3. ./ep.py -i dat/box.dat -s box-key
-  4. ./ep.py -i dat/line.dat -s line-key
-  5. ./ep.py -i dat/line-norm.dat -s line-norm
+  1. ./ep.py -i dat/line.dat -s line-key
+  2. ./ep.py -i dat/line-norm.dat -s line-norm
+  3. ./ep.py -i dat/bar-clustered.dat -s bar-clustered
+  4. ./ep.py -i dat/bar-clustered.dat -s bar-norm-clustered
+  5. ./ep.py -i dat/box.dat -s box-key
 
 * Sub attributes
   - -f data format
