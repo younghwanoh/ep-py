@@ -221,7 +221,7 @@ elif style == "bar-key-clustered":
     PP.ParseWith("\t")
 
     # Set label with key
-    L1 = TickLabel(PP, "data", rotate=45)
+    L1 = TickLabel(PP, "data")
 
     # Normalization must be occured after grouping TickLabel
     PP.datNormTo("SEQavg", opt="speedup") # option: speedup, exetime
@@ -245,7 +245,7 @@ elif style == "bar-key-clustered":
     CB = CBarPlotter(title="BarPlot with key format",
                      xlabel="Input Size", ylabel="Speedup", barwidth=2)
     # CB.setLimitOn(x=[0, 10], y=[0, 10])
-    CB.draw(D1,D2,D3,D4, ticklabel=L1, margin=0.05)
+    CB.draw(D1,D2,D3,D4, ticklabel=L1, tickangle=45, figmargin=0.05)
     CB.saveToPdf(output)
 
 elif style == "bar-key-cc":
@@ -257,11 +257,11 @@ elif style == "bar-key-cc":
     PP.ParseWith("\t")
 
     # Set label with key
-    L1 = TickLabel(PP, "data", rotate=45)
-    L2 = TickLabel(PP, "data", rotate=45)
+    L1 = TickLabel(PP, "data")
+    L2 = TickLabel(PP, "data")
 
     # Normalization must be occured after grouping TickLabel
-    # PP.datNormTo("SEQavg", opt="speedup") # option: speedup, exetime
+    PP.datNormTo("SEQavg", opt="speedup") # option: speedup, exetime
 
     # Set data
     D1 = Group(PP, "SEQiavg", color="red", hatch="-")
@@ -287,10 +287,11 @@ elif style == "bar-key-cc":
     D8.setLegend("CG+profile") 
 
     # Draw bar
-    CB = CBarPlotter(title="BarPlot with key format", width=10, height=4,
-                     xlabel="Input Size", ylabel="Speedup", barwidth=2)
-    # CB.setLimitOn(x=[0, 10], y=[0, 10])
-    CB.draw(G1, G2, ticklabel=[L1, L2], margin=0.05)
+    CB = CCBarPlotter(title="BarPlot with key format", width=10, height=4,
+                      xlabel="Input Size", ylabel="Speedup", barwidth=2)
+    CB.setPropLegend(ncol=8, size=7.5, frame=False)
+    CB.setLimitOn(y=[0, 4.5])
+    CB.draw(G1, G2, ticklabel=[L1, L2], tickangle=45, figmargin=0.05, groupmargin=1.1)
     CB.saveToPdf(output)
 
 elif style == "bar-single":
@@ -309,9 +310,10 @@ elif style == "bar-single":
     L1 = TickLabel(PP, "label")
 
     # Draw bar
-    BP = CBarPlotter(title="BarPlot with flattend format", xlabel="Input Size", ylabel="Performance", barwidth=2)
+    BP = CBarPlotter(title="BarPlot with flattend format",
+                     xlabel="Input Size", ylabel="Performance", barwidth=2)
     # BP.setLimitOn(x=[0, 10], y=[0, 10])
-    BP.draw(D1, ticklabel=L1, margin=0.3)
+    BP.draw(D1, ticklabel=L1, figmargin=0.3)
     BP.saveToPdf(output)
 
 # box graph

@@ -19,7 +19,14 @@ class AbstractPlotter(object):
 
         self.ax.autoscale(enable=True, axis='y', tight=False)
         self.ax.autoscale(enable=True, axis='x', tight=False)
-        self.ax.grid()
+
+    def setPropLegend(self, **kwargs):
+        if "ncol" in kwargs:
+            self.ncol = kwargs["ncol"]
+        if "size" in kwargs:
+            self.legsize = kwargs["size"]
+        if "frame" in kwargs:
+            self.frame = kwargs["frame"]
 
     def setLimitOn(self, **kwargs):
         # set y-space
@@ -36,7 +43,7 @@ class AbstractPlotter(object):
         pp.close()
         plt.close()
 
-    def showToWbeginow(self):
+    def showToWindow(self):
         plt.show()
         plt.close()
 
@@ -45,6 +52,7 @@ class LinePlotter(AbstractPlotter):
     """Draw line graph with grouped data or column-parsed data"""
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
+        self.ax.grid()
 
     def draw(self, *argv):
         keyLen = len(argv)
@@ -70,25 +78,24 @@ class CBarPlotter(AbstractPlotter):
 
     def draw(self, *argv, **kwargs):
         # default 12% margin to entire bar width
-        PerFigToMargin = 0.12 
+        FigSideMargin = 0.12 
 
-        if "margin" in kwargs:
-            PerFigToMargin = kwargs["margin"]
+        if "figmargin" in kwargs:
+            FigSideMargin = kwargs["figmargin"]
         if "ticklabel" in kwargs:
             self.tickLabel = kwargs["ticklabel"]
 
         keyLen = len(argv)
         datLen = len(argv[0].Y)
-        pc = range(keyLen)
 
         # Interval between clustered bars: 40% of total width in a clustered group
-        interGlobalOffset = (self.barwidth*keyLen) * 1.4
-        begin = np.arange(datLen) * interGlobalOffset
+        interClusterOffset = (self.barwidth*keyLen) * 1.4
+        base = np.arange(datLen) * interClusterOffset
 
         legend = []
         rects = []
         for i in range(keyLen):
-            rects.append(self.ax.bar(begin+i*self.barwidth, argv[i].Y, self.barwidth, color=argv[i].color, hatch=argv[i].hatch))
+            rects.append(self.ax.bar(base+i*self.barwidth, argv[i].Y, self.barwidth, color=argv[i].color, hatch=argv[i].hatch))
             if bool(argv[i].legend):
                 legend.append(argv[i].legend)
 
@@ -96,12 +103,12 @@ class CBarPlotter(AbstractPlotter):
         self.ax.legend(rects, legend)
 
         # set xtick point and label
-        self.ax.set_xticks(begin+(self.barwidth*keyLen)/2)
+        self.ax.set_xticks(base+(self.barwidth*keyLen)/2)
         self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickLabel.rotate)
 
 
-        LengthOfWholeBar = begin[-1] + self.barwidth*keyLen
-        plt.xlim([-LengthOfWholeBar*PerFigToMargin, LengthOfWholeBar*(1+PerFigToMargin)])
+        LengthOfWholeBar = base[-1] + self.barwidth*keyLen
+        plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
 
 
 class CCBarPlotter(AbstractPlotter):
@@ -117,35 +124,56 @@ class CCBarPlotter(AbstractPlotter):
 
     def draw(self, *argv, **kwargs):
         # default 12% margin to entire bar width
-        PerFigToMargin = 0.12 
+        FigSideMargin = 0.12 
 
-        if "margin" in kwargs:
-            PerFigToMargin = kwargs["margin"]
+        if "figmargin" in kwargs:
+            FigSideMargin = kwargs["figmargin"]
+        if "groupmargin" in kwargs:
+            BtwGroupMargin = kwargs["groupmargin"]
         if "ticklabel" in kwargs:
-            self.tickLabel = kwargs["ticklabel"]
-
-        keyLen = len(argv)
-        datLen = len(argv[0].Y)
-        pc = range(keyLen)
-
-        # Interval between clustered bars: 40% of total width in a clustered group
-        interGlobalOffset = (self.barwidth*keyLen) * 1.4
-        begin = np.arange(datLen) * interGlobalOffset
+            # merge multiple label list
+            temp = []
+            for i in kwargs["ticklabel"]:
+                temp += i.content
+            self.tickLabel = temp
+        if "ticklabel" in kwargs:
+            self.tickAngle = kwargs["tickangle"]
 
         legend = []
         rects = []
-        for i in range(keyLen):
-            rects.append(self.ax.bar(begin+i*self.barwidth, argv[i].Y, self.barwidth, color=argv[i].color, hatch=argv[i].hatch))
-            if bool(argv[i].legend):
-                legend.append(argv[i].legend)
+        base = []
+        globalBase = np.array([])
+
+        # set margin proportional to the first data
+        keyLen = argv[0].length
+        datLen = len(argv[0].content[0].Y)
+
+        # Interval between clustered bars: 40% of total width in a clustered group
+        interClusterOffset = (self.barwidth * keyLen) * 1.4
+        # Interval between clustered group: 
+        interGlobalOffset = interClusterOffset * datLen * BtwGroupMargin
+
+        for k, eachGroup in enumerate(argv):
+            # base calcuation (x position of bar with array)
+            base.append(np.arange(datLen) * interClusterOffset + interGlobalOffset * k)
+
+            # Update global accumulative variables
+            globalBase = np.concatenate((globalBase, base[k])) + (self.barwidth*keyLen)/2
+
+            for i, elem in enumerate(eachGroup.content):
+                rects.append(self.ax.bar(base[k]+i*self.barwidth, elem.Y, self.barwidth,
+                                         color=elem.color, hatch=elem.hatch))
+                if bool(elem.legend):
+                    legend.append(elem.legend)
 
         # set legend
-        self.ax.legend(rects, legend)
+        leg = self.ax.legend(rects, legend, loc="upper center", 
+                            ncol=self.ncol, prop={'size':self.legsize})
+        leg.draw_frame(self.frame)
 
         # set xtick point and label
-        self.ax.set_xticks(begin+(self.barwidth*keyLen)/2)
-        self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickLabel.rotate)
+        self.ax.set_xticks(globalBase)
+        self.ax.set_xticklabels(self.tickLabel, rotation=self.tickAngle)
 
-
-        LengthOfWholeBar = begin[-1] + self.barwidth*keyLen
-        plt.xlim([-LengthOfWholeBar*PerFigToMargin, LengthOfWholeBar*(1+PerFigToMargin)])
+        LengthOfWholeBar = base[-1][-1] + self.barwidth*keyLen
+        plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])

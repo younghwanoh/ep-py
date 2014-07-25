@@ -100,7 +100,8 @@ class GGroup:
             if isinstance(i, Group) == False:
                 print("GGroup::init - Wrong argument type. Group must be assigned."), exit()
 
-        self.group = argv
+        self.content = argv
+        self.length = len(argv)
 
 # Label class: grouping correlated data and its configuration
 class TickLabel:
