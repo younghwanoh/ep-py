@@ -38,7 +38,22 @@ def tIsfloat(value):
 # Group class: grouping correlated data and its configuration
 class Group:
     """Group data to plot each correlated data"""
-    def __init__(self, PP, *argv, **kwargs):
+    def __init__(self, *argv, **kwargs):
+        # Group already grouped data if input is instanceof "Group"
+        isMultiDim = True;
+        for i in argv:
+            if isinstance(i, Group) is False:
+                isMultiDim = False
+                break;
+        if isMultiDim is True:
+            self.content = argv
+            self.length = len(argv)
+            return
+
+        # Group raw data
+        argv=list(argv)
+        PP = argv.pop(0)
+
         # set default attributes
         self.color = "black"
         self.marker = "o"
@@ -92,16 +107,6 @@ class Group:
 
     def setLegend(self, string):
         self.legend = string
-
-class GGroup:
-    """Group already grouped data to plot ClusteredClustered Bar"""
-    def __init__(self, *argv, **kwargs):
-        for i in argv:
-            if isinstance(i, Group) == False:
-                print("GGroup::init - Wrong argument type. Group must be assigned."), exit()
-
-        self.content = argv
-        self.length = len(argv)
 
 # Label class: grouping correlated data and its configuration
 class TickLabel:

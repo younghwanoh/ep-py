@@ -158,7 +158,7 @@ class CCBarPlotter(AbstractPlotter):
             base.append(np.arange(datLen) * interClusterOffset + interGlobalOffset * k)
 
             # Update global accumulative variables
-            globalBase = np.concatenate((globalBase, base[k])) + (self.barwidth*keyLen)/2
+            globalBase = np.concatenate((globalBase, base[k] + (self.barwidth*keyLen)/2)) 
 
             for i, elem in enumerate(eachGroup.content):
                 rects.append(self.ax.bar(base[k]+i*self.barwidth, elem.Y, self.barwidth,

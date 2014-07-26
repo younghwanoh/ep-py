@@ -268,13 +268,13 @@ elif style == "bar-key-cc":
     D2 = Group(PP, "GPUiavg", color="blue")
     D3 = Group(PP, "CGCEavg", color="green", hatch="||")
     D4 = Group(PP, "Profile", color="black")
-    G1 = GGroup(D1, D2, D3, D4)
+    G1 = Group(D1, D2, D3, D4)
 
     D5 = Group(PP, "SEQiavg", color="red", hatch="-")
     D6 = Group(PP, "GPUiavg", color="blue")
     D7 = Group(PP, "CGCEavg", color="green", hatch="||")
     D8 = Group(PP, "Profile", color="black")
-    G2 = GGroup(D5, D6, D7, D8)
+    G2 = Group(D5, D6, D7, D8)
 
     D1.setLegend("CPU-only") 
     D2.setLegend("GPU-only") 
