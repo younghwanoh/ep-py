@@ -154,6 +154,8 @@ class CCBarPlotter(AbstractPlotter):
         interGlobalOffset = interClusterOffset * datLen * BtwGroupMargin
 
         for k, eachGroup in enumerate(argv):
+            keyLen = eachGroup.length
+            datLen = len(eachGroup.content[0].Y)
             # base calcuation (x position of bar with array)
             base.append(np.arange(datLen) * interClusterOffset + interGlobalOffset * k)
 

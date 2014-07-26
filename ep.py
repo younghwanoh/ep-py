@@ -249,7 +249,7 @@ elif style == "bar-key-clustered":
     CB.saveToPdf(output)
 
 elif style == "bar-key-cc":
-    text = tRead("dat/bar-key.dat")
+    text = tRead("dat/bar-key-cc.dat")
 
     # Parse text
     PP = PatternParser(text)
@@ -270,11 +270,10 @@ elif style == "bar-key-cc":
     D4 = Group(PP, "Profile", color="black")
     G1 = Group(D1, D2, D3, D4)
 
-    D5 = Group(PP, "SEQiavg", color="red", hatch="-")
-    D6 = Group(PP, "GPUiavg", color="blue")
-    D7 = Group(PP, "CGCEavg", color="green", hatch="||")
-    D8 = Group(PP, "Profile", color="black")
-    G2 = Group(D5, D6, D7, D8)
+    D5 = Group(PP, "Savg", color="red", hatch="-")
+    D6 = Group(PP, "Cavg", color="green", hatch="||")
+    D7 = Group(PP, "Prof", color="black")
+    G2 = Group(D5, D6, D7)
 
     D1.setLegend("CPU-only") 
     D2.setLegend("GPU-only") 
@@ -282,9 +281,8 @@ elif style == "bar-key-cc":
     D4.setLegend("CGCE+profile") 
 
     D5.setLegend("C-only") 
-    D6.setLegend("G-only") 
-    D7.setLegend("CG-only") 
-    D8.setLegend("CG+profile") 
+    D6.setLegend("CG-only") 
+    D7.setLegend("CG+profile") 
 
     # Draw bar
     CB = CCBarPlotter(title="BarPlot with key format", width=10, height=4,
