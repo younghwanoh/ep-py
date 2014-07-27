@@ -30,11 +30,12 @@ User should denote specification of data layout and graph's layout.
   1. Line (line-key, line-raw, line-flat)
   2. Normalized line (line-norm)
   3. Clustered Bar (bar-clustered, bar-key-clustered)
-  4. Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)
-  5. Box (...ing)
-  6. Multiple subplot (Not yet)
-  7. CDF (Not yet)
-  8. etc...
+  5. Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)
+  4. Clustered Clustered Bar (bar-key-cc)
+  6. Box (...ing)
+  7. Multiple subplot (Not yet)
+  8. CDF (Not yet)
+  9. etc...
 
 ### Example usages
 
@@ -43,7 +44,8 @@ User should denote specification of data layout and graph's layout.
   2. ./ep.py -i dat/line-norm.dat -s line-norm
   3. ./ep.py -i dat/bar-clustered.dat -s bar-clustered
   4. ./ep.py -i dat/bar-clustered.dat -s bar-norm-clustered
-  5. ./ep.py -i dat/box.dat -s box-key
+  5. ./ep.py -i dat/bar-key-cc.dat -s bar-key-cc
+  6. ./ep.py -i dat/box.dat -s box-key
 
 * Sub attributes
   - -f data format
