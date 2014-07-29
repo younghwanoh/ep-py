@@ -115,15 +115,15 @@ class PatternParser:
         tCheckArgsExists(kwargs, "copy", "opt")
 
         # copy: pass reference, or not: pass copied value
-        CpyOrNot = lambda x: list(x) if bool(kwargs["copy"]) is True else x
+        CpyOrNot = lambda x: list(x) if kwargs["copy"] is True else x
         # Transpose for column data or not
         TransOrNot = lambda x: tTranspose(x) if kwargs["opt"] is "col" else x
 
         if len(argv) == 0:
-            return CpyOrNot(self.datList)
+            return [CpyOrNot(i) for i in self.datList]
         else:
             temp = TransOrNot(self.datList)
-            return temp[argv[0]]
+            return CpyOrNot(temp[argv[0]])
 
     # arguments: target index, copy=boolean
     def getKeyArr(self, *argv, **kwargs):
@@ -134,7 +134,7 @@ class PatternParser:
         CpyOrNot = lambda x: list(x) if kwargs["copy"] is True else x
 
         if len(argv) == 0:
-            return CpyOrNot(self.keyList)
+            return [CpyOrNot(i) for i in self.keyList]
         else:
-            return self.keyList[argv[0]]
+            return CpyOrNot(self.keyList[argv[0]])
 

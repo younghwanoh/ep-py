@@ -136,14 +136,23 @@ elif style == "getter-test":
     print(PP.getDataArr(0, opt="row")) # by default, opt is row
     print("\nCol Data with index 0 ---------------------------")
     print(PP.getDataArr(0, opt="col"))
+    print("\nGet Data without Copy ------------------------------")
+    print("Before return value update")
+    print("a = PP.getDataArr(0)")
+    a = PP.getDataArr(0)
+    print(a)
+    print("\nAfter return value update")
+    print("a[0] = \"I'm Refed Here !\"")
+    a[0] = "I'm Refed Here !"
+    print(PP.getDataArr(0))
     print("\nGet Data with Copy ------------------------------")
     print("Before return value update")
     print("a = PP.getDataArr(0, copy=True)")
-    a = PP.getDataArr(0, copy=True)
+    b = PP.getDataArr(0, copy=True)
     print(a)
     print("\nAfter return value update")
-    print("a[0] = \"I'm Here !\"")
-    a[0] = "I'm Here !"
+    print("a[0] = \"I'm Copied Here !\"")
+    b[0] = "I'm Copied Here !"
     print(PP.getDataArr(0))
 
 # bar graph
