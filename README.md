@@ -1,4 +1,4 @@
-ep-py ver. 0.2
+ep-py ver. 0.3
 =====
 Personal graph drawing library with high-level abstraction of python-matplotlib<br>
 
@@ -76,8 +76,10 @@ all styles of classes must be defined case by case. Here are the list of classes
   - BoxPlotter (...ing)
   - BarPlotter (...ing)
   - CBarPlotter
-  - CCBarPlotter (Not yet)
+  - CCBarPlotter
   - MultiPlotter (Not yet)
+  - StackBarPlotter (Not yet)
+  - CStackBarPlotter (Not yet)
 
 ## Prefix of GIT log messages
   - \*: Major version update
