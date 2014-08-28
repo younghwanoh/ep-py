@@ -375,11 +375,11 @@ elif style == "box-time":
     D5.setLegend("GPU")
 
     # Draw box
-    BOP = BoxPlotter(title="BoxPlot with start/end points",
+    BOP = BoxPlotter(title="BoxPlot with start/end points", width=10, height=4,
                      xlabel="Time", ylabel="Running Device", boxwidth=2, vertical=False, timeline=True)
 
-    BOP.setLegendStyle(ncol=5, size=7.5, frame=False) 
-    BOP.draw(D1, D2, D3, D4, D5)
+    BOP.setLegendStyle(ncol=5, size=12, frame=False) 
+    BOP.draw(D1, D2, D3, D4, D5, figmargin=0.8)
     BOP.saveToPdf(output)
 
 elif style == "multiplot-skel":

@@ -18,11 +18,16 @@ class AbstractPlotter(object):
             self.fig.set_size_inches(kwargs["width"], kwargs["height"])
 
         self.manualLegendStyle=False
-        self.ax.autoscale(enable=True, axis='y', tight=False)
-        self.ax.autoscale(enable=True, axis='x', tight=False)
 
     def setLegendStyle(self, **kwargs):
+        # Flag for manual legend style change
         self.manualLegendStyle=True
+
+        # Initial values
+        self.ncol = 5
+        self.legsize = 10
+        self.frame = True
+
         if "ncol" in kwargs:
             self.ncol = kwargs["ncol"]
         if "size" in kwargs:
@@ -30,13 +35,6 @@ class AbstractPlotter(object):
         if "frame" in kwargs:
             self.frame = kwargs["frame"]
 
-    def drawLegend(self, this, target, legend):
-        if self.manualLegendStyle is True:
-            leg = this.ax.legend(target, legend, loc="upper center", 
-                                 ncol=this.ncol, prop={'size':this.legsize})
-            leg.draw_frame(this.frame)
-        else:
-            this.ax.legend(target, legend)
 
     def setLimitOn(self, **kwargs):
         # set y-space
@@ -57,6 +55,19 @@ class AbstractPlotter(object):
         plt.show()
         plt.close()
 
+    # Internally used function start ==============================================================================
+    def callBeforeDraw(self):
+        pass
+
+    def drawLegend(self, target, legend):
+        if self.manualLegendStyle is True:
+            leg = self.ax.legend(target, legend, loc="upper center", 
+                                 ncol=self.ncol, prop={'size':self.legsize})
+            leg.draw_frame(self.frame)
+        else:
+            self.ax.legend(target, legend)
+        self.manualLegendStyle=False
+
 class tickLabelInit:
     """Initializer of tickLabel class"""
     def __init__(self):
@@ -70,6 +81,8 @@ class LinePlotter(AbstractPlotter):
         self.ax.grid()
 
     def draw(self, *argv):
+        self.callBeforeDraw()
+
         keyLen = len(argv)
         pc = range(keyLen)
 
@@ -78,7 +91,7 @@ class LinePlotter(AbstractPlotter):
             pc[i], = self.ax.plot(argv[i].X, argv[i].Y, linewidth=1, marker=argv[i].marker, color=argv[i].color)
             legend.append(argv[i].legend)
 
-        self.drawLegend(self, pc, legend);
+        self.drawLegend(pc, legend);
 
 class CBarPlotter(AbstractPlotter):
     """Draw clustered bar graph with grouped data or column-parsed data"""
@@ -86,13 +99,15 @@ class CBarPlotter(AbstractPlotter):
         AbstractPlotter.__init__(self, **kwargs)
 
         self.barwidth = 1
-        self.tickLabel = [""]
+        self.tickLabel = tickLabelInit()
         self.tickAngle = 0
 
         if "barwidth" in kwargs:
             self.barwidth = kwargs["barwidth"]
 
     def draw(self, *argv, **kwargs):
+        self.callBeforeDraw()
+
         # default 12% margin to entire bar width
         FigSideMargin = 0.12 
 
@@ -118,7 +133,7 @@ class CBarPlotter(AbstractPlotter):
                 legend.append(argv[i].legend)
 
         # set legend
-        self.drawLegend(self, rects, legend);
+        self.drawLegend(rects, legend);
 
         # set xtick point and label
         self.ax.set_xticks(base+(self.barwidth*keyLen)/2)
@@ -135,13 +150,15 @@ class CCBarPlotter(AbstractPlotter):
         AbstractPlotter.__init__(self, **kwargs)
 
         self.barwidth = 1
-        self.tickLabel = [""]
+        self.tickLabel = tickLabelInit()
         self.tickAngle = 0
 
         if "barwidth" in kwargs:
             self.barwidth = kwargs["barwidth"]
 
     def draw(self, *argv, **kwargs):
+        self.callBeforeDraw()
+
         # default 12% margin to entire bar width
         FigSideMargin = 0.12 
 
@@ -188,7 +205,7 @@ class CCBarPlotter(AbstractPlotter):
                     legend.append(elem.legend)
 
         # set legend
-        self.drawLegend(self, rects, legend);
+        self.drawLegend(rects, legend);
 
         # set xtick point and label
         self.ax.set_xticks(globalBase)
@@ -217,6 +234,8 @@ class BoxPlotter(AbstractPlotter):
             self.timeline = kwargs["timeline"]
 
     def draw(self, *argv, **kwargs):
+        self.callBeforeDraw()
+
         # default 12% margin to entire box width
         FigSideMargin = 0.12 
 
@@ -253,7 +272,7 @@ class BoxPlotter(AbstractPlotter):
                 legend.append(argv[i].legend)
 
         # set legend
-        self.drawLegend(self, rects, legend);
+        self.drawLegend(rects, legend);
 
         # set xtick point and label
         if self.vertical is True:
