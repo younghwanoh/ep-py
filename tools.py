@@ -112,10 +112,6 @@ class Group:
 class TickLabel:
     """Group data to plot each correlated data"""
     def __init__(self, PP, *argv, **kwargs):
-        self.rotate = 0
-        if "rotate" in kwargs:
-            self.rotate = kwargs["rotate"]
-
         # cut out if label has floating point
         toint = lambda x: int(x) if type(x) is float else x
         if type(argv[0]) is str:

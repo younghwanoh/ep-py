@@ -296,7 +296,7 @@ elif style == "bar-key-cc":
     # Draw bar
     CB = CCBarPlotter(title="BarPlot with key format", width=10, height=4,
                       xlabel="Input Size", ylabel="Speedup", barwidth=2)
-    CB.setPropLegend(ncol=8, size=7.5, frame=False)
+    CB.setLegendStyle(ncol=8, size=7.5, frame=False)
     CB.setLimitOn(y=[0, 4.5])
     CB.draw(G1, G2, ticklabel=[L1, L2], tickangle=45, figmargin=0.05, groupmargin=1.1)
     CB.saveToPdf(output)
@@ -326,23 +326,61 @@ elif style == "bar-single":
 # box graph
 elif style == "box-key":
     text = tRead("dat/box.dat")
-    text = "CPU 0 S: 2.01513671875,796.010986328125,1473.43603515625\n\
-CPU 0 E: 795.9951171875,1473.39404296875,2616.083984375\n\
-CPU 1 S: 2.02294921875,347.43896484375,685.344970703125,1339.2451171875\n\
-CPU 1 E: 347.3779296875,685.326171875,1339.220947265625,2431.3759765625\n\
-CPU 2 S: 2.027099609375,348.198974609375,686.010986328125,1361.590087890625\n\
-CPU 2 E: 348.18505859375,685.983154296875,1361.51806640625,2549.39111328125\n\
-CPU 3 S: 2.031005859375,753.9150390625,1953.3720703125\n\
-CPU 3 E: 753.902099609375,1953.31005859375,2056.718017578125\n\
-GPU S: 1.994140625,800.839111328125\n\
-GPU E: 800.779052734375,2235.4169921875\n"
 
+    # Parse text
     PP = PatternParser(text);
     PP.PickKeyWith(": ")
     PP.ParseWith(",")
-    print(PP.keyList)
-    print("---------------------------------------------")
-    print(PP.datList)
+
+    # Set data
+    D1 = Group(PP, "CPU 0 S", "CPU 0 E", color="#225522", hatch="")
+    D1.setLegend("CPU 0")
+    D2 = Group(PP, "CPU 1 S", "CPU 1 E", color="#BC434C", hatch="")
+    D2.setLegend("CPU 1")
+    D3 = Group(PP, "CPU 2 S", "CPU 2 E", color="#FFBB00", hatch="")
+    D3.setLegend("CPU 2")
+    D4 = Group(PP, "CPU 3 S", "CPU 3 E", color="#B82E92", hatch="")
+    D4.setLegend("CPU 3")
+    D5 = Group(PP, "GPU S", "GPU E", color="#4455D2", hatch="")
+    D5.setLegend("GPU")
+
+    # Set label with key
+    L1 = TickLabel(None, ["CPU 0", "CPU 1", "CPU 2", "CPU 3", "GPU 0"])
+
+    # Draw box
+    BOP = BoxPlotter(title="BoxPlot with start/end points",
+                     xlabel="Device", ylabel="Degree of process", boxwidth=2, vertical=True, timeline=False) 
+    BOP.draw(D1, D2, D3, D4, D5, ticklabel=L1)
+    BOP.saveToPdf(output)
+
+# box graph
+elif style == "box-time":
+    text = tRead("dat/box-time.dat")
+
+    # Parse text
+    PP = PatternParser(text);
+    PP.PickKeyWith(": ")
+    PP.ParseWith(",")
+
+    # Set data
+    D1 = Group(PP, "CPU 0 S", "CPU 0 E", color="#225522", hatch="")
+    D1.setLegend("CPU 0")
+    D2 = Group(PP, "CPU 1 S", "CPU 1 E", color="#BC434C", hatch="")
+    D2.setLegend("CPU 1")
+    D3 = Group(PP, "CPU 2 S", "CPU 2 E", color="#FFBB00", hatch="")
+    D3.setLegend("CPU 2")
+    D4 = Group(PP, "CPU 3 S", "CPU 3 E", color="#B82E92", hatch="")
+    D4.setLegend("CPU 3")
+    D5 = Group(PP, "GPU S", "GPU E", color="#4455D2", hatch="")
+    D5.setLegend("GPU")
+
+    # Draw box
+    BOP = BoxPlotter(title="BoxPlot with start/end points",
+                     xlabel="Time", ylabel="Running Device", boxwidth=2, vertical=False, timeline=True)
+
+    BOP.setLegendStyle(ncol=5, size=7.5, frame=False) 
+    BOP.draw(D1, D2, D3, D4, D5)
+    BOP.saveToPdf(output)
 
 elif style == "multiplot-skel":
     text = "# monitoring\n\
