@@ -32,7 +32,7 @@ User should denote specification of data layout and graph's layout.
   3. Clustered Bar (bar-clustered, bar-key-clustered)
   5. Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)
   4. Clustered Clustered Bar (bar-key-cc)
-  6. Box (...ing)
+  6. Box (box-key, box-time)
   7. Multiple subplot (Not yet)
   8. CDF (Not yet)
   9. etc...
@@ -46,6 +46,7 @@ User should denote specification of data layout and graph's layout.
   4. ./ep.py -i dat/bar-clustered.dat -s bar-norm-clustered
   5. ./ep.py -i dat/bar-key-cc.dat -s bar-key-cc
   6. ./ep.py -i dat/box.dat -s box-key
+  7. ./ep.py -i dat/box.dat -s box-time
 
 * Sub attributes
   - -f data format
@@ -59,6 +60,7 @@ User should denote specification of data layout and graph's layout.
 ## parser.py
 Front-end parser class module. <b>PatternParser</b> class parses data with row(\n:newline) and col(denoted key). The class receives raw text string as an input of the constructor.<br>
 And then, ParseKeyWith and ParseWith methods parses data and special key respectively. Special key is used as a identifier when grouping correlated data with <b>tools.py</b>.
+Users must modify this codes to adapt their customized data with helper methods as mentioned.
 
 ## tools.py
 Some of data manipulation tools are defined in this file.
