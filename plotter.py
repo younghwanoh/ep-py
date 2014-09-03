@@ -335,7 +335,7 @@ class CBoxPlotter(AbstractPlotter):
         for i in range(GroupLen):
             keyLen.append(argv[i].length)
 
-        base = np.linspace(0, self.boxwidth*(GroupLen), GroupLen)
+        base = np.linspace(0, self.boxwidth*(GroupLen+1), GroupLen)
 
         legend = []
         rects = []

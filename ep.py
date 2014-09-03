@@ -382,51 +382,41 @@ elif style == "box-time":
     BOP.draw(D1, D2, D3, D4, D5, figmargin=0.8)
     BOP.saveToPdf(output)
 
-elif style == "multiplot-2box":
+elif style == "box-multi-time":
     # First parse text
-    text = tRead("dat/box-mt-cpu.dat")
+    text = tRead("dat/box-multi-time.dat")
     PP = PatternParser(text);
     PP.PickKeyWith(": ")
     PP.ParseWith(",")
 
     # Set data
-    D1 = Group(PP, "Schedule S", "Schedule E", color="#225522", hatch="")
-    D2 = Group(PP, "Memory S", "Memory E", color="#BC434C", hatch="")
-    D3 = Group(PP, "Compute S", "Compute E", color="#FFBB00", hatch="")
+    D1 = Group(PP, "Schedule 0 S", "Schedule 0 E", color="#225522", hatch="")
+    D2 = Group(PP, "Memory 0 S", "Memory 0 E", color="#BC434C", hatch="")
+    D3 = Group(PP, "Compute 0 S", "Compute 0 E", color="#FFBB00", hatch="")
     G1 = Group(D1, D2, D3)
 
     D1.setLegend("Schedule")
     D2.setLegend("Memory")
     D3.setLegend("Compute")
 
-    # Second parse text
-    text = tRead("dat/box-mt-gpu.dat")
-    PP = PatternParser(text);
-    PP.PickKeyWith(": ")
-    PP.ParseWith(",")
-
     # Set data
-    D4 = Group(PP, "Schedule S", "Schedule E", color="#225522", hatch="")
-    D5 = Group(PP, "Memory S", "Memory E", color="#BC434C", hatch="")
-    D6 = Group(PP, "Compute S", "Compute E", color="#FFBB00", hatch="")
+    D4 = Group(PP, "Schedule 1 S", "Schedule 1 E", color="#225522", hatch="")
+    D5 = Group(PP, "Memory 1 S", "Memory 1 E", color="#BC434C", hatch="")
+    D6 = Group(PP, "Compute 1 S", "Compute 1 E", color="#FFBB00", hatch="")
     G2 = Group(D4, D5, D6)
 
-    # Third parse text
-    text = tRead("dat/box-mt-gpu.dat")
-    PP = PatternParser(text);
-    PP.PickKeyWith(": ")
-    PP.ParseWith(",")
-
     # Set data
-    D4 = Group(PP, "Schedule S", "Schedule E", color="#225522", hatch="")
-    D5 = Group(PP, "Memory S", "Memory E", color="#BC434C", hatch="")
-    D6 = Group(PP, "Compute S", "Compute E", color="#FFBB00", hatch="")
-    G3 = Group(D4, D5, D6)
+    D7 = Group(PP, "Schedule G S", "Schedule G E", color="#225522", hatch="")
+    D8 = Group(PP, "Memory G S", "Memory G E", color="#BC434C", hatch="")
+    D9 = Group(PP, "Compute G S", "Compute G E", color="#FFBB00", hatch="")
+    G3 = Group(D7, D8, D9)
+
+    L1 = TickLabel(PP, ["CPU 0", "CPU 1", "GPU"])
 
     # Draw box
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=10, height=4,
-                     xlabel="Time", ylabel="Running Device", boxwidth=2, vertical=False, timeline=True)
+                     xlabel="Time (ms)", boxwidth=2, vertical=False, timeline=True)
 
     CBOP.setLegendStyle(ncol=5, size=12, frame=False)
-    CBOP.draw(G1, G2, G3, figmargin=0.8)
+    CBOP.draw(G1, G2, G3, figmargin=0.4, ticklabel=L1)
     CBOP.saveToPdf(output)
