@@ -20,6 +20,10 @@ argparser.add_argument("-o","--outFile", help='Specify the name of output PDF fi
 argparser.add_argument("-s","--style", help='Specify the style of graphs')
 args = argparser.parse_args()
 
+# color macro dictionary
+mcro = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292", "blue":"#4455D2" }
+mcro = {"green":"#EEEEEE", "yellow":"#FFFFFF", "red":"#FFFFFF", "purple":"#DFDFDF", "blue":"#000000" }
+
 # output file name
 output = "output.pdf"
 if bool(args.outFile) == True:
@@ -383,6 +387,7 @@ elif style == "box-time":
     BOP.saveToPdf(output)
 
 elif style == "box-multi-time":
+
     # First parse text
     text = tRead("dat/box-multi-time.dat")
     PP = PatternParser(text);
@@ -390,9 +395,9 @@ elif style == "box-multi-time":
     PP.ParseWith(",")
 
     # Set data
-    D1 = Group(PP, "Schedule 0 S", "Schedule 0 E", color="#225522", hatch="")
-    D2 = Group(PP, "Memory 0 S", "Memory 0 E", color="#BC434C", hatch="")
-    D3 = Group(PP, "Compute 0 S", "Compute 0 E", color="#FFBB00", hatch="")
+    D1 = Group(PP, "Schedule 0 S", "Schedule 0 E", color=mcro["red"], hatch="")
+    D2 = Group(PP, "Memory 0 S", "Memory 0 E", color=mcro["yellow"], hatch="//")
+    D3 = Group(PP, "Compute 0 S", "Compute 0 E", color=mcro["blue"], hatch="")
     G1 = Group(D1, D2, D3)
 
     D1.setLegend("Schedule")
@@ -400,23 +405,23 @@ elif style == "box-multi-time":
     D3.setLegend("Compute")
 
     # Set data
-    D4 = Group(PP, "Schedule 1 S", "Schedule 1 E", color="#225522", hatch="")
-    D5 = Group(PP, "Memory 1 S", "Memory 1 E", color="#BC434C", hatch="")
-    D6 = Group(PP, "Compute 1 S", "Compute 1 E", color="#FFBB00", hatch="")
+    D4 = Group(PP, "Schedule 1 S", "Schedule 1 E", color=mcro["red"], hatch="")
+    D5 = Group(PP, "Memory 1 S", "Memory 1 E", color=mcro["yellow"], hatch="//")
+    D6 = Group(PP, "Compute 1 S", "Compute 1 E", color=mcro["blue"], hatch="")
     G2 = Group(D4, D5, D6)
 
     # Set data
-    D7 = Group(PP, "Schedule G S", "Schedule G E", color="#225522", hatch="")
-    D8 = Group(PP, "Memory G S", "Memory G E", color="#BC434C", hatch="")
-    D9 = Group(PP, "Compute G S", "Compute G E", color="#FFBB00", hatch="")
+    D7 = Group(PP, "Schedule G S", "Schedule G E", color=mcro["red"], hatch="")
+    D8 = Group(PP, "Memory G S", "Memory G E", color=mcro["yellow"], hatch="//")
+    D9 = Group(PP, "Compute G S", "Compute G E", color=mcro["blue"], hatch="")
     G3 = Group(D7, D8, D9)
 
     L1 = TickLabel(PP, ["CPU 0", "CPU 1", "GPU"])
 
     # Draw box
-    CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=10, height=4,
+    CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=12, height=5,
                      xlabel="Time (ms)", boxwidth=2, vertical=False, timeline=True)
 
-    CBOP.setLegendStyle(ncol=5, size=12, frame=False)
+    CBOP.setLegendStyle(ncol=5, size=13, frame=False)
     CBOP.draw(G1, G2, G3, figmargin=0.4, ticklabel=L1)
     CBOP.saveToPdf(output)
