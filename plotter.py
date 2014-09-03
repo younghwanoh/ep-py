@@ -218,6 +218,7 @@ class CCBarPlotter(AbstractPlotter):
         LengthOfWholeBar = base[-1][-1] + self.barwidth*keyLen
         plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
 
+
 class BoxPlotter(AbstractPlotter):
     """Draw clustered bar graph with grouped data or column-parsed data"""
     def __init__(self, **kwargs):
@@ -274,6 +275,85 @@ class BoxPlotter(AbstractPlotter):
             if bool(argv[i].legend):
                 rects.append(rect)
                 legend.append(argv[i].legend)
+
+        # set legend
+        self.drawLegend(rects, legend);
+
+        # set xtick point and label
+        if self.vertical is True:
+            self.ax.set_xticks(base + self.boxwidth/2)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+        else:
+            self.ax.set_yticks(base + self.boxwidth/2)
+            self.ax.set_yticklabels(self.tickLabel.content, rotation=self.tickAngle)
+
+        # set x / y-range
+        if self.vertical is True:
+            self.ax.autoscale(enable=True, axis='y', tight=False)
+            LengthOfWholeBar = base[-1] + self.boxwidth
+            plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+        else:
+            self.ax.autoscale(enable=True, axis='x', tight=False)
+            LengthOfWholeBar = base[-1] + self.boxwidth
+            plt.ylim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+
+
+class CBoxPlotter(AbstractPlotter):
+    """Draw clustered bar graph with grouped data or column-parsed data"""
+    def __init__(self, **kwargs):
+        AbstractPlotter.__init__(self, **kwargs)
+
+        # Default properties
+        self.boxwidth = 1
+        self.vertical = True
+        self.tickLabel = tickLabelInit()
+        self.tickAngle = 0
+
+        if "boxwidth" in kwargs:
+            self.boxwidth = float(kwargs["boxwidth"])
+        if "vertical" in kwargs:
+            self.vertical = kwargs["vertical"]
+
+    def draw(self, *argv, **kwargs):
+        self.callBeforeDraw()
+
+        # default 12% margin to entire box width
+        FigSideMargin = 0.12 
+
+        if "figmargin" in kwargs:
+            FigSideMargin = kwargs["figmargin"]
+        if "groupmargin" in kwargs:
+            BtwGroupMargin = kwargs["groupmargin"]
+        if "ticklabel" in kwargs:
+            self.tickLabel = kwargs["ticklabel"]
+        if "tickangle" in kwargs:
+            self.tickAngle = kwargs["tickangle"]
+
+        GroupLen = len(argv)
+
+        keyLen = []
+        for i in range(GroupLen):
+            keyLen.append(argv[i].length)
+
+        base = np.linspace(0, self.boxwidth*(GroupLen), GroupLen)
+
+        legend = []
+        rects = []
+        for z in range(GroupLen):
+            arg = argv[z].content
+            for i in range(keyLen[z]):
+                datLen = len(arg[i].X)
+                for j in range(datLen):
+                    if self.vertical is True:
+                        rect = plt.Rectangle([base[z], arg[i].X[j]], self.boxwidth, arg[i].Y[j] - arg[i].X[j],
+                                             facecolor=arg[i].color, hatch=arg[i].hatch)
+                    else:
+                        rect = plt.Rectangle([arg[i].X[j], base[z]], arg[i].Y[j] - arg[i].X[j], self.boxwidth,
+                                             facecolor=arg[i].color, hatch=arg[i].hatch)
+                    self.ax.add_patch(rect)
+                if bool(arg[i].legend):
+                    rects.append(rect)
+                    legend.append(arg[i].legend)
 
         # set legend
         self.drawLegend(rects, legend);

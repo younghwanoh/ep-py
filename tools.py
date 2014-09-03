@@ -39,7 +39,7 @@ def tIsfloat(value):
 class Group:
     """Group data to plot each correlated data"""
     def __init__(self, *argv, **kwargs):
-        # Group already grouped data if input is instanceof "Group"
+        # Group of grouped data if input is instanceof "Group"
         isMultiDim = True;
         for i in argv:
             if isinstance(i, Group) is False:
@@ -50,7 +50,7 @@ class Group:
             self.length = len(argv)
             return
 
-        # Group raw data
+        # Group raw data with new copy
         argv=list(argv)
         PP = argv.pop(0)
 
