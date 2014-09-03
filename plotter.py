@@ -60,6 +60,10 @@ class AbstractPlotter(object):
         pass
 
     def drawLegend(self, target, legend):
+        if len(legend) == 0:
+            # No legend is specified
+            return;
+
         if self.manualLegendStyle is True:
             leg = self.ax.legend(target, legend, loc="upper center", 
                                  ncol=self.ncol, prop={'size':self.legsize})

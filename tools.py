@@ -103,7 +103,8 @@ class Group:
             # Over-dimensional data array
             print("Group::init - Multi-dimensional data isn't supported yet")
 
-        self.legend = self.keyY if type(self.keyY) is str else None
+        # self.legend = self.keyY if type(self.keyY) is str else None
+        self.legend = []
 
     def setLegend(self, string):
         self.legend = string
