@@ -4,13 +4,9 @@ import os
 from time import sleep
 import sys
 
-tests = ["line-key","line-raw","line-norm","bar-clustered",
+tests = ["line-key","line-raw","line-norm","pie","bar-clustered",
          "bar-norm-clustered","bar-key-clustered","bar-key-cc","bar-single",
-         "box-key","box-time","getter-test"]
-
-if sys.argv[1] == "-r":
-    os.system('rm *.pdf')
-    sys.exit();
+         "box-key","box-time","jaws","getter-test"]
 
 for i in tests:
     print("\033[1;31m%s\033[m test !! ============================================" % i)

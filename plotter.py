@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
+from tools import tTranspose
+
 class AbstractPlotter(object):
     def __init__(self, **kwargs):
         self.fig, self.ax = plt.subplots()
@@ -97,6 +99,59 @@ class LinePlotter(AbstractPlotter):
 
         self.drawLegend(pc, legend);
 
+class SBarPlotter(AbstractPlotter):
+    """Draw stacked bar graph with grouped data or column-parsed data"""
+    def __init__(self, **kwargs):
+        AbstractPlotter.__init__(self, **kwargs)
+        self.barwidth = 1
+        self.tickLabel = tickLabelInit()
+        self.tickAngle = 0
+
+        if "barwidth" in kwargs:
+            self.barwidth = kwargs["barwidth"] 
+
+    def draw(self, *argv, **kwargs):
+        # default 12% margin to entire bar width
+        FigSideMargin = 0.12 
+
+        colors = []
+        legend = []
+        if "figmargin" in kwargs:
+            FigSideMargin = kwargs["figmargin"]
+        if "ticklabel" in kwargs:
+            self.tickLabel = kwargs["ticklabel"]
+        if "tickangle" in kwargs:
+            self.tickAngle = kwargs["tickangle"]
+
+        if "legend" in kwargs:
+            legend = kwargs["legend"]
+        if "colors" in kwargs:
+            colors = kwargs["colors"]
+
+        keyLen = len(argv)
+        base = np.linspace(0, self.barwidth*(keyLen), keyLen)
+        data = tTranspose(argv)
+
+        # accumulate_space(data)
+
+        rects = []
+        stackLen = len(data)
+        accum = np.array([0 for i in range(keyLen)])
+        for i in range(stackLen):
+            accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
+            rects.append(self.ax.bar(base, data[i], self.barwidth, color=colors[i], bottom=accum))
+
+        # set legend
+        self.drawLegend(rects, legend);
+
+        # set xtick point and label
+        self.ax.set_xticks(base+float(self.barwidth)/2)
+        self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+
+        LengthOfWholeBar = base[-1] + self.barwidth
+        plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+
+
 class CBarPlotter(AbstractPlotter):
     """Draw clustered bar graph with grouped data or column-parsed data"""
     def __init__(self, **kwargs):
@@ -142,7 +197,6 @@ class CBarPlotter(AbstractPlotter):
         # set xtick point and label
         self.ax.set_xticks(base+(self.barwidth*keyLen)/2)
         self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
-
 
         LengthOfWholeBar = base[-1] + self.barwidth*keyLen
         plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
@@ -336,6 +390,7 @@ class CBoxPlotter(AbstractPlotter):
             keyLen.append(argv[i].length)
 
         base = np.linspace(0, self.boxwidth*(GroupLen+1), GroupLen)
+        # base[3:] += 2
 
         legend = []
         rects = []
@@ -375,3 +430,32 @@ class CBoxPlotter(AbstractPlotter):
             self.ax.autoscale(enable=True, axis='x', tight=False)
             LengthOfWholeBar = base[-1] + self.boxwidth
             plt.ylim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+
+
+class PiePlotter(AbstractPlotter):
+    """Draw pie graph with grouped data or column-parsed data"""
+    def __init__(self, **kwargs):
+        AbstractPlotter.__init__(self, **kwargs)
+        self.ax.axis("equal")
+
+    def draw(self, *argv, **kwargs):
+        colors = []
+        legend = []
+        if ("colors" in kwargs) & ("legend" in kwargs):
+            legend = kwargs["legend"]
+            colors = kwargs["colors"]
+            self.ax.pie(argv[0], colors=colors, labels=legend)
+            return
+        if "legend" in kwargs:
+            legend = kwargs["legend"]
+            self.ax.pie(argv[0], labels=legend)
+            return
+        if "colors" in kwargs:
+            colors = kwargs["colors"]
+            self.ax.pie(argv[0], colors=colors)
+            print("PiePlotter::Warning! Label is not denoted")
+            return
+
+        self.ax.pie(argv[0])
+        print("PiePlotter::Warning! Label is not denoted")
+

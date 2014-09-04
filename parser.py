@@ -1,23 +1,38 @@
 #!/usr/bin/python
+import csv
+from sys import stdout
+
 from tools import *
+
+# ==== Function role ====
+# Dump <<key, value>> pares from <<"value", "base_key">>
+# if the keys are found in the specified "partial_key"
+
+def dump(value, base_key, partial_key):
+    writeLine = csv.writer(stdout, delimiter='\t')
+    for k in range(len(base_key)):
+        if base_key[k].find(partial_key) >= 0:
+            writeLine.writerow([base_key[k]]+value[k])
 
 # Front-end parser
 class PatternParser:
     """Parse EP format data with some exclusive patterns"""
-    def __init__(self, *argv):
+    def __init__(self, *argv, **kwargs):
         self.isParsedBefore = False
         self.keyParseType = None
-
         self.RAWdata = argv[0]
-        self.rowParse()
 
-    def deleteCommentIn(self, target):
-        """Subtool: delete comment line starting with #"""
-        rowDataTemp = []
-        for eachRow in target:
-            if eachRow[0] != "#":
-                rowDataTemp.append(eachRow)
-        return rowDataTemp
+        tCheckArgsExists(kwargs, "customKey", "subtract")
+        if kwargs["customKey"] is False:
+            # The case that keys are denoted in files.
+            self.rowParse()
+        else:
+            # The case that keys are denoted manually and must be clustered.
+            subtract = None;
+            if kwargs["subtract"] is True:
+                subtract = kwargs["subtract"]
+
+            self.cluster(subtract, kwargs["customKey"])
 
     def rowParse(self):
         """Parse col data with \n"""
@@ -28,6 +43,14 @@ class PatternParser:
             del self.rowData[-1]
 
         self.rowData = self.deleteCommentIn(self.rowData)
+
+    def deleteCommentIn(self, target):
+        """Subtool: delete comment line starting with #"""
+        rowDataTemp = []
+        for eachRow in target:
+            if eachRow[0] != "#":
+                rowDataTemp.append(eachRow)
+        return rowDataTemp
 
     def colParse(self, delimiter):
         """Parse col data with delimiter"""
@@ -85,6 +108,51 @@ class PatternParser:
         else:
             print("PP::PickKeyWith - Argument type is wrong! Must be string."), exit()
 
+    def sumWithRegionKey(self, keys):    
+        _sum = []
+        for k in range(0, len(keys)):
+            _tmp = 0
+            for i in range(0, len(self.datList[self.keyList.index("GPU "+keys[k]+" end")])):
+                _tmp += self.datList[self.keyList.index("GPU "+keys[k]+" end")][i] \
+                        - self.datList[self.keyList.index("GPU "+keys[k]+" start")][i]
+            _sum.append(_tmp)
+
+        self.datList = _sum
+
+    # ==== Function role ====
+    # Cluster raw spread data to each group (only for the data which denotes special key)
+    # e.g.
+    # before
+    #      data 1: 2
+    #      data 2: 3
+    #      data 1: 1
+    # after
+    #      data 1: 2,1 (clustered)
+    #      data 2: 3
+    #
+    # ==== Argument specification ====
+    # initial: all values are subtracted by initial
+    #          if "initial" is None, first line's value is used for "initial"
+    # key: key list to customly parse (or clustered)
+    def cluster(self, initial, key):
+        text = self.RAWdata.split("\n")
+
+        if bool(initial) == True:
+            initial = text[0].split(": ")[1]
+
+        value = []
+        for k in range(len(key)):
+            value.append([])
+            for i in range(len(text)):
+                raw = text[i].split(": ")
+                if raw[0] == key[k]:
+                    value[k].append(float(raw[1]) - float(initial))
+
+        # dump(value, key, "GPU memcp")
+
+        self.keyList = key
+        self.datList = value
+
     # Normalize to data denoted by a special key
     # 1) datNormTo("normalizeToThisKey")
     # 2) datNormTo("normalizeToThisKey", skip="skipThisKey")
@@ -110,6 +178,7 @@ class PatternParser:
             print("PP::datNormTo - First argument must be key string."), exit()
 
     # arguments: target index, opt="row"|"col", copy=boolean
+    # if no arguments are specified, whole array is returned
     def getDataArr(self, *argv, **kwargs):
         """Get data arrays from PatternParser"""
         tCheckArgsExists(kwargs, "copy", "opt")
