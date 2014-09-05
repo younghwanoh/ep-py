@@ -581,7 +581,7 @@ elif style == "jaws-all":
     CBOP.draw(*argument, figmargin=0.1, ticklabel=L1)
     CBOP.saveToPdf(output)
 
-elif style == "jaws.pie":
+elif style == "jaws-pie":
     key = [ "GPU comm0 start", "GPU comm0 end",
             "GPU comm1 start", "GPU comm1 end",
             "GPU memcp start", "GPU memcp end",

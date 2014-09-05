@@ -30,12 +30,17 @@ User should denote specification of data layout and graph's layout.
   1. Line (line-key, line-raw, line-flat)
   2. Normalized line (line-norm)
   3. Clustered Bar (bar-clustered, bar-key-clustered)
-  5. Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)
-  4. Clustered Clustered Bar (bar-key-cc)
-  6. Box (box-key, box-time)
-  7. Multiple subplot (Not yet)
-  8. CDF (Not yet)
-  9. etc...
+  4. Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)
+  5. Clustered Clustered Bar (bar-key-cc)
+  6. Stacked Bar (bar-stacked)
+  7. Box (box-key, box-time)
+  8. Clustered Box (jaws-all, jaws)
+  9. Pie (jaws-pie)
+  10. Multiple subplot (Not yet)
+  11. CDF (Not yet)
+  12. etc...
+
+ref. "jaws-\*" examples can be also tested with "draw.sh" styles
 
 ### Example usages
 
@@ -45,8 +50,10 @@ User should denote specification of data layout and graph's layout.
   3. ./ep.py -i dat/bar-clustered.dat -s bar-clustered
   4. ./ep.py -i dat/bar-clustered.dat -s bar-norm-clustered
   5. ./ep.py -i dat/bar-key-cc.dat -s bar-key-cc
-  6. ./ep.py -i dat/box.dat -s box-key
-  7. ./ep.py -i dat/box.dat -s box-time
+  6. ./ep.py -i dat/jaws/atax.share.log -s bar-stacked
+  7. ./ep.py -i dat/box.dat -s box-key
+  8. ./ep.py -i dat/box.dat -s box-time
+  9. ./ep.py -i dat/jaws/atax.share.log -s jaws-pie
 
 * Sub attributes
   - -f data format
@@ -75,10 +82,13 @@ Because, program cannot know which of graph styles the programmer wants to draw,
 all styles of classes must be defined case by case. Here are the list of classes.
 
   - LinePlotter
-  - BoxPlotter (...ing)
+  - BoxPlotter
+  - CBoxPlotter
   - BarPlotter (...ing)
   - CBarPlotter
   - CCBarPlotter
+  - SBarPlotter
+  - PiePlotter
   - MultiPlotter (Not yet)
   - StackBarPlotter (Not yet)
   - CStackBarPlotter (Not yet)
