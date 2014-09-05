@@ -443,22 +443,16 @@ class PiePlotter(AbstractPlotter):
 
     def draw(self, *argv, **kwargs):
         colors = []
+        hatch = [0 for i in range(len(argv[0]))]
         legend = []
-        if ("colors" in kwargs) & ("legend" in kwargs):
-            legend = kwargs["legend"]
-            colors = kwargs["colors"]
-            self.ax.pie(argv[0], colors=colors, labels=legend)
-            return
         if "legend" in kwargs:
             legend = kwargs["legend"]
-            self.ax.pie(argv[0], labels=legend)
-            return
         if "colors" in kwargs:
             colors = kwargs["colors"]
-            self.ax.pie(argv[0], colors=colors)
-            print("PiePlotter::Warning! Label is not denoted")
-            return
+        if "hatch" in kwargs:
+            hatch = kwargs["hatch"]
 
-        self.ax.pie(argv[0])
-        print("PiePlotter::Warning! Label is not denoted")
+        patches = self.ax.pie(argv[0], colors=colors, labels=legend)[0]
 
+        for i, val in enumerate(patches):
+            patches[i].set_hatch(hatch[i])

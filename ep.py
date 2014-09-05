@@ -507,6 +507,10 @@ elif style == "jaws-all":
             "GPU exe start", "GPU exe end",
             "GPU comm2 start", "GPU comm2 end",
             "GPU schdl start", "GPU schdl end"]
+    text = tRead("dat/jaws/atax.share.log")
+    # text = tRead("dat/breakSM.dat")
+    ## text = tRead("dat/breakNoSM.dat")
+
     tag_ = []
     tag_comm_s = []
     tag_comm_e = []
@@ -523,9 +527,6 @@ elif style == "jaws-all":
         tag_exe_s.append("CPU%d exe start" % i)
         tag_exe_e.append("CPU%d exe end" % i)
     key = key + tag_comm_s + tag_comm_e + tag_exe_s + tag_exe_e
-
-    # text = tRead("dat/breakSM.dat")
-    ## text = tRead("dat/breakNoSM.dat")
 
     # Use custom parser mode
     PP = PatternParser(text, customKey=key, subtract=True);
@@ -590,6 +591,8 @@ elif style == "jaws-pie":
             "GPU schdl start", "GPU schdl end",
             "DONE"]
 
+    text = tRead("dat/jaws/atax.share.log")
+
     ## Use custom parser mode
     tag = ["memcp", "comm0", "comm1", "comm2", "schdl"]
     PP = PatternParser(text, customKey=key, subtract=True);
@@ -599,12 +602,14 @@ elif style == "jaws-pie":
     ## Custom data process after parsing
     fraction[2] -= fraction[0]
 
-    colors = [mcro["green"], mcro["red"], mcro["yellow"], "#FFBBBB", "#428bca", mcro["gray"]]
+    # colors = [mcro["green"], mcro["red"], mcro["yellow"], "#FFBBBB", "#428bca", mcro["gray"]]
+    colors = [mcro["gray"], mcro["dgray"], mcro["black"], mcro["white"], mcro["white"], mcro["white"]]
+    hatch = ["", "", "", "\\\\", "", ".."]
 
     ## Draw box
     PIP = PiePlotter(title="Pie")
 
-    PIP.draw(fraction, legend=tag, colors=colors)
+    PIP.draw(fraction, legend=tag, colors=colors, hatch=hatch)
     PIP.saveToPdf(output)
 
 elif style == "bar-stacked":
@@ -622,6 +627,7 @@ elif style == "bar-stacked":
 
     ## Tag lists that will parse
     tag = ["memcp", "comm0", "comm1", "comm2", "schdl"]
+    leg = ["memcpy", "init", "task_begin", "task_end", "partition"]
 
     ## First parsing
     PP = PatternParser(text_sm, customKey=key, subtract=True);
@@ -652,8 +658,8 @@ elif style == "bar-stacked":
     SBP = SBarPlotter(title=args.signature+" - GPU",
                       xlabel="Strategy", ylabel="Fraction", barwidth=1)
 
-    SBP.setLegendStyle(ncol=5, size=11, frame=False)
+    SBP.setLegendStyle(ncol=5, size=10, frame=False)
     SBP.setLimitOn(y=[0, 1.2])
     SBP.draw(S_GPUresult, NS_GPUresult,
-             legend=tag, colors=colors, hatch=hatch, ticklabel=L1, figmargin=0.4)
+             legend=leg, colors=colors, hatch=hatch, ticklabel=L1, figmargin=0.4)
     SBP.saveToPdf(output)
