@@ -22,8 +22,8 @@ argparser.add_argument("-s","--style", help='Specify the style of graphs')
 args = argparser.parse_args()
 
 # color macro dictionary
-mcro = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292", "blue":"#4455D2", "gray":"#DFDFDF"}
-# mcro = {"green":"#EEEEEE", "yellow":"#FFFFFF", "red":"#FFFFFF", "purple":"#DFDFDF", "blue":"#000000" }
+mcro = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292", "blue":"#4455D2",
+        "white":"#FFFFFF", "dwhite":"#DFDFDF", "gray":"#888888", "dgray":"#4F4F4F", "black":"#000000"}
 
 # output file name
 output = "output.pdf"
@@ -641,16 +641,19 @@ elif style == "bar-stacked":
     # Normalized to total sum of data2(NS_GPUresult)
     S_GPUresult = [ i/totOverhead for i in S_GPUresult ]
     NS_GPUresult = [ i/totOverhead for i in NS_GPUresult ]
-    colors = [mcro["green"], mcro["red"], mcro["yellow"], mcro["blue"], mcro["purple"]]
+
+    # Set style
+    colors = [mcro["black"], mcro["dgray"], mcro["gray"], mcro["white"], mcro["white"]]
+    hatch = ["", "", "", "\\\\", ""]
 
     L1 = TickLabel(PP, ["with-Shared", "without-Shared"])
 
     ## Draw box
-    SBP = SBarPlotter(title=args.signature,
+    SBP = SBarPlotter(title=args.signature+" - GPU",
                       xlabel="Strategy", ylabel="Fraction", barwidth=1)
 
     SBP.setLegendStyle(ncol=5, size=11, frame=False)
     SBP.setLimitOn(y=[0, 1.2])
     SBP.draw(S_GPUresult, NS_GPUresult,
-             legend=tag, colors=colors, ticklabel=L1, figmargin=0.4)
+             legend=tag, colors=colors, hatch=hatch, ticklabel=L1, figmargin=0.4)
     SBP.saveToPdf(output)

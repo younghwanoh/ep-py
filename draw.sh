@@ -21,6 +21,6 @@
 ./ep.py -s bar-stacked -si syrk -o syrk.share.bar.pdf
 ./ep.py -s bar-stacked -si gemm -o gemm.share.bar.pdf
 
-convert atax.share.bar.pdf atax.png
-convert syrk.share.bar.pdf syrk.png
-convert gemm.share.bar.pdf gemm.png
+# convert atax.share.bar.pdf atax.png
+# convert syrk.share.bar.pdf syrk.png
+# convert gemm.share.bar.pdf gemm.png

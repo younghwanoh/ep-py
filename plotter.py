@@ -115,6 +115,7 @@ class SBarPlotter(AbstractPlotter):
         FigSideMargin = 0.12 
 
         colors = []
+        hatch = []
         legend = []
         if "figmargin" in kwargs:
             FigSideMargin = kwargs["figmargin"]
@@ -127,6 +128,8 @@ class SBarPlotter(AbstractPlotter):
             legend = kwargs["legend"]
         if "colors" in kwargs:
             colors = kwargs["colors"]
+        if "hatch" in kwargs:
+            hatch = kwargs["hatch"]
 
         keyLen = len(argv)
         base = np.linspace(0, self.barwidth*(keyLen), keyLen)
@@ -139,7 +142,7 @@ class SBarPlotter(AbstractPlotter):
         accum = np.array([0 for i in range(keyLen)])
         for i in range(stackLen):
             accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
-            rects.append(self.ax.bar(base, data[i], self.barwidth, color=colors[i], bottom=accum))
+            rects.append(self.ax.bar(base, data[i], self.barwidth, color=colors[i], hatch=hatch[i], bottom=accum))
 
         # set legend
         self.drawLegend(rects, legend);
