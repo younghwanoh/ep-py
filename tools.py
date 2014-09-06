@@ -23,6 +23,12 @@ def tRead(inFile):
         text = inputFile.read()
     return text
 
+def tMergeCrossSpace(val, func):
+    space = range(len(val)*2-1)[1::2]
+    for idx in space:
+        val.insert(idx, func(val, idx))
+    return val
+
 def tCheckArgsExists(kwargs, *argv):
     """Checking directory arguments are exists and set values on each index"""
     for key in argv:

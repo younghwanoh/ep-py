@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-from tools import tTranspose, tDivSpace
+from tools import tTranspose, tMergeCrossSpace
 
 class AbstractPlotter(object):
     baseOffset = 0
@@ -135,10 +135,16 @@ class AbstractBarPlotter(AbstractPlotter):
             self.barwidth = kwargs["barwidth"] 
 
     def setTicks(self, **kwargs):
+        if "tick" in kwargs:
+            self.tick = kwargs["tick"]
         if "label" in kwargs:
             self.tickLabel = kwargs["label"]
         if "label2" in kwargs:
-            self.tickLabel2 = kwargs["label2"]
+            label2 = kwargs["label2"]
+
+            ## Merge two-level labels one by one
+            # self.tickLabel.content = tMergeCrossSpace(self.tickLabel.content, label2.content)
+
         if "angle" in kwargs:
             self.tickAngle = kwargs["angle"]
 
@@ -148,8 +154,7 @@ class AbstractBarPlotter(AbstractPlotter):
             self.barwidth = kwargs["barwidth"]
 
 # avg = lambda x, y: (float(x[y] + x[y-1]))/2
-# tDivSpace([1,2,3,4,5], avg)
-
+# tMergeCrossSpace(range(10), avg)
 
 class SBarPlotter(AbstractBarPlotter):
     """Draw stacked bar graph with grouped data or column-parsed data"""
@@ -197,8 +202,19 @@ class SBarPlotter(AbstractBarPlotter):
         self.drawLegend(self.rects, self.legend);
 
         # set xtick point and label
-        self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
+        # print(self.globalBase+float(self.barwidth)/2)
+        # self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
+        self.ax.set_xticks(self.tick)
         self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+
+        va = [0,-.04,0, -.08, 0,-.04,0,
+              0,-.04,0, -.08, 0,-.04,0,
+              0,-.04,0, -.08, 0,-.04,0]
+
+        for t, y in zip( self.ax.get_xticklabels( ), va ):
+            t.set_y( y )
+
+        self.ax.xaxis.labelpad=10
 
         LengthOfWholeBar = self.base[-1] + self.barwidth
         plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
@@ -251,8 +267,6 @@ class CCBarPlotter(AbstractBarPlotter):
             for i in kwargs["label"]:
                 temp += i.content
             self.tickLabel = temp
-        # if "label2" in kwargs:
-        #     self.tickLabel2 = kwargs["label2"]
         if "angle" in kwargs:
             self.tickAngle = kwargs["angle"]
 

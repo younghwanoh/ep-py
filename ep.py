@@ -757,8 +757,8 @@ elif style == "bar-clustacked":
         NS_GPUresult[i] = [ j/GPUOverhead for j in NS_GPUresult[i] ]
         S_CPUresult[i] = [ j/CPUOverhead for j in S_CPUresult[i] ]
         NS_CPUresult[i] = [ j/CPUOverhead for j in NS_CPUresult[i] ]
-        l1_label += ["S", "N", "S", "N"]
-        l2_label += ["GPU", "CPU"]
+        # l1_label += ["S", "GPU", "N", "S", "CPU", "N"]
+        # l2_label += ["GPU", "CPU"]
 
         # Zero padding for legend
         S_GPUresult[i] = S_GPUresult[i] + [0]
@@ -776,13 +776,22 @@ elif style == "bar-clustacked":
     hatch = ["", "", "", "\\\\", "", ""]
 
     ## Level of lables
+    l1_label = ["S", "GPU", "N", "ATAX", "S", "CPU", "N"] + \
+               ["S", "GPU", "N", "SYRK", "S", "CPU", "N"] + \
+               ["S", "GPU", "N", "GEMM", "S", "CPU", "N"]
+
     L1 = TickLabel(None, l1_label)
-    L2 = TickLabel(None, l2_label)
+    # L2 = TickLabel(None, l2_label)
 
     ## Draw box
     SBP = SBarPlotter(title="Normalized overhead to each device",
-                      xlabel="Strategy", ylabel="Fraction", figmargin=0.05,
-                      t1_label=L1, t2_label=L2, tickangle=45)
+                      xlabel="Strategy", ylabel="Fraction", figmargin=0.05)
+
+    # Set tick styles
+    tspace = [.5,1,1.5, 2.05, 2.6,3.1,3.6,
+              5.6,6.1,6.6, 7.15, 7.7,8.2,8.7,
+              10.7,11.2,11.7, 12.25, 12.8,13.3,13.8]
+    SBP.setTicks(tick=tspace, label=L1)
 
     # Set graph styles
     SBP.setLegendStyle(ncol=3, size=10, frame=False)
