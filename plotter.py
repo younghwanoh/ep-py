@@ -4,9 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-from tools import tTranspose
+from tools import tTranspose, tDivSpace
 
 class AbstractPlotter(object):
+    baseOffset = 0
+    globalBase = np.array([])
     def __init__(self, **kwargs):
         self.fig, self.ax = plt.subplots()
         if "ylabel" in kwargs:
@@ -20,6 +22,10 @@ class AbstractPlotter(object):
             self.fig.set_size_inches(kwargs["width"], kwargs["height"])
 
         self.manualLegendStyle=False
+
+    def setBaseOffset(self, offset):
+        # Graph's offset if multiple graphs are drawn
+        self.baseOffset = offset
 
     def setLegendStyle(self, **kwargs):
         # Flag for manual legend style change
@@ -47,13 +53,23 @@ class AbstractPlotter(object):
         if "x" in kwargs:
             plt.xlim(kwargs["x"])
 
+    def FinalCall(self):
+        # Virtual function called after all draw methods are executed
+        pass
+
+    def setBottomMargin(self, margin):
+        # bottom margin for labels of multiple colomns
+        plt.gcf().subplots_adjust(bottom=margin)
+
     def saveToPdf(self, output):
+        self.FinalCall()
         pp = PdfPages(output)
         plt.savefig(pp, format='pdf')
         pp.close()
         plt.close()
 
     def showToWindow(self):
+        self.FinalCall()
         plt.show()
         plt.close()
 
@@ -99,86 +115,102 @@ class LinePlotter(AbstractPlotter):
 
         self.drawLegend(pc, legend);
 
-class SBarPlotter(AbstractPlotter):
-    """Draw stacked bar graph with grouped data or column-parsed data"""
+
+class AbstractBarPlotter(AbstractPlotter):
+    """Abstract class for Bar plotter"""
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
+        # Initial base point
+        self.base = [0]
+
         self.barwidth = 1
         self.tickLabel = tickLabelInit()
         self.tickAngle = 0
+        self.FigSideMargin = 0.12 
 
+        if "figmargin" in kwargs:
+            self.FigSideMargin = kwargs["figmargin"]
         if "barwidth" in kwargs:
+            # barwidth can be assigned as a style over all bars
             self.barwidth = kwargs["barwidth"] 
 
-    def draw(self, *argv, **kwargs):
-        # default 12% margin to entire bar width
-        FigSideMargin = 0.12 
+    def setTicks(self, **kwargs):
+        if "label" in kwargs:
+            self.tickLabel = kwargs["label"]
+        if "label2" in kwargs:
+            self.tickLabel2 = kwargs["label2"]
+        if "angle" in kwargs:
+            self.tickAngle = kwargs["angle"]
 
-        colors = []
-        hatch = []
-        legend = []
-        if "figmargin" in kwargs:
-            FigSideMargin = kwargs["figmargin"]
-        if "ticklabel" in kwargs:
-            self.tickLabel = kwargs["ticklabel"]
-        if "tickangle" in kwargs:
-            self.tickAngle = kwargs["tickangle"]
+    def callBeforeDraw(self, **kwargs):
+        # barwidth can also be assigned to each different elem
+        if "barwidth" in kwargs:
+            self.barwidth = kwargs["barwidth"]
+
+# avg = lambda x, y: (float(x[y] + x[y-1]))/2
+# tDivSpace([1,2,3,4,5], avg)
+
+
+class SBarPlotter(AbstractBarPlotter):
+    """Draw stacked bar graph with grouped data or column-parsed data"""
+    def __init__(self, **kwargs):
+        AbstractBarPlotter.__init__(self, **kwargs)
+
+    def setStackStyle(self, **kwargs):
+        self.colors = []
+        self.hatch = []
+        self.legend = []
 
         if "legend" in kwargs:
-            legend = kwargs["legend"]
+            self.legend = kwargs["legend"]
         if "colors" in kwargs:
-            colors = kwargs["colors"]
+            self.colors = kwargs["colors"]
         if "hatch" in kwargs:
-            hatch = kwargs["hatch"]
+            self.hatch = kwargs["hatch"]
 
+    def draw(self, *argv, **kwargs):
+        self.callBeforeDraw(**kwargs)
+
+        # Calculate tick point
         keyLen = len(argv)
-        base = np.linspace(0, self.barwidth*(keyLen), keyLen)
+        left = self.base[-1] + self.baseOffset
+        right = left + self.barwidth*(keyLen-1)
+        self.base = np.linspace(left, right, keyLen)
+        print("Offset: %d, Base: %s" % (self.baseOffset, self.base))
+
         data = tTranspose(argv)
 
-        # accumulate_space(data)
+        # Accumulate tick bases to global base
+        self.globalBase = np.concatenate([self.globalBase, self.base])
 
-        rects = []
+        self.rects = []
         stackLen = len(data)
         accum = np.array([0 for i in range(keyLen)])
         for i in range(stackLen):
             accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
-            rects.append(self.ax.bar(base, data[i], self.barwidth, color=colors[i], hatch=hatch[i], bottom=accum))
+            self.rects.append(self.ax.bar(self.base, data[i], self.barwidth,
+                              color=self.colors[i], hatch=self.hatch[i], bottom=accum))
 
+
+    def FinalCall(self):
         # set legend
-        self.drawLegend(rects, legend);
+        self.drawLegend(self.rects, self.legend);
 
         # set xtick point and label
-        self.ax.set_xticks(base+float(self.barwidth)/2)
+        self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
         self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
 
-        LengthOfWholeBar = base[-1] + self.barwidth
-        plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+        LengthOfWholeBar = self.base[-1] + self.barwidth
+        plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
-class CBarPlotter(AbstractPlotter):
+class CBarPlotter(AbstractBarPlotter):
     """Draw clustered bar graph with grouped data or column-parsed data"""
     def __init__(self, **kwargs):
-        AbstractPlotter.__init__(self, **kwargs)
-
-        self.barwidth = 1
-        self.tickLabel = tickLabelInit()
-        self.tickAngle = 0
-
-        if "barwidth" in kwargs:
-            self.barwidth = kwargs["barwidth"]
+        AbstractBarPlotter.__init__(self, **kwargs)
 
     def draw(self, *argv, **kwargs):
-        self.callBeforeDraw()
-
-        # default 12% margin to entire bar width
-        FigSideMargin = 0.12 
-
-        if "figmargin" in kwargs:
-            FigSideMargin = kwargs["figmargin"]
-        if "ticklabel" in kwargs:
-            self.tickLabel = kwargs["ticklabel"]
-        if "tickangle" in kwargs:
-            self.tickAngle = kwargs["tickangle"]
+        self.callBeforeDraw(**kwargs)
 
         keyLen = len(argv)
         datLen = len(argv[0].Y)
@@ -202,39 +234,30 @@ class CBarPlotter(AbstractPlotter):
         self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
 
         LengthOfWholeBar = base[-1] + self.barwidth*keyLen
-        plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+        plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
-class CCBarPlotter(AbstractPlotter):
+class CCBarPlotter(AbstractBarPlotter):
     """Draw clustered*2 bar graph with grouped parsed data"""
     def __init__(self, **kwargs):
-        AbstractPlotter.__init__(self, **kwargs)
-
-        self.barwidth = 1
-        self.tickLabel = tickLabelInit()
-        self.tickAngle = 0
-
-        if "barwidth" in kwargs:
-            self.barwidth = kwargs["barwidth"]
-
-    def draw(self, *argv, **kwargs):
-        self.callBeforeDraw()
-
-        # default 12% margin to entire bar width
-        FigSideMargin = 0.12 
-
-        if "figmargin" in kwargs:
-            FigSideMargin = kwargs["figmargin"]
+        AbstractBarPlotter.__init__(self, **kwargs)
         if "groupmargin" in kwargs:
-            BtwGroupMargin = kwargs["groupmargin"]
-        if "ticklabel" in kwargs:
+            self.BtwGroupMargin = kwargs["groupmargin"]
+
+    def setTicks(self, **kwargs):
+        if "label" in kwargs:
             # merge multiple label list
             temp = []
-            for i in kwargs["ticklabel"]:
+            for i in kwargs["label"]:
                 temp += i.content
             self.tickLabel = temp
-        if "tickangle" in kwargs:
-            self.tickAngle = kwargs["tickangle"]
+        # if "label2" in kwargs:
+        #     self.tickLabel2 = kwargs["label2"]
+        if "angle" in kwargs:
+            self.tickAngle = kwargs["angle"]
+
+    def draw(self, *argv, **kwargs):
+        self.callBeforeDraw(**kwargs)
 
         legend = []
         rects = []
@@ -248,7 +271,7 @@ class CCBarPlotter(AbstractPlotter):
         # Interval between clustered bars: 40% of total width in a clustered group
         interClusterOffset = (self.barwidth * keyLen) * 1.4
         # Interval between clustered group: 
-        interGlobalOffset = interClusterOffset * datLen * BtwGroupMargin
+        interGlobalOffset = interClusterOffset * datLen * self.BtwGroupMargin
 
         for k, eachGroup in enumerate(argv):
             keyLen = eachGroup.length
@@ -273,7 +296,7 @@ class CCBarPlotter(AbstractPlotter):
         self.ax.set_xticklabels(self.tickLabel, rotation=self.tickAngle)
 
         LengthOfWholeBar = base[-1][-1] + self.barwidth*keyLen
-        plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+        plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
 class BoxPlotter(AbstractPlotter):
@@ -303,8 +326,6 @@ class BoxPlotter(AbstractPlotter):
 
         if "figmargin" in kwargs:
             FigSideMargin = kwargs["figmargin"]
-        if "groupmargin" in kwargs:
-            BtwGroupMargin = kwargs["groupmargin"]
         if "ticklabel" in kwargs:
             self.tickLabel = kwargs["ticklabel"]
         if "tickangle" in kwargs:
@@ -379,8 +400,6 @@ class CBoxPlotter(AbstractPlotter):
 
         if "figmargin" in kwargs:
             FigSideMargin = kwargs["figmargin"]
-        if "groupmargin" in kwargs:
-            BtwGroupMargin = kwargs["groupmargin"]
         if "ticklabel" in kwargs:
             self.tickLabel = kwargs["ticklabel"]
         if "tickangle" in kwargs:

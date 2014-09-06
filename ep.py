@@ -22,7 +22,7 @@ argparser.add_argument("-s","--style", help='Specify the style of graphs')
 args = argparser.parse_args()
 
 # color macro dictionary
-mcro = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292", "blue":"#4455D2",
+mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292", "blue":"#4455D2",
         "white":"#FFFFFF", "dwhite":"#DFDFDF", "gray":"#888888", "dgray":"#4F4F4F", "black":"#000000"}
 
 # output file name
@@ -130,7 +130,7 @@ elif style == "pie":
     PP.PickKeyWith(": ")
 
     tag = ["CN", "HL", "YH"]
-    colors = [mcro["red"], mcro["yellow"], mcro["blue"]]
+    colors = [mc["red"], mc["yellow"], mc["blue"]]
 
     # Draw box
     PIP = PiePlotter(title="PiePlot with start/end points")
@@ -203,9 +203,10 @@ elif style == "bar-clustered":
 
     # Draw bar
     CB = CBarPlotter(title="BarPlot with flattend format",
-                     xlabel="Input Size", ylabel="Exe time", barwidth=2)
+                     xlabel="Input Size", ylabel="Exe time")
     # CB.setLimitOn(x=[0, 10], y=[0, 10])
-    CB.draw(D1,D2,D3,D4, ticklabel=L1)
+    CB.draw(D1,D2,D3,D4, barwidth=2)
+    CB.setTicks(label=L1)
     CB.saveToPdf(output)
 
 elif style == "bar-norm-clustered":
@@ -236,9 +237,10 @@ elif style == "bar-norm-clustered":
 
     # Draw bar
     CB = CBarPlotter(title="Normalized BarPlot with flattend format",
-                     xlabel="Input Size", ylabel="Speedup", barwidth=2)
+                     xlabel="Input Size", ylabel="Speedup")
     # CB.setLimitOn(x=[0, 10], y=[0, 10])
-    CB.draw(D1,D2,D3,D4, ticklabel=L1)
+    CB.setTicks(label=L1)
+    CB.draw(D1,D2,D3,D4, barwidth=2)
     CB.saveToPdf(output)
 
 elif style == "bar-key-clustered":
@@ -271,10 +273,11 @@ elif style == "bar-key-clustered":
     # L1 = TickLabel(None, ["label","1","2",1])
 
     # Draw bar
-    CB = CBarPlotter(title="BarPlot with key format",
-                     xlabel="Input Size", ylabel="Speedup", barwidth=2)
+    CB = CBarPlotter(title="BarPlot with key format", xlabel="Input Size", ylabel="Speedup",
+                     figmargin=0.05)
+    CB.setTicks(label=L1, angle=45)
     # CB.setLimitOn(x=[0, 10], y=[0, 10])
-    CB.draw(D1,D2,D3,D4, ticklabel=L1, tickangle=45, figmargin=0.05)
+    CB.draw(D1,D2,D3,D4, barwidth=2)
     CB.saveToPdf(output)
 
 elif style == "bar-key-cc":
@@ -315,10 +318,12 @@ elif style == "bar-key-cc":
 
     # Draw bar
     CB = CCBarPlotter(title="BarPlot with key format", width=10, height=4,
-                      xlabel="Input Size", ylabel="Speedup", barwidth=2)
+                      xlabel="Input Size", ylabel="Speedup", figmargin=0.05, groupmargin=1.1)
+
     CB.setLegendStyle(ncol=8, size=7.5, frame=False)
+    CB.setTicks(label=[L1, L2], angle=45)
     CB.setLimitOn(y=[0, 4.5])
-    CB.draw(G1, G2, ticklabel=[L1, L2], tickangle=45, figmargin=0.05, groupmargin=1.1)
+    CB.draw(G1, G2, barwidth=2)
     CB.saveToPdf(output)
 
 elif style == "bar-single":
@@ -337,10 +342,10 @@ elif style == "bar-single":
     L1 = TickLabel(PP, "label")
 
     # Draw bar
-    BP = CBarPlotter(title="BarPlot with flattend format",
-                     xlabel="Input Size", ylabel="Performance", barwidth=2)
+    BP = CBarPlotter(title="BarPlot with flattend format", ticklabel=L1,
+                     xlabel="Input Size", ylabel="Performance", figmargin=0.3)
     # BP.setLimitOn(x=[0, 10], y=[0, 10])
-    BP.draw(D1, ticklabel=L1, figmargin=0.3)
+    BP.draw(D1, barwidth=2)
     BP.saveToPdf(output)
 
 # box graph
@@ -411,9 +416,9 @@ elif style == "box-multi-time":
     PP.ParseWith(",")
 
     # Set data
-    D1 = Group(PP, "Schedule 0 S", "Schedule 0 E", color=mcro["red"], hatch="")
-    D2 = Group(PP, "Memory 0 S", "Memory 0 E", color=mcro["yellow"], hatch="//")
-    D3 = Group(PP, "Compute 0 S", "Compute 0 E", color=mcro["blue"], hatch="")
+    D1 = Group(PP, "Schedule 0 S", "Schedule 0 E", color=mc["red"], hatch="")
+    D2 = Group(PP, "Memory 0 S", "Memory 0 E", color=mc["yellow"], hatch="//")
+    D3 = Group(PP, "Compute 0 S", "Compute 0 E", color=mc["blue"], hatch="")
     G1 = Group(D1, D2, D3)
 
     D1.setLegend("Schedule")
@@ -421,15 +426,15 @@ elif style == "box-multi-time":
     D3.setLegend("Compute")
 
     # Set data
-    D4 = Group(PP, "Schedule 1 S", "Schedule 1 E", color=mcro["red"], hatch="")
-    D5 = Group(PP, "Memory 1 S", "Memory 1 E", color=mcro["yellow"], hatch="//")
-    D6 = Group(PP, "Compute 1 S", "Compute 1 E", color=mcro["blue"], hatch="")
+    D4 = Group(PP, "Schedule 1 S", "Schedule 1 E", color=mc["red"], hatch="")
+    D5 = Group(PP, "Memory 1 S", "Memory 1 E", color=mc["yellow"], hatch="//")
+    D6 = Group(PP, "Compute 1 S", "Compute 1 E", color=mc["blue"], hatch="")
     G2 = Group(D4, D5, D6)
 
     # Set data
-    D7 = Group(PP, "Schedule G S", "Schedule G E", color=mcro["red"], hatch="")
-    D8 = Group(PP, "Memory G S", "Memory G E", color=mcro["yellow"], hatch="//")
-    D9 = Group(PP, "Compute G S", "Compute G E", color=mcro["blue"], hatch="")
+    D7 = Group(PP, "Schedule G S", "Schedule G E", color=mc["red"], hatch="")
+    D8 = Group(PP, "Memory G S", "Memory G E", color=mc["yellow"], hatch="//")
+    D9 = Group(PP, "Compute G S", "Compute G E", color=mc["blue"], hatch="")
     G3 = Group(D7, D8, D9)
 
     L1 = TickLabel(PP, ["CPU 0", "CPU 1", "GPU"])
@@ -456,28 +461,28 @@ elif style == "jaws":
     PP = PatternParser(text, customKey=key, subtract=True);
 
     # Set GPU data
-    D1 = Group(PP, "GPU comm0 start", "GPU comm0 end", color=mcro["yellow"], hatch="//")
-    D2 = Group(PP, "GPU comm1 start", "GPU comm1 end", color=mcro["yellow"], hatch="//")
-    D3 = Group(PP, "GPU comm2 start", "GPU comm2 end", color=mcro["yellow"], hatch="//")
+    D1 = Group(PP, "GPU comm0 start", "GPU comm0 end", color=mc["yellow"], hatch="//")
+    D2 = Group(PP, "GPU comm1 start", "GPU comm1 end", color=mc["yellow"], hatch="//")
+    D3 = Group(PP, "GPU comm2 start", "GPU comm2 end", color=mc["yellow"], hatch="//")
     G1 = Group(D1, D2, D3)
 
-    D4 = Group(PP, "GPU memcp start", "GPU memcp end", color=mcro["red"], hatch="")
+    D4 = Group(PP, "GPU memcp start", "GPU memcp end", color=mc["red"], hatch="")
     G2 = Group(D4)
 
-    D5 = Group(PP, "GPU exe start", "GPU exe end", color=mcro["blue"], hatch="")
+    D5 = Group(PP, "GPU exe start", "GPU exe end", color=mc["blue"], hatch="")
     G3 = Group(D5)
 
     # Set CPU data
-    D6 = Group(PP, "CPU comm0 start", "CPU comm0 end", color=mcro["yellow"], hatch="//")
+    D6 = Group(PP, "CPU comm0 start", "CPU comm0 end", color=mc["yellow"], hatch="//")
     G4 = Group(D6)
 
-    D7 = Group(PP, "CPU comm1 start", "CPU comm1 end", color=mcro["yellow"], hatch="//")
+    D7 = Group(PP, "CPU comm1 start", "CPU comm1 end", color=mc["yellow"], hatch="//")
     G5 = Group(D7)
 
-    D8 = Group(PP, "CPU exe0 start", "CPU exe0 end", color=mcro["blue"], hatch="")
+    D8 = Group(PP, "CPU exe0 start", "CPU exe0 end", color=mc["blue"], hatch="")
     G6 = Group(D8)
 
-    D9 = Group(PP, "CPU exe1 start", "CPU exe1 end", color=mcro["blue"], hatch="")
+    D9 = Group(PP, "CPU exe1 start", "CPU exe1 end", color=mc["blue"], hatch="")
     G7 = Group(D9)
 
     tag = ["GPU comm", "GPU memcp", "GPU exe", "CPU comm0", "CPU comm1", "CPU exe0", "CPU exe1"]
@@ -507,7 +512,7 @@ elif style == "jaws-all":
             "GPU exe start", "GPU exe end",
             "GPU comm2 start", "GPU comm2 end",
             "GPU schdl start", "GPU schdl end"]
-    text = tRead("dat/jaws/atax.share.log")
+    # text = tRead("dat/jaws/atax.share.log")
     # text = tRead("dat/breakSM.dat")
     ## text = tRead("dat/breakNoSM.dat")
 
@@ -532,15 +537,15 @@ elif style == "jaws-all":
     PP = PatternParser(text, customKey=key, subtract=True);
 
     # Set GPU data
-    D4 = Group(PP, "GPU memcp start", "GPU memcp end", color=mcro["green"], hatch="")
+    D4 = Group(PP, "GPU memcp start", "GPU memcp end", color=mc["green"], hatch="")
     G1 = Group(D4)
 
-    D1 = Group(PP, "GPU comm0 start", "GPU comm0 end", color=mcro["red"], hatch="\\")
-    D2 = Group(PP, "GPU comm1 start", "GPU comm1 end", color=mcro["yellow"], hatch="\\")
-    D3 = Group(PP, "GPU comm2 start", "GPU comm2 end", color=mcro["yellow"], hatch="//")
+    D1 = Group(PP, "GPU comm0 start", "GPU comm0 end", color=mc["red"], hatch="\\")
+    D2 = Group(PP, "GPU comm1 start", "GPU comm1 end", color=mc["yellow"], hatch="\\")
+    D3 = Group(PP, "GPU comm2 start", "GPU comm2 end", color=mc["yellow"], hatch="//")
     G2 = Group(D1, D2, D3)
 
-    D5 = Group(PP, "GPU exe start", "GPU exe end", color=mcro["blue"], hatch="")
+    D5 = Group(PP, "GPU exe start", "GPU exe end", color=mc["blue"], hatch="")
     G3 = Group(D5)
 
     D6 = Group(PP, "GPU schdl start", "GPU schdl end", color="#428bca", hatch="")
@@ -550,10 +555,10 @@ elif style == "jaws-all":
     G = []
     # Set CPU data
     for i in range(10):
-        D.append(Group(PP, "CPU%d comm0 start" % i, "CPU%d comm0 end" % i, color=mcro["red"], hatch="\\"))
-        D.append(Group(PP, "CPU%d comm1 start" % i, "CPU%d comm1 end" % i, color=mcro["yellow"], hatch="\\"))
-        D.append(Group(PP, "CPU%d comm2 start" % i, "CPU%d comm2 end" % i, color=mcro["yellow"], hatch="//"))
-        D.append(Group(PP, "CPU%d exe start" % i, "CPU%d exe end" % i, color=mcro["blue"], hatch=""))
+        D.append(Group(PP, "CPU%d comm0 start" % i, "CPU%d comm0 end" % i, color=mc["red"], hatch="\\"))
+        D.append(Group(PP, "CPU%d comm1 start" % i, "CPU%d comm1 end" % i, color=mc["yellow"], hatch="\\"))
+        D.append(Group(PP, "CPU%d comm2 start" % i, "CPU%d comm2 end" % i, color=mc["yellow"], hatch="//"))
+        D.append(Group(PP, "CPU%d exe start" % i, "CPU%d exe end" % i, color=mc["blue"], hatch=""))
         G.append(Group(D[-4], D[-3], D[-2], D[-1]))
 
     tag = ["GPU schdl", "GPU memcp", "GPU comm", "GPU exe"] + tag_
@@ -602,8 +607,8 @@ elif style == "jaws-pie":
     ## Custom data process after parsing
     fraction[2] -= fraction[0]
 
-    # colors = [mcro["green"], mcro["red"], mcro["yellow"], "#FFBBBB", "#428bca", mcro["gray"]]
-    colors = [mcro["gray"], mcro["dgray"], mcro["black"], mcro["white"], mcro["white"], mcro["white"]]
+    # colors = [mc["green"], mc["red"], mc["yellow"], "#FFBBBB", "#428bca", mc["gray"]]
+    colors = [mc["gray"], mc["dgray"], mc["black"], mc["white"], mc["white"], mc["white"]]
     hatch = ["", "", "", "\\\\", "", ".."]
 
     ## Draw box
@@ -649,17 +654,147 @@ elif style == "bar-stacked":
     NS_GPUresult = [ i/totOverhead for i in NS_GPUresult ]
 
     # Set style
-    colors = [mcro["black"], mcro["dgray"], mcro["gray"], mcro["white"], mcro["white"]]
+    colors = [mc["black"], mc["dgray"], mc["gray"], mc["white"], mc["white"]]
     hatch = ["", "", "", "\\\\", ""]
 
     L1 = TickLabel(PP, ["with-Shared", "without-Shared"])
 
     ## Draw box
     SBP = SBarPlotter(title=args.signature+" - GPU",
-                      xlabel="Strategy", ylabel="Fraction", barwidth=1)
+                      xlabel="Strategy", ylabel="Fraction", figmargin=0.4)
 
+    # Set graph style
+    SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg)
     SBP.setLegendStyle(ncol=5, size=10, frame=False)
+
+    # Draw
     SBP.setLimitOn(y=[0, 1.2])
-    SBP.draw(S_GPUresult, NS_GPUresult,
-             legend=leg, colors=colors, hatch=hatch, ticklabel=L1, figmargin=0.4)
+    SBP.draw(S_GPUresult, NS_GPUresult, ticklabel=L1, barwidth=1)
+    SBP.saveToPdf(output)
+
+elif style == "bar-clustacked":
+
+    benchmarks = ["atax", "syrk", "gemm"]
+
+    ## Assign data directly
+    S_CPUresult = []
+    NS_CPUresult = []
+    S_GPUresult = []
+    NS_GPUresult = []
+
+    # atax
+    S_CPUresult.append([3.877490234375, 15.810107421874996, 3.2838867187500007,
+                        1.8818359375, 57.51716308593768])
+    NS_CPUresult.append([1200.7843017578125, 36.7966796875, 53.126953125,
+                         4343.073974609375, 158.7681152343721])
+    S_GPUresult.append([202.099609375, 1.007080078125, 17.988037109375,
+                        1.5107421875, 7.1806640625])
+    NS_GPUresult.append([197.38525390625, 1062.109130859375, 420.0341796875,
+                         6318.2197265625, 746.284423828125])
+
+    # syrk
+    S_CPUresult.append([4.66689453125, 12.704321289062502, 1.7093505859374998,
+                        0.748779296875, 33.37495117187518])
+    NS_CPUresult.append([72.4834716796875, 5.658862304687499, 796.4159423828124,
+                         1.311767578125, 429.0301025390618])
+    S_GPUresult.append([18.7412109375, 0.7900390625, 18.235595703125,
+                        1.321533203125, 0.72705078125])
+    NS_GPUresult.append([18.828125, 64.095947265625, 30.923828125,
+                         391.0361328125, 93.978759765625])
+
+    # gemm
+    S_CPUresult.append([2.2271484375, 7.4610839843750005, 1.4408935546875,
+                        0.8291015625, 77.42680664062391])
+    NS_CPUresult.append([105.3399658203125, 7.2691894531250005, 590.9168701171875,
+                         1.216064453125, 436.6934082031248])
+    S_GPUresult.append([35.37109375, 0.986083984375, 1.62646484375,
+                        2.89111328125, 1.29638671875])
+    NS_GPUresult.append([32.498291015625, 98.093017578125, 43.816650390625,
+                         1232.966552734375, 224.430908203125])
+
+#     # Parse GPU data
+#     key = [ "GPU comm0 start", "GPU comm0 end",
+#             "GPU comm1 start", "GPU comm1 end",
+#             "GPU memcp start", "GPU memcp end",
+#             "GPU exe start", "GPU exe end",
+#             "GPU comm2 start", "GPU comm2 end",
+#             "GPU schdl start", "GPU schdl end",
+#             "DONE"]
+#
+#     S_GPUresult = []
+#     NS_GPUresult = []
+#
+#     for target in benchmarks:
+#         ## Read raw datas
+#         text_sm = tRead("dat/jaws/%s.share.log" % target)
+#         text_nsm = tRead("dat/jaws/%s.noshare.log" % target)
+#
+#         ## First parsing
+#         PP = PatternParser(text_sm, customKey=key, subtract=True);
+#         PP.sumWithRegionKey(tag_gpu)
+#         S_GPUresult.append(PP.getDataArr())
+#
+#         ## Second parsing
+#         PN = PatternParser(text_nsm, customKey=key, subtract=True);
+#         PN.sumWithRegionKey(tag_gpu)
+#         NS_GPUresult.append(PN.getDataArr())
+#
+#         ## Custom data process after parsing
+#         NS_GPUresult[-1][2] -= NS_GPUresult[-1][0]
+#         S_GPUresult[-1][2] -= S_GPUresult[-1][0]
+#
+#         totOverhead = reduce(np.add, NS_CPUresult[-1])
+#         print(NS_CPUresult[-1])
+
+    l1_label = []
+    l2_label = []
+    for i in range(len(benchmarks)):
+        GPUOverhead = reduce(np.add, NS_GPUresult[i])
+        CPUOverhead = reduce(np.add, NS_CPUresult[i])
+
+        # Normalized to total sum of data(NS_CPUresult)
+        S_GPUresult[i] = [ j/GPUOverhead for j in S_GPUresult[i] ]
+        NS_GPUresult[i] = [ j/GPUOverhead for j in NS_GPUresult[i] ]
+        S_CPUresult[i] = [ j/CPUOverhead for j in S_CPUresult[i] ]
+        NS_CPUresult[i] = [ j/CPUOverhead for j in NS_CPUresult[i] ]
+        l1_label += ["S", "N", "S", "N"]
+        l2_label += ["GPU", "CPU"]
+
+        # Zero padding for legend
+        S_GPUresult[i] = S_GPUresult[i] + [0]
+        NS_GPUresult[i] = NS_GPUresult[i] + [0]
+        S_CPUresult[i] = [0] + S_CPUresult[i] 
+        NS_CPUresult[i] = [0] + NS_CPUresult[i]
+
+    ## Tag lists that will parse
+    tag_cpu = ["comm0", "comm1", "comm2", "schdl", "barrier"]
+    tag_gpu = ["memcp", "comm0", "comm1", "comm2", "schdl"]
+    leg = ["memcpy", "init", "task_begin", "task_end", "partition", "sync"]
+
+    ## Set style
+    colors = [mc["black"], mc["dgray"], mc["gray"], mc["white"], mc["white"], mc["dwhite"]]
+    hatch = ["", "", "", "\\\\", "", ""]
+
+    ## Level of lables
+    L1 = TickLabel(None, l1_label)
+    L2 = TickLabel(None, l2_label)
+
+    ## Draw box
+    SBP = SBarPlotter(title="Normalized overhead to each device",
+                      xlabel="Strategy", ylabel="Fraction", figmargin=0.05,
+                      t1_label=L1, t2_label=L2, tickangle=45)
+
+    # Set graph styles
+    SBP.setLegendStyle(ncol=3, size=10, frame=False)
+    SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg)
+    SBP.setBottomMargin(0.15)
+
+    # Draw graphs
+    SBP.setLimitOn(y=[0, 1.2])
+    for i in range(len(benchmarks)):
+        SBP.draw(S_GPUresult[i], NS_GPUresult[i], barwidth=1)
+        SBP.setBaseOffset(1.1)
+        SBP.draw(S_CPUresult[i], NS_CPUresult[i], barwidth=1)
+        SBP.setBaseOffset(2)
+
     SBP.saveToPdf(output)

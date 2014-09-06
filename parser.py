@@ -108,7 +108,7 @@ class PatternParser:
         else:
             print("PP::PickKeyWith - Argument type is wrong! Must be string."), exit()
 
-    def sumWithRegionKey(self, keys):    
+    def sumWithRegionKey(self, keys):
         _sum = []
         for k in range(0, len(keys)):
             _tmp = 0
