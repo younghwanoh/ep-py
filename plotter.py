@@ -8,6 +8,11 @@ from tools import tTranspose, tMergeCrossSpace
 
 class AbstractPlotter(object):
     baseOffset = 0
+
+    # patch: graph obj lists, legend: legend lists
+    patch = []
+    legend = []
+
     globalBase = np.array([])
     def __init__(self, **kwargs):
         self.fig, self.ax = plt.subplots()
@@ -162,7 +167,6 @@ class SBarPlotter(AbstractBarPlotter):
     def setStackStyle(self, **kwargs):
         self.colors = []
         self.hatch = []
-        self.legend = []
 
         if "legend" in kwargs:
             self.legend = kwargs["legend"]
@@ -186,18 +190,17 @@ class SBarPlotter(AbstractBarPlotter):
         # Accumulate tick bases to global base
         self.globalBase = np.concatenate([self.globalBase, self.base])
 
-        self.rects = []
         stackLen = len(data)
         accum = np.array([0 for i in range(keyLen)])
         for i in range(stackLen):
             accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
-            self.rects.append(self.ax.bar(self.base, data[i], self.barwidth,
+            self.patch.append(self.ax.bar(self.base, data[i], self.barwidth,
                               color=self.colors[i], hatch=self.hatch[i], bottom=accum))
 
 
     def FinalCall(self):
         # set legend
-        self.drawLegend(self.rects, self.legend);
+        self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.setManualBase == False:
@@ -225,28 +228,31 @@ class CBarPlotter(AbstractBarPlotter):
     def draw(self, *argv, **kwargs):
         self.callBeforeDraw(**kwargs)
 
-        keyLen = len(argv)
+        self.keyLen = keyLen = len(argv)
         datLen = len(argv[0].Y)
 
         # Interval between clustered bars: 40% of total width in a clustered group
         interClusterOffset = (self.barwidth*keyLen) * 1.4
-        base = np.arange(datLen) * interClusterOffset
+        self.base = np.arange(datLen) * interClusterOffset + self.baseOffset + self.base[-1]
 
-        legend = []
-        rects = []
+        # Accumulate tick bases to global base
+        self.globalBase = np.concatenate([self.globalBase, self.base])
+
         for i in range(keyLen):
-            rects.append(self.ax.bar(base+i*self.barwidth, argv[i].Y, self.barwidth, color=argv[i].color, hatch=argv[i].hatch))
+            self.patch.append(self.ax.bar(self.base+i*self.barwidth, argv[i].Y,
+                                          self.barwidth, color=argv[i].color, hatch=argv[i].hatch))
             if bool(argv[i].legend):
-                legend.append(argv[i].legend)
+                self.legend.append(argv[i].legend)
 
+    def FinalCall(self):
         # set legend
-        self.drawLegend(rects, legend);
+        self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
-        self.ax.set_xticks(base+(self.barwidth*keyLen)/2)
+        self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
         self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
 
-        LengthOfWholeBar = base[-1] + self.barwidth*keyLen
+        LengthOfWholeBar = self.globalBase[-1] + self.barwidth*self.keyLen
         plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
@@ -270,8 +276,6 @@ class CCBarPlotter(AbstractBarPlotter):
     def draw(self, *argv, **kwargs):
         self.callBeforeDraw(**kwargs)
 
-        legend = []
-        rects = []
         base = []
         globalBase = np.array([])
 
@@ -294,13 +298,13 @@ class CCBarPlotter(AbstractBarPlotter):
             globalBase = np.concatenate((globalBase, base[k] + (self.barwidth*keyLen)/2)) 
 
             for i, elem in enumerate(eachGroup.content):
-                rects.append(self.ax.bar(base[k]+i*self.barwidth, elem.Y, self.barwidth,
-                                         color=elem.color, hatch=elem.hatch))
+                self.patch.append(self.ax.bar(base[k]+i*self.barwidth, elem.Y, self.barwidth,
+                                              color=elem.color, hatch=elem.hatch))
                 if bool(elem.legend):
-                    legend.append(elem.legend)
+                    self.legend.append(elem.legend)
 
         # set legend
-        self.drawLegend(rects, legend);
+        self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         self.ax.set_xticks(globalBase)
@@ -349,8 +353,6 @@ class BoxPlotter(AbstractPlotter):
         else:
             base = np.linspace(0, self.boxwidth*(keyLen+2), keyLen)
 
-        legend = []
-        rects = []
         for i in range(keyLen):
             datLen = len(argv[i].X)
             for j in range(datLen):
@@ -362,11 +364,11 @@ class BoxPlotter(AbstractPlotter):
                                          facecolor=argv[i].color, hatch=argv[i].hatch)
                 self.ax.add_patch(rect)
             if bool(argv[i].legend):
-                rects.append(rect)
-                legend.append(argv[i].legend)
+                self.patch.append(rect)
+                self.legend.append(argv[i].legend)
 
         # set legend
-        self.drawLegend(rects, legend);
+        self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.vertical is True:
@@ -425,8 +427,6 @@ class CBoxPlotter(AbstractPlotter):
         base = np.linspace(0, self.boxwidth*(GroupLen+1), GroupLen)
         # base[3:] += 2
 
-        legend = []
-        rects = []
         for z in range(GroupLen):
             arg = argv[z].content
             for i in range(keyLen[z]):
@@ -440,11 +440,11 @@ class CBoxPlotter(AbstractPlotter):
                                              facecolor=arg[i].color, hatch=arg[i].hatch)
                     self.ax.add_patch(rect)
                 if bool(arg[i].legend):
-                    rects.append(rect)
-                    legend.append(arg[i].legend)
+                    self.patch.append(rect)
+                    self.legend.append(arg[i].legend)
 
         # set legend
-        self.drawLegend(rects, legend);
+        self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.vertical is True:
