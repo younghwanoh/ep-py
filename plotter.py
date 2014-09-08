@@ -123,6 +123,7 @@ class AbstractBarPlotter(AbstractPlotter):
         # Initial base point
         self.base = [0]
 
+        self.setManualBase = False
         self.barwidth = 1
         self.tickLabel = tickLabelInit()
         self.tickAngle = 0
@@ -135,16 +136,13 @@ class AbstractBarPlotter(AbstractPlotter):
             self.barwidth = kwargs["barwidth"] 
 
     def setTicks(self, **kwargs):
-        if "tick" in kwargs:
-            self.tick = kwargs["tick"]
+        self.setManualBase = True
+        if "tspace" in kwargs:
+            self.tspace = kwargs["tspace"]
+        if "voffset" in kwargs:
+            self.voffset = kwargs["voffset"]
         if "label" in kwargs:
             self.tickLabel = kwargs["label"]
-        if "label2" in kwargs:
-            label2 = kwargs["label2"]
-
-            ## Merge two-level labels one by one
-            # self.tickLabel.content = tMergeCrossSpace(self.tickLabel.content, label2.content)
-
         if "angle" in kwargs:
             self.tickAngle = kwargs["angle"]
 
@@ -202,17 +200,16 @@ class SBarPlotter(AbstractBarPlotter):
         self.drawLegend(self.rects, self.legend);
 
         # set xtick point and label
-        # print(self.globalBase+float(self.barwidth)/2)
-        # self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
-        self.ax.set_xticks(self.tick)
-        self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+        if self.setManualBase == False:
+            print(self.globalBase+float(self.barwidth)/2)
+            self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
+        else:
+            self.ax.set_xticks(self.tspace)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
 
-        va = [0,-.04,0, -.08, 0,-.04,0,
-              0,-.04,0, -.08, 0,-.04,0,
-              0,-.04,0, -.08, 0,-.04,0]
-
-        for t, y in zip( self.ax.get_xticklabels( ), va ):
-            t.set_y( y )
+            for t, y in zip( self.ax.get_xticklabels( ), self.voffset ):
+                t.set_y( y )
+            self.setManualBase = True
 
         self.ax.xaxis.labelpad=10
 

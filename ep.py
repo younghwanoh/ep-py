@@ -33,7 +33,6 @@ if bool(args.outFile) == True:
 if bool(args.inFile) == True:
     text = tRead(args.inFile)
 
-style = "bar-flat"
 if bool(args.style) == True:
     style = args.style
 
@@ -458,7 +457,7 @@ elif style == "jaws":
     # initial = 1409814899688.332
 
     # Use custom parser mode
-    PP = PatternParser(text, customKey=key, subtract=True);
+    PP = PatternParser(text, customKey=key, subt1st=True);
 
     # Set GPU data
     D1 = Group(PP, "GPU comm0 start", "GPU comm0 end", color=mc["yellow"], hatch="//")
@@ -534,7 +533,7 @@ elif style == "jaws-all":
     key = key + tag_comm_s + tag_comm_e + tag_exe_s + tag_exe_e
 
     # Use custom parser mode
-    PP = PatternParser(text, customKey=key, subtract=True);
+    PP = PatternParser(text, customKey=key, subt1st=True);
 
     # Set GPU data
     D4 = Group(PP, "GPU memcp start", "GPU memcp end", color=mc["green"], hatch="")
@@ -600,8 +599,8 @@ elif style == "jaws-pie":
 
     ## Use custom parser mode
     tag = ["memcp", "comm0", "comm1", "comm2", "schdl"]
-    PP = PatternParser(text, customKey=key, subtract=True);
-    PP.sumWithRegionKey(tag)
+    PP = PatternParser(text, customKey=key, subt1st=True);
+    PN.sumWithRegionKey(tag, prefix="GPU ")
     fraction = PP.getDataArr()
 
     ## Custom data process after parsing
@@ -635,13 +634,13 @@ elif style == "bar-stacked":
     leg = ["memcpy", "init", "task_begin", "task_end", "partition"]
 
     ## First parsing
-    PP = PatternParser(text_sm, customKey=key, subtract=True);
-    PP.sumWithRegionKey(tag)
+    PP = PatternParser(text_sm, customKey=key, subt1st=True);
+    PP.sumWithRegionKey(tag, prefix="GPU ")
     S_GPUresult = PP.getDataArr()
 
     ## Second parsing
-    PN = PatternParser(text_nsm, customKey=key, subtract=True);
-    PN.sumWithRegionKey(tag)
+    PN = PatternParser(text_nsm, customKey=key, subt1st=True);
+    PN.sumWithRegionKey(tag, prefix="GPU ")
     NS_GPUresult = PN.getDataArr()
 
     ## Custom data process after parsing
@@ -712,42 +711,7 @@ elif style == "bar-clustacked":
     NS_GPUresult.append([32.498291015625, 98.093017578125, 43.816650390625,
                          1232.966552734375, 224.430908203125])
 
-#     # Parse GPU data
-#     key = [ "GPU comm0 start", "GPU comm0 end",
-#             "GPU comm1 start", "GPU comm1 end",
-#             "GPU memcp start", "GPU memcp end",
-#             "GPU exe start", "GPU exe end",
-#             "GPU comm2 start", "GPU comm2 end",
-#             "GPU schdl start", "GPU schdl end",
-#             "DONE"]
-#
-#     S_GPUresult = []
-#     NS_GPUresult = []
-#
-#     for target in benchmarks:
-#         ## Read raw datas
-#         text_sm = tRead("dat/jaws/%s.share.log" % target)
-#         text_nsm = tRead("dat/jaws/%s.noshare.log" % target)
-#
-#         ## First parsing
-#         PP = PatternParser(text_sm, customKey=key, subtract=True);
-#         PP.sumWithRegionKey(tag_gpu)
-#         S_GPUresult.append(PP.getDataArr())
-#
-#         ## Second parsing
-#         PN = PatternParser(text_nsm, customKey=key, subtract=True);
-#         PN.sumWithRegionKey(tag_gpu)
-#         NS_GPUresult.append(PN.getDataArr())
-#
-#         ## Custom data process after parsing
-#         NS_GPUresult[-1][2] -= NS_GPUresult[-1][0]
-#         S_GPUresult[-1][2] -= S_GPUresult[-1][0]
-#
-#         totOverhead = reduce(np.add, NS_CPUresult[-1])
-#         print(NS_CPUresult[-1])
-
-    l1_label = []
-    l2_label = []
+    # Reproduce data (Normalization, ...)
     for i in range(len(benchmarks)):
         GPUOverhead = reduce(np.add, NS_GPUresult[i])
         CPUOverhead = reduce(np.add, NS_CPUresult[i])
@@ -757,8 +721,6 @@ elif style == "bar-clustacked":
         NS_GPUresult[i] = [ j/GPUOverhead for j in NS_GPUresult[i] ]
         S_CPUresult[i] = [ j/CPUOverhead for j in S_CPUresult[i] ]
         NS_CPUresult[i] = [ j/CPUOverhead for j in NS_CPUresult[i] ]
-        # l1_label += ["S", "GPU", "N", "S", "CPU", "N"]
-        # l2_label += ["GPU", "CPU"]
 
         # Zero padding for legend
         S_GPUresult[i] = S_GPUresult[i] + [0]
@@ -775,23 +737,26 @@ elif style == "bar-clustacked":
     colors = [mc["black"], mc["dgray"], mc["gray"], mc["white"], mc["white"], mc["dwhite"]]
     hatch = ["", "", "", "\\\\", "", ""]
 
-    ## Level of lables
-    l1_label = ["S", "GPU", "N", "ATAX", "S", "CPU", "N"] + \
-               ["S", "GPU", "N", "SYRK", "S", "CPU", "N"] + \
-               ["S", "GPU", "N", "GEMM", "S", "CPU", "N"]
-
-    L1 = TickLabel(None, l1_label)
-    # L2 = TickLabel(None, l2_label)
 
     ## Draw box
     SBP = SBarPlotter(title="Normalized overhead to each device",
-                      xlabel="Strategy", ylabel="Fraction", figmargin=0.05)
+                      xlabel="", ylabel="Fraction", figmargin=0.05)
 
-    # Set tick styles
+    # Set manual ticks
+    tlabel = ["S", "GPU", "N", "ATAX", "S", "CPU", "N"] + \
+               ["S", "GPU", "N", "SYRK", "S", "CPU", "N"] + \
+               ["S", "GPU", "N", "GEMM", "S", "CPU", "N"]
+
+    L1 = TickLabel(None, tlabel)
+
     tspace = [.5,1,1.5, 2.05, 2.6,3.1,3.6,
               5.6,6.1,6.6, 7.15, 7.7,8.2,8.7,
               10.7,11.2,11.7, 12.25, 12.8,13.3,13.8]
-    SBP.setTicks(tick=tspace, label=L1)
+    vspace = [0,-.04,0, -.08, 0,-.04,0,
+              0,-.04,0, -.08, 0,-.04,0,
+              0,-.04,0, -.08, 0,-.04,0]
+
+    SBP.setTicks(tspace=tspace, voffset=vspace, label=L1)
 
     # Set graph styles
     SBP.setLegendStyle(ncol=3, size=10, frame=False)

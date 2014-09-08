@@ -29,8 +29,8 @@ class PatternParser:
         else:
             # The case that keys are denoted manually and must be clustered.
             subtract = None;
-            if kwargs["subtract"] is True:
-                subtract = kwargs["subtract"]
+            if kwargs["subt1st"] is True:
+                subtract = kwargs["subt1st"]
 
             self.cluster(subtract, kwargs["customKey"])
 
@@ -108,14 +108,39 @@ class PatternParser:
         else:
             print("PP::PickKeyWith - Argument type is wrong! Must be string."), exit()
 
-    def sumWithRegionKey(self, keys):
+    # ==== Fimctopm role ====
+    # After "cluster", summing up each start/end data with key
+    def sumWithRegionKey(self, keys, **kwargs):
+        if "prefix" in kwargs:
+            keys = [kwargs["prefix"] + i for i in keys]
+
         _sum = []
         for k in range(0, len(keys)):
             _tmp = 0
-            for i in range(0, len(self.datList[self.keyList.index("GPU "+keys[k]+" end")])):
-                _tmp += self.datList[self.keyList.index("GPU "+keys[k]+" end")][i] \
-                        - self.datList[self.keyList.index("GPU "+keys[k]+" start")][i]
+            for i in range(0, len(self.datList[self.keyList.index(keys[k]+" end")])):
+                _tmp += self.datList[self.keyList.index(keys[k]+" end")][i] \
+                        - self.datList[self.keyList.index(keys[k]+" start")][i]
             _sum.append(_tmp)
+
+        if "update" in kwargs:
+            if kwargs["get"] == True:
+                return _sum
+
+        self.datList = _sum
+
+    # ==== Fimctopm role ====
+    # After "cluster", summing up each data with key
+    def sumWithKey(self, keys):
+        _sum = []
+        for k in range(0, len(keys)):
+            _tmp = 0
+            for i in range(0, len(self.datList[self.keyList.index(keys[k])])):
+                _tmp += self.datList[self.keyList.index(keys[k])][i]
+            _sum.append(_tmp)
+
+        if "update" in kwargs:
+            if kwargs["get"] == True:
+                return _sum
 
         self.datList = _sum
 
@@ -137,6 +162,7 @@ class PatternParser:
     def cluster(self, initial, key):
         text = self.RAWdata.split("\n")
 
+        # subtract all data to initial 0 row's data if flag is set
         if bool(initial) == True:
             initial = text[0].split(": ")[1]
 
