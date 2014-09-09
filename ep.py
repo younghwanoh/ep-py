@@ -89,10 +89,10 @@ elif style == "line-flat":
     D3 = Group(PP, [1,2,3,4], "gpu-only", color="green", marker="o")
     D4 = Group(PP, [1,2,3,4], "cpu+gpu",  color="black", marker="x")
 
-    # D1.setLegend("SEQ") 
-    # D2.setLegend("CPU-only") 
-    # D3.setLegend("GPU-only") 
-    # D4.setLegend("CPU+GPU") 
+    D1.setLegend("SEQ") 
+    D2.setLegend("CPU-only") 
+    D3.setLegend("GPU-only") 
+    D4.setLegend("CPU+GPU") 
 
     LP = LinePlotter(title="LinePlot with flattend format", xlabel="abc", ylabel="ee")
     LP.setLimitOn(x=[0, 10], y=[0, 10])
@@ -113,10 +113,10 @@ elif style == "line-norm":
     D3 = Group(PP, "data", "SEQiavg", color="green", marker="o")
     D4 = Group(PP, "data", "GPUiavg", color="black", marker="x")
 
-    # D1.setLegend("SEQ") 
-    # D2.setLegend("CPU-only") 
-    # D3.setLegend("GPU-only") 
-    # D4.setLegend("CPU+GPU") 
+    D1.setLegend("SEQ") 
+    D2.setLegend("CPU-only") 
+    D3.setLegend("GPU-only") 
+    D4.setLegend("CPU+GPU") 
 
     LP = LinePlotter(title="Normalized LinePlot", xlabel="abc", ylabel="ee")
     LP.draw(D1,D2,D3,D4)
@@ -460,7 +460,7 @@ elif style == "jaws":
     # initial = 1409814899688.332
 
     # Use custom parser mode
-    PP = PatternParser(text, customKey=key, subt1st=True);
+    PP = PatternParser(text, arrange=key, subtfromfirst=True);
 
     # Set GPU data
     D1 = Group(PP, "GPU comm0 start", "GPU comm0 end", color=mc["yellow"], hatch="//")
@@ -537,7 +537,7 @@ elif style == "jaws-all":
     key = key + tag_comm_s + tag_comm_e + tag_exe_s + tag_exe_e
 
     # Use custom parser mode
-    PP = PatternParser(text, customKey=key, subt1st=True);
+    PP = PatternParser(text, arrange=key, subtfromfirst=True);
 
     # Set GPU data
     D4 = Group(PP, "GPU memcp start", "GPU memcp end", color=mc["green"], hatch="")
@@ -604,7 +604,7 @@ elif style == "jaws-pie":
 
     ## Use custom parser mode
     tag = ["memcp", "comm0", "comm1", "comm2", "schdl"]
-    PP = PatternParser(text, customKey=key, subt1st=True);
+    PP = PatternParser(text, arrange=key, subtfromfirst=True);
     PP.sumWithRegionKey(tag, prefix="GPU ")
     fraction = PP.getDataArr()
 
@@ -639,12 +639,12 @@ elif style == "bar-stacked":
     leg = ["memcpy", "init", "task_begin", "task_end", "partition"]
 
     ## First parsing
-    PP = PatternParser(text_sm, customKey=key, subt1st=True);
+    PP = PatternParser(text_sm, arrange=key, subtfromfirst=True);
     PP.sumWithRegionKey(tag, prefix="GPU ")
     S_GPUresult = PP.getDataArr()
 
     ## Second parsing
-    PN = PatternParser(text_nsm, customKey=key, subt1st=True);
+    PN = PatternParser(text_nsm, arrange=key, subtfromfirst=True);
     PN.sumWithRegionKey(tag, prefix="GPU ")
     NS_GPUresult = PN.getDataArr()
 

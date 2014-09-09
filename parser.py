@@ -22,17 +22,17 @@ class PatternParser:
         self.keyParseType = None
         self.RAWdata = argv[0]
 
-        tCheckArgsExists(kwargs, "customKey", "subtract")
-        if kwargs["customKey"] is False:
+        tCheckArgsExists(kwargs, "arrange", "subtfromfirst")
+        if kwargs["arrange"] is False:
             # The case that keys are denoted in files.
             self.rowParse()
         else:
             # The case that keys are denoted manually and must be clustered.
             subtract = None;
-            if kwargs["subt1st"] is True:
-                subtract = kwargs["subt1st"]
+            if kwargs["subtfromfirst"] is True:
+                subtract = kwargs["subtfromfirst"]
 
-            self.cluster(subtract, kwargs["customKey"])
+            self.cluster(subtract, kwargs["arrange"])
 
     def rowParse(self):
         """Parse col data with \n"""

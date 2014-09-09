@@ -7,16 +7,21 @@ from matplotlib.backends.backend_pdf import PdfPages
 from tools import tTranspose, tMergeCrossSpace
 
 class AbstractPlotter(object):
-    baseOffset = 0
-
     # patch: graph obj lists, legend: legend lists
     patch = []
     legend = []
 
+    baseOffset = 0
     globalBase = np.array([])
     def __init__(self, **kwargs):
         self.fig, self.ax = plt.subplots()
+
+        self.manualLegendStyle=False
+        self.manualBase = False
+        self.tickLabel = tickLabelInit()
+        self.tickAngle = 0
         self.FigSideMargin = 0.12 
+
         if "figmargin" in kwargs:
             self.FigSideMargin = kwargs["figmargin"]
         if "ylabel" in kwargs:
@@ -25,11 +30,20 @@ class AbstractPlotter(object):
             self.ax.set_xlabel(kwargs["xlabel"])
         if "title" in kwargs:
             self.ax.set_title(kwargs["title"])
-
         if ("width" in kwargs) & ("height" in kwargs):
             self.fig.set_size_inches(kwargs["width"], kwargs["height"])
 
-        self.manualLegendStyle=False
+    def setTicks(self, **kwargs):
+        if "tspace" in kwargs:
+            self.manualBase = True
+            self.tspace = kwargs["tspace"]
+            #FIXME:: Maual tick space settings aren't yet implemented for BoxPlotter
+        if "voffset" in kwargs:
+            self.voffset = kwargs["voffset"]
+        if "label" in kwargs:
+            self.tickLabel = kwargs["label"]
+        if "angle" in kwargs:
+            self.tickAngle = kwargs["angle"]
 
     def setBaseOffset(self, offset):
         # Graph's offset if multiple graphs are drawn
@@ -50,7 +64,6 @@ class AbstractPlotter(object):
             self.legsize = kwargs["size"]
         if "frame" in kwargs:
             self.frame = kwargs["frame"]
-
 
     def setLimitOn(self, **kwargs):
         # set y-space
@@ -81,7 +94,7 @@ class AbstractPlotter(object):
         plt.show()
         plt.close()
 
-    # Internally used function start ==============================================================================
+    # Private function start ====================================================
     def callBeforeDraw(self):
         pass
 
@@ -97,6 +110,7 @@ class AbstractPlotter(object):
         else:
             self.ax.legend(target, legend)
         self.manualLegendStyle=False
+    # Private function end ======================================================
 
 class tickLabelInit:
     """Initializer of tickLabel class"""
@@ -131,26 +145,11 @@ class AbstractBarPlotter(AbstractPlotter):
         AbstractPlotter.__init__(self, **kwargs)
         # Initial base point
         self.base = [0]
-
-        self.setManualBase = False
         self.barwidth = 1
-        self.tickLabel = tickLabelInit()
-        self.tickAngle = 0
 
         if "barwidth" in kwargs:
             # barwidth can be assigned as a style over all bars
             self.barwidth = kwargs["barwidth"] 
-
-    def setTicks(self, **kwargs):
-        if "tspace" in kwargs:
-            self.setManualBase = True
-            self.tspace = kwargs["tspace"]
-        if "voffset" in kwargs:
-            self.voffset = kwargs["voffset"]
-        if "label" in kwargs:
-            self.tickLabel = kwargs["label"]
-        if "angle" in kwargs:
-            self.tickAngle = kwargs["angle"]
 
     def callBeforeDraw(self, **kwargs):
         # barwidth can also be assigned to each different elem
@@ -201,7 +200,7 @@ class SBarPlotter(AbstractBarPlotter):
         self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
-        if self.setManualBase == False:
+        if self.manualBase == False:
             self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
         else:
             self.ax.set_xticks(self.tspace)
@@ -209,7 +208,7 @@ class SBarPlotter(AbstractBarPlotter):
 
             for t, y in zip( self.ax.get_xticklabels( ), self.voffset ):
                 t.set_y( y )
-            self.setManualBase = True
+            self.manualBase = True
 
         self.ax.xaxis.labelpad=10
 
@@ -323,9 +322,6 @@ class AbstractBoxPlotter(AbstractPlotter):
         # Initial base point
         self.base = [0]
 
-        self.setManualBase = False
-        self.tickLabel = tickLabelInit()
-        self.tickAngle = 0
         self.boxwidth = 1
         self.vertical = True
 
@@ -333,18 +329,6 @@ class AbstractBoxPlotter(AbstractPlotter):
             self.vertical = kwargs["vertical"]
         if "boxwidth" in kwargs:
             self.boxwidth = float(kwargs["boxwidth"])
-
-    def setTicks(self, **kwargs):
-        if "tspace" in kwargs:
-            self.setManualBase = True
-            self.tspace = kwargs["tspace"]
-            #FIXME:: Maual tick space settings aren't yet implemented
-        if "voffset" in kwargs:
-            self.voffset = kwargs["voffset"]
-        if "label" in kwargs:
-            self.tickLabel = kwargs["label"]
-        if "angle" in kwargs:
-            self.tickAngle = kwargs["angle"]
 
     def callBeforeDraw(self, **kwargs):
         # boxwidth can also be assigned to each different elem

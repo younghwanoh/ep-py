@@ -4,7 +4,7 @@ import os
 from time import sleep
 import sys
 
-tests = ["line-key","line-raw","line-norm","pie","bar-clustered",
+tests = ["line-key","line-raw","line-flat","line-norm","pie","bar-clustered",
          "bar-norm-clustered","bar-key-clustered","bar-key-cc","bar-single",
          "box-key","box-time", "box-multi-time","jaws","bar-clustacked","getter-test"]
 
