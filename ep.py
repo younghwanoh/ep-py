@@ -372,9 +372,10 @@ elif style == "box-key":
     L1 = TickLabel(None, ["CPU 0", "CPU 1", "CPU 2", "CPU 3", "GPU 0"])
 
     # Draw box
-    BOP = BoxPlotter(title="BoxPlot with start/end points",
-                     xlabel="Device", ylabel="Degree of process", boxwidth=2, vertical=True, timeline=False) 
-    BOP.draw(D1, D2, D3, D4, D5, ticklabel=L1)
+    BOP = BoxPlotter(title="BoxPlot with start/end points", xlabel="Device",
+                     ylabel="Degree of process", boxwidth=2, vertical=True, timeline=False)
+    BOP.setTicks(label=L1)
+    BOP.draw(D1, D2, D3, D4, D5)
     BOP.saveToPdf(output)
 
 # box graph
@@ -400,10 +401,11 @@ elif style == "box-time":
 
     # Draw box
     BOP = BoxPlotter(title="BoxPlot with start/end points", width=10, height=4,
-                     xlabel="Time", ylabel="Running Device", boxwidth=2, vertical=False, timeline=True)
+                     xlabel="Time", ylabel="Running Device", figmargin=0.8,
+                     vertical=False, timeline=True)
 
     BOP.setLegendStyle(ncol=5, size=12, frame=False) 
-    BOP.draw(D1, D2, D3, D4, D5, figmargin=0.8)
+    BOP.draw(D1, D2, D3, D4, D5, boxwidth=2)
     BOP.saveToPdf(output)
 
 elif style == "box-multi-time":
@@ -440,10 +442,11 @@ elif style == "box-multi-time":
 
     # Draw box
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=12, height=5,
-                     xlabel="Time (ms)", boxwidth=2, vertical=False, timeline=True)
+                       xlabel="Time (ms)", figmargin=0.4, vertical=False, timeline=True)
 
     CBOP.setLegendStyle(ncol=5, size=13, frame=False)
-    CBOP.draw(G1, G2, G3, figmargin=0.4, ticklabel=L1)
+    CBOP.setTicks(label=L1)
+    CBOP.draw(G1, G2, G3, boxwidth=2)
     CBOP.saveToPdf(output)
 
 elif style == "jaws":
@@ -497,10 +500,11 @@ elif style == "jaws":
 
     # Draw box
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=14, height=5,
-                     xlabel="Time (ms)", boxwidth=2, vertical=False)
+                       xlabel="Time (ms)", figmargin=0.4, vertical=False)
 
     CBOP.setLegendStyle(ncol=5, size=13, frame=False)
-    CBOP.draw(G1, G2, G3, G4, G5, G6, G7, figmargin=0.4, ticklabel=L1)
+    CBOP.setTicks(label=L1)
+    CBOP.draw(G1, G2, G3, G4, G5, G6, G7, boxwidth=2)
     CBOP.saveToPdf(output)
 
 elif style == "jaws-all":
@@ -580,10 +584,11 @@ elif style == "jaws-all":
 
     # Draw box
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=12, height=7,
-                     xlabel="Time (ms)", boxwidth=2, vertical=False)
+                     xlabel="Time (ms)", figmargin=0.1, vertical=False)
 
     CBOP.setLegendStyle(ncol=6, size=13, frame=False)
-    CBOP.draw(*argument, figmargin=0.1, ticklabel=L1)
+    CBOP.setTicks(label=L1)
+    CBOP.draw(*argument, boxwidth=2)
     CBOP.saveToPdf(output)
 
 elif style == "jaws-pie":
@@ -600,7 +605,7 @@ elif style == "jaws-pie":
     ## Use custom parser mode
     tag = ["memcp", "comm0", "comm1", "comm2", "schdl"]
     PP = PatternParser(text, customKey=key, subt1st=True);
-    PN.sumWithRegionKey(tag, prefix="GPU ")
+    PP.sumWithRegionKey(tag, prefix="GPU ")
     fraction = PP.getDataArr()
 
     ## Custom data process after parsing
@@ -668,7 +673,8 @@ elif style == "bar-stacked":
 
     # Draw
     SBP.setLimitOn(y=[0, 1.2])
-    SBP.draw(S_GPUresult, NS_GPUresult, ticklabel=L1, barwidth=1)
+    SBP.setTicks(label=L1)
+    SBP.draw(S_GPUresult, NS_GPUresult, barwidth=1)
     SBP.saveToPdf(output)
 
 elif style == "bar-clustacked":

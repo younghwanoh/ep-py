@@ -6,7 +6,7 @@ import sys
 
 tests = ["line-key","line-raw","line-norm","pie","bar-clustered",
          "bar-norm-clustered","bar-key-clustered","bar-key-cc","bar-single",
-         "box-key","box-time","jaws","bar-clustacked","getter-test"]
+         "box-key","box-time", "box-multi-time","jaws","bar-clustacked","getter-test"]
 
 for i in tests:
     print("\033[1;31m%s\033[m test !! ============================================" % i)

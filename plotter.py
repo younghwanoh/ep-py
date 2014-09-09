@@ -16,6 +16,9 @@ class AbstractPlotter(object):
     globalBase = np.array([])
     def __init__(self, **kwargs):
         self.fig, self.ax = plt.subplots()
+        self.FigSideMargin = 0.12 
+        if "figmargin" in kwargs:
+            self.FigSideMargin = kwargs["figmargin"]
         if "ylabel" in kwargs:
             self.ax.set_ylabel(kwargs["ylabel"])
         if "xlabel" in kwargs:
@@ -111,14 +114,15 @@ class LinePlotter(AbstractPlotter):
         self.callBeforeDraw()
 
         keyLen = len(argv)
-        pc = range(keyLen)
+        self.patch = range(keyLen)
 
-        legend = []
         for i in range(keyLen):
-            pc[i], = self.ax.plot(argv[i].X, argv[i].Y, linewidth=1, marker=argv[i].marker, color=argv[i].color)
-            legend.append(argv[i].legend)
+            self.patch[i], = self.ax.plot(argv[i].X, argv[i].Y, linewidth=1,
+                                          marker=argv[i].marker, color=argv[i].color)
+            self.legend.append(argv[i].legend)
 
-        self.drawLegend(pc, legend);
+    def FinalCall(self):
+        self.drawLegend(self.patch, self.legend);
 
 
 class AbstractBarPlotter(AbstractPlotter):
@@ -132,17 +136,14 @@ class AbstractBarPlotter(AbstractPlotter):
         self.barwidth = 1
         self.tickLabel = tickLabelInit()
         self.tickAngle = 0
-        self.FigSideMargin = 0.12 
 
-        if "figmargin" in kwargs:
-            self.FigSideMargin = kwargs["figmargin"]
         if "barwidth" in kwargs:
             # barwidth can be assigned as a style over all bars
             self.barwidth = kwargs["barwidth"] 
 
     def setTicks(self, **kwargs):
-        self.setManualBase = True
         if "tspace" in kwargs:
+            self.setManualBase = True
             self.tspace = kwargs["tspace"]
         if "voffset" in kwargs:
             self.voffset = kwargs["voffset"]
@@ -156,8 +157,6 @@ class AbstractBarPlotter(AbstractPlotter):
         if "barwidth" in kwargs:
             self.barwidth = kwargs["barwidth"]
 
-# avg = lambda x, y: (float(x[y] + x[y-1]))/2
-# tMergeCrossSpace(range(10), avg)
 
 class SBarPlotter(AbstractBarPlotter):
     """Draw stacked bar graph with grouped data or column-parsed data"""
@@ -197,14 +196,12 @@ class SBarPlotter(AbstractBarPlotter):
             self.patch.append(self.ax.bar(self.base, data[i], self.barwidth,
                               color=self.colors[i], hatch=self.hatch[i], bottom=accum))
 
-
     def FinalCall(self):
         # set legend
         self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.setManualBase == False:
-            print(self.globalBase+float(self.barwidth)/2)
             self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
         else:
             self.ax.set_xticks(self.tspace)
@@ -257,6 +254,7 @@ class CBarPlotter(AbstractBarPlotter):
 
 
 class CCBarPlotter(AbstractBarPlotter):
+    cc_globalBase = np.array([])
     """Draw clustered*2 bar graph with grouped parsed data"""
     def __init__(self, **kwargs):
         AbstractBarPlotter.__init__(self, **kwargs)
@@ -289,10 +287,11 @@ class CCBarPlotter(AbstractBarPlotter):
         interGlobalOffset = interClusterOffset * datLen * self.BtwGroupMargin
 
         for k, eachGroup in enumerate(argv):
-            keyLen = eachGroup.length
+            self.keyLen = eachGroup.length
             datLen = len(eachGroup.content[0].Y)
             # base calcuation (x position of bar with array)
-            base.append(np.arange(datLen) * interClusterOffset + interGlobalOffset * k)
+            base.append(np.arange(datLen) * interClusterOffset +
+                        interGlobalOffset * k + self.baseOffset)
 
             # Update global accumulative variables
             globalBase = np.concatenate((globalBase, base[k] + (self.barwidth*keyLen)/2)) 
@@ -303,55 +302,79 @@ class CCBarPlotter(AbstractBarPlotter):
                 if bool(elem.legend):
                     self.legend.append(elem.legend)
 
+        # Accumulate tick bases to global base
+        self.cc_globalBase = np.concatenate([self.cc_globalBase, globalBase])
+
+    def FinalCall(self):
         # set legend
         self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
-        self.ax.set_xticks(globalBase)
+        self.ax.set_xticks(self.cc_globalBase)
         self.ax.set_xticklabels(self.tickLabel, rotation=self.tickAngle)
 
-        LengthOfWholeBar = base[-1][-1] + self.barwidth*keyLen
+        LengthOfWholeBar = self.cc_globalBase[-1] + self.barwidth*self.keyLen
         plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
-class BoxPlotter(AbstractPlotter):
-    """Draw clustered bar graph with grouped data or column-parsed data"""
+class AbstractBoxPlotter(AbstractPlotter):
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
+        # Initial base point
+        self.base = [0]
 
-        # Default properties
-        self.boxwidth = 1
-        self.vertical = True
-        self.timeline = False
+        self.setManualBase = False
         self.tickLabel = tickLabelInit()
         self.tickAngle = 0
+        self.boxwidth = 1
+        self.vertical = True
 
-        if "boxwidth" in kwargs:
-            self.boxwidth = float(kwargs["boxwidth"])
         if "vertical" in kwargs:
             self.vertical = kwargs["vertical"]
+        if "boxwidth" in kwargs:
+            self.boxwidth = float(kwargs["boxwidth"])
+
+    def setTicks(self, **kwargs):
+        if "tspace" in kwargs:
+            self.setManualBase = True
+            self.tspace = kwargs["tspace"]
+            #FIXME:: Maual tick space settings aren't yet implemented
+        if "voffset" in kwargs:
+            self.voffset = kwargs["voffset"]
+        if "label" in kwargs:
+            self.tickLabel = kwargs["label"]
+        if "angle" in kwargs:
+            self.tickAngle = kwargs["angle"]
+
+    def callBeforeDraw(self, **kwargs):
+        # boxwidth can also be assigned to each different elem
+        if "boxwidth" in kwargs:
+            self.boxwidth = kwargs["boxwidth"]
+
+
+class BoxPlotter(AbstractBoxPlotter):
+    """Draw clustered bar graph with grouped data or column-parsed data"""
+    def __init__(self, **kwargs):
+        AbstractBoxPlotter.__init__(self, **kwargs)
+        # Default properties
+        self.timeline = False
+
         if "timeline" in kwargs:
             self.timeline = kwargs["timeline"]
 
     def draw(self, *argv, **kwargs):
         self.callBeforeDraw()
 
-        # default 12% margin to entire box width
-        FigSideMargin = 0.12 
-
-        if "figmargin" in kwargs:
-            FigSideMargin = kwargs["figmargin"]
-        if "ticklabel" in kwargs:
-            self.tickLabel = kwargs["ticklabel"]
-        if "tickangle" in kwargs:
-            self.tickAngle = kwargs["tickangle"]
-
         keyLen = len(argv)
 
+        # Calculate global/local base
         if self.timeline is True:
-            base = np.linspace(0, 0, keyLen)
+            base = np.linspace(0, 0, keyLen) + self.baseOffset
         else:
-            base = np.linspace(0, self.boxwidth*(keyLen+2), keyLen)
+            base = np.linspace(0, self.boxwidth*(keyLen+2), keyLen) + self.baseOffset
+
+        # Accumulate tick bases to global base
+        self.globalBase = np.concatenate([self.globalBase, base])
 
         for i in range(keyLen):
             datLen = len(argv[i].X)
@@ -367,56 +390,36 @@ class BoxPlotter(AbstractPlotter):
                 self.patch.append(rect)
                 self.legend.append(argv[i].legend)
 
+    def FinalCall(self):
         # set legend
         self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.vertical is True:
-            self.ax.set_xticks(base + self.boxwidth/2)
+            self.ax.set_xticks(self.globalBase + self.boxwidth/2)
             self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
         else:
-            self.ax.set_yticks(base + self.boxwidth/2)
+            self.ax.set_yticks(self.globalBase + self.boxwidth/2)
             self.ax.set_yticklabels(self.tickLabel.content, rotation=self.tickAngle)
 
         # set x / y-range
         if self.vertical is True:
             self.ax.autoscale(enable=True, axis='y', tight=False)
-            LengthOfWholeBar = base[-1] + self.boxwidth
-            plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+            LengthOfWholeBar = self.globalBase[-1] + self.boxwidth
+            plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
         else:
             self.ax.autoscale(enable=True, axis='x', tight=False)
-            LengthOfWholeBar = base[-1] + self.boxwidth
-            plt.ylim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+            LengthOfWholeBar = self.globalBase[-1] + self.boxwidth
+            plt.ylim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
-class CBoxPlotter(AbstractPlotter):
+class CBoxPlotter(AbstractBoxPlotter):
     """Draw clustered bar graph with grouped data or column-parsed data"""
     def __init__(self, **kwargs):
-        AbstractPlotter.__init__(self, **kwargs)
-
-        # Default properties
-        self.boxwidth = 1
-        self.vertical = True
-        self.tickLabel = tickLabelInit()
-        self.tickAngle = 0
-
-        if "boxwidth" in kwargs:
-            self.boxwidth = float(kwargs["boxwidth"])
-        if "vertical" in kwargs:
-            self.vertical = kwargs["vertical"]
+        AbstractBoxPlotter.__init__(self, **kwargs)
 
     def draw(self, *argv, **kwargs):
         self.callBeforeDraw()
-
-        # default 12% margin to entire box width
-        FigSideMargin = 0.12 
-
-        if "figmargin" in kwargs:
-            FigSideMargin = kwargs["figmargin"]
-        if "ticklabel" in kwargs:
-            self.tickLabel = kwargs["ticklabel"]
-        if "tickangle" in kwargs:
-            self.tickAngle = kwargs["tickangle"]
 
         GroupLen = len(argv)
 
@@ -424,8 +427,11 @@ class CBoxPlotter(AbstractPlotter):
         for i in range(GroupLen):
             keyLen.append(argv[i].length)
 
-        base = np.linspace(0, self.boxwidth*(GroupLen+1), GroupLen)
-        # base[3:] += 2
+        # By default, CBoxPlotter draws timeline
+        base = np.linspace(0, self.boxwidth*(GroupLen+1), GroupLen) + self.baseOffset
+
+        # Accumulate tick bases to global base
+        self.globalBase = np.concatenate([self.globalBase, base])
 
         for z in range(GroupLen):
             arg = argv[z].content
@@ -443,26 +449,27 @@ class CBoxPlotter(AbstractPlotter):
                     self.patch.append(rect)
                     self.legend.append(arg[i].legend)
 
+    def FinalCall(self):
         # set legend
         self.drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.vertical is True:
-            self.ax.set_xticks(base + self.boxwidth/2)
+            self.ax.set_xticks(self.globalBase + self.boxwidth/2)
             self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
         else:
-            self.ax.set_yticks(base + self.boxwidth/2)
+            self.ax.set_yticks(self.globalBase + self.boxwidth/2)
             self.ax.set_yticklabels(self.tickLabel.content, rotation=self.tickAngle)
 
         # set x / y-range
         if self.vertical is True:
             self.ax.autoscale(enable=True, axis='y', tight=False)
-            LengthOfWholeBar = base[-1] + self.boxwidth
-            plt.xlim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+            LengthOfWholeBar = self.globalBase[-1] + self.boxwidth
+            plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
         else:
             self.ax.autoscale(enable=True, axis='x', tight=False)
-            LengthOfWholeBar = base[-1] + self.boxwidth
-            plt.ylim([-LengthOfWholeBar*FigSideMargin, LengthOfWholeBar*(1+FigSideMargin)])
+            LengthOfWholeBar = self.globalBase[-1] + self.boxwidth
+            plt.ylim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
 class PiePlotter(AbstractPlotter):
