@@ -27,33 +27,34 @@ Top(or test) module to draw graphs using ep.py APIs
 User should denote specification of data layout and graph's layout.
 
 * Supported graph type
-  1. Line (line-key, line-raw, line-flat)
-  2. Normalized line (line-norm)
-  3. Clustered Bar (bar-clustered, bar-key-clustered)
-  4. Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)
-  5. Clustered Clustered Bar (bar-key-cc)
-  6. Stacked Bar (bar-stacked)
-  7. Box (box-key, box-time)
-  8. Clustered Box (jaws-all, jaws)
-  9. Pie (jaws-pie)
-  10. Multiple subplot (Not yet)
-  11. CDF (Not yet)
-  12. etc...
+  1) Line (line-key, line-raw, line-flat)
+  2) Normalized line (line-norm)
+  3) Clustered Bar (bar-clustered, bar-key-clustered)
+  4) Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)
+  5) Clustered Clustered Bar (bar-key-cc)
+  6) Stacked Bar (bar-stacked, bar-clustacked)
+  7) Box (box-key, box-time, box-multi-time)
+  8) Clustered Box (jaws-all, jaws)
+  9) Pie (jaws-pie)
+  10) Multiple subplot (Not yet)
+  11) CDF (Not yet)
+  12) etc...
 
 ref. "jaws-\*" examples can be also tested with "draw.sh" styles
 
 ### Example usages
 
 * ./ep.py -i \[input\] \[attributes ...\]
-  1. ./ep.py -i dat/line.dat -s line-key
-  2. ./ep.py -i dat/line-norm.dat -s line-norm
-  3. ./ep.py -i dat/bar-clustered.dat -s bar-clustered
-  4. ./ep.py -i dat/bar-clustered.dat -s bar-norm-clustered
-  5. ./ep.py -i dat/bar-key-cc.dat -s bar-key-cc
-  6. ./ep.py -i dat/jaws/atax.share.log -s bar-stacked
-  7. ./ep.py -i dat/box.dat -s box-key
-  8. ./ep.py -i dat/box.dat -s box-time
-  9. ./ep.py -i dat/jaws/atax.share.log -s jaws-pie
+  1) ./ep.py -i dat/line.dat -s line-key
+  2) ./ep.py -i dat/line-norm.dat -s line-norm
+  3) ./ep.py -i dat/bar-clustered.dat -s bar-clustered
+  4) ./ep.py -i dat/bar-clustered.dat -s bar-norm-clustered
+  5) ./ep.py -i dat/bar-key-cc.dat -s bar-key-cc
+  6-1) ./ep.py -si atax -s bar-stacked
+  6-2) ./ep.py -s bar-clustacked
+  7) ./ep.py -i dat/box.dat -s box-key
+  8) ./ep.py -i dat/box.dat -s box-time
+  9) ./ep.py -i dat/jaws/atax.share.log -s jaws-pie
 
 * Sub attributes
   - -f data format
