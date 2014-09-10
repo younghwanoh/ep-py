@@ -4,15 +4,6 @@ from sys import stdout
 
 from tools import *
 
-# ==== Function role ====
-# Dump <<key, value>> pares from <<"value", "base_key">>
-# if the keys are found in the specified "partial_key"
-
-def dump(value, base_key, partial_key):
-    writeLine = csv.writer(stdout, delimiter='\t')
-    for k in range(len(base_key)):
-        if base_key[k].find(partial_key) >= 0:
-            writeLine.writerow([base_key[k]]+value[k])
 
 # Front-end parser
 class PatternParser:
@@ -22,7 +13,7 @@ class PatternParser:
         self.keyParseType = None
         self.RAWdata = argv[0]
 
-        tCheckArgsExists(kwargs, "arrange", "subtfromfirst")
+        tCheckArgsExists(kwargs, "region", "arrange", "subtfromfirst")
         if kwargs["arrange"] is False:
             # The case that keys are denoted in files.
             self.rowParse()
@@ -31,8 +22,19 @@ class PatternParser:
             subtract = None;
             if kwargs["subtfromfirst"] is True:
                 subtract = kwargs["subtfromfirst"]
+            if kwargs["region"] is True:
+                # Cluster with region key
+                key = []
+                for elem in kwargs["arrange"]:
+                    key.append(elem + " start")
+                    key.append(elem + " end")
+            else:
+                # Cluster withh manual start/end key
+                key = kwargs["arrange"]
+                    
+            assert bool(key) & (len(key) > 0)
 
-            self.cluster(subtract, kwargs["arrange"])
+            self.cluster(subtract, key)
 
     def rowParse(self):
         """Parse col data with \n"""
@@ -145,6 +147,16 @@ class PatternParser:
         self.datList = _sum
 
     # ==== Function role ====
+    # Dump <<key, value>> pares from <<"value", "base_key">>
+    # if the keys are found in the specified "partial_key"
+
+    def dump(self, value, base_key, partial_key):
+        writeLine = csv.writer(stdout, delimiter='\t')
+        for k in range(len(base_key)):
+            if base_key[k].find(partial_key) >= 0:
+                writeLine.writerow([base_key[k]]+value[k])
+
+    # ==== Function role ====
     # Cluster raw spread data to each group (only for the data which denotes special key)
     # e.g.
     # before
@@ -174,7 +186,7 @@ class PatternParser:
                 if raw[0] == key[k]:
                     value[k].append(float(raw[1]) - float(initial))
 
-        # dump(value, key, "GPU memcp")
+        # self.dump(value, key, "GPU memcp")
 
         self.keyList = key
         self.datList = value

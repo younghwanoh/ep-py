@@ -451,51 +451,44 @@ elif style == "box-multi-time":
 
 elif style == "jaws":
 
-    key = ["GPU comm0 start", "GPU comm0 end", "GPU comm1 start", "GPU comm1 end", "GPU memcp start", "GPU memcp end",
-           "GPU exe start", "GPU exe end", "CPU comm0 start", "CPU comm0 end", "CPU exe0 start", "CPU exe0 end",
-           "CPU exe1 start", "CPU exe1 end", "CPU comm1 start", "CPU comm1 end", "GPU comm2 start", "GPU comm2 end"]
+    key = ["GPU comm0", "GPU comm1", "GPU memcp",
+           "GPU exe", "CPU comm0", "CPU exe0",
+           "CPU exe1", "CPU comm1", "GPU comm2"]
     # text = tRead("dat/breakSM.dat")
-    # initial = 1409813537567.167
     text = tRead("dat/breakNoSM.dat")
-    # initial = 1409814899688.332
 
     # Use custom parser mode
-    PP = PatternParser(text, arrange=key, subtfromfirst=True);
+    PP = PatternParser(text, arrange=key, region=True, subtfromfirst=True);
 
     # Set GPU data
-    D1 = Group(PP, "GPU comm0 start", "GPU comm0 end", color=mc["yellow"], hatch="//")
-    D2 = Group(PP, "GPU comm1 start", "GPU comm1 end", color=mc["yellow"], hatch="//")
-    D3 = Group(PP, "GPU comm2 start", "GPU comm2 end", color=mc["yellow"], hatch="//")
+    D1 = Group(PP, "GPU comm0", region=True, color=mc["yellow"], hatch="//")
+    D2 = Group(PP, "GPU comm1", region=True, color=mc["yellow"], hatch="//")
+    D3 = Group(PP, "GPU comm2", region=True, color=mc["yellow"], hatch="//")
     G1 = Group(D1, D2, D3)
 
-    D4 = Group(PP, "GPU memcp start", "GPU memcp end", color=mc["red"], hatch="")
+    D4 = Group(PP, "GPU memcp", region=True, color=mc["red"], hatch="")
     G2 = Group(D4)
 
-    D5 = Group(PP, "GPU exe start", "GPU exe end", color=mc["blue"], hatch="")
+    D5 = Group(PP, "GPU exe", region=True, color=mc["blue"], hatch="")
     G3 = Group(D5)
 
     # Set CPU data
-    D6 = Group(PP, "CPU comm0 start", "CPU comm0 end", color=mc["yellow"], hatch="//")
+    D6 = Group(PP, "CPU comm0", region=True, color=mc["yellow"], hatch="//")
     G4 = Group(D6)
 
-    D7 = Group(PP, "CPU comm1 start", "CPU comm1 end", color=mc["yellow"], hatch="//")
+    D7 = Group(PP, "CPU comm1", region=True, color=mc["yellow"], hatch="//")
     G5 = Group(D7)
 
-    D8 = Group(PP, "CPU exe0 start", "CPU exe0 end", color=mc["blue"], hatch="")
+    D8 = Group(PP, "CPU exe0", region=True, color=mc["blue"], hatch="")
     G6 = Group(D8)
 
-    D9 = Group(PP, "CPU exe1 start", "CPU exe1 end", color=mc["blue"], hatch="")
+    D9 = Group(PP, "CPU exe1", region=True, color=mc["blue"], hatch="")
     G7 = Group(D9)
 
     tag = ["GPU comm", "GPU memcp", "GPU exe", "CPU comm0", "CPU comm1", "CPU exe0", "CPU exe1"]
-    D1.setLegend(tag[0])
-    D4.setLegend(tag[1])
-    D5.setLegend(tag[2])
-    D6.setLegend(tag[3])
-    D7.setLegend(tag[4])
-    D8.setLegend(tag[5])
-    D9.setLegend(tag[6])
 
+    # Set legend and label to data
+    tSetLegend(tag, D1,D4,D5,D6,D7,D8,D9)
     L1 = TickLabel(PP, tag)
 
     # Draw box
@@ -509,71 +502,54 @@ elif style == "jaws":
 
 elif style == "jaws-all":
 
-    key = [ "GPU comm0 start", "GPU comm0 end",
-            "GPU comm1 start", "GPU comm1 end",
-            "GPU memcp start", "GPU memcp end",
-            "GPU exe start", "GPU exe end",
-            "GPU comm2 start", "GPU comm2 end",
-            "GPU schdl start", "GPU schdl end"]
+    key = [ "GPU comm0","GPU comm1","GPU memcp","GPU exe","GPU comm2","GPU schdl"]
     # text = tRead("dat/jaws/atax.share.log")
     # text = tRead("dat/breakSM.dat")
     ## text = tRead("dat/breakNoSM.dat")
 
-    tag_ = []
-    tag_comm_s = []
-    tag_comm_e = []
-    tag_exe_s = []
-    tag_exe_e = []
+    cpu_tag = []
+    gpu_tag = ["GPU schdl", "GPU memcp", "GPU comm", "GPU exe"]
+    key_comm = []
+    key_exe = []
     for i in range(10):
-        tag_.append("CPU%d" % i)
-        tag_comm_s.append("CPU%d comm0 start" % i)
-        tag_comm_e.append("CPU%d comm0 end" % i)
-        tag_comm_s.append("CPU%d comm1 start" % i)
-        tag_comm_e.append("CPU%d comm1 end" % i)
-        tag_comm_s.append("CPU%d comm2 start" % i)
-        tag_comm_e.append("CPU%d comm2 end" % i)
-        tag_exe_s.append("CPU%d exe start" % i)
-        tag_exe_e.append("CPU%d exe end" % i)
-    key = key + tag_comm_s + tag_comm_e + tag_exe_s + tag_exe_e
-
+        cpu_tag.append("CPU%d" % i)
+        key_comm.append("CPU%d comm0" % i)
+        key_comm.append("CPU%d comm1" % i)
+        key_comm.append("CPU%d comm2" % i)
+        key_exe.append("CPU%d exe" % i)
+    key = key + key_comm + key_exe
     # Use custom parser mode
-    PP = PatternParser(text, arrange=key, subtfromfirst=True);
+    PP = PatternParser(text, arrange=key, region=True, subtfromfirst=True);
 
     # Set GPU data
-    D4 = Group(PP, "GPU memcp start", "GPU memcp end", color=mc["green"], hatch="")
+    D4 = Group(PP, "GPU memcp", region=True, color=mc["green"], hatch="")
     G1 = Group(D4)
 
-    D1 = Group(PP, "GPU comm0 start", "GPU comm0 end", color=mc["red"], hatch="\\")
-    D2 = Group(PP, "GPU comm1 start", "GPU comm1 end", color=mc["yellow"], hatch="\\")
-    D3 = Group(PP, "GPU comm2 start", "GPU comm2 end", color=mc["yellow"], hatch="//")
+    D1 = Group(PP, "GPU comm0", region=True, color=mc["red"], hatch="\\")
+    D2 = Group(PP, "GPU comm1", region=True, color=mc["yellow"], hatch="\\")
+    D3 = Group(PP, "GPU comm2", region=True, color=mc["yellow"], hatch="//")
     G2 = Group(D1, D2, D3)
 
-    D5 = Group(PP, "GPU exe start", "GPU exe end", color=mc["blue"], hatch="")
+    D5 = Group(PP, "GPU exe", region=True, color=mc["blue"], hatch="")
     G3 = Group(D5)
 
-    D6 = Group(PP, "GPU schdl start", "GPU schdl end", color="#428bca", hatch="")
+    D6 = Group(PP, "GPU schdl", region=True, color="#428bca", hatch="")
     G4 = Group(D6)
 
     D = []
     G = []
     # Set CPU data
     for i in range(10):
-        D.append(Group(PP, "CPU%d comm0 start" % i, "CPU%d comm0 end" % i, color=mc["red"], hatch="\\"))
-        D.append(Group(PP, "CPU%d comm1 start" % i, "CPU%d comm1 end" % i, color=mc["yellow"], hatch="\\"))
-        D.append(Group(PP, "CPU%d comm2 start" % i, "CPU%d comm2 end" % i, color=mc["yellow"], hatch="//"))
-        D.append(Group(PP, "CPU%d exe start" % i, "CPU%d exe end" % i, color=mc["blue"], hatch=""))
-        G.append(Group(D[-4], D[-3], D[-2], D[-1]))
+        D7 = Group(PP, "CPU%d comm0" % i, region=True, color=mc["red"], hatch="\\")
+        D8 = Group(PP, "CPU%d comm1" % i, region=True, color=mc["yellow"], hatch="\\")
+        D9 = Group(PP, "CPU%d comm2" % i, region=True, color=mc["yellow"], hatch="//")
+        D10= Group(PP, "CPU%d exe" % i, region=True, color=mc["blue"], hatch="")
+        G.append(Group(D7, D8, D9, D10))
 
-    tag = ["GPU schdl", "GPU memcp", "GPU comm", "GPU exe"] + tag_
-    # D1.setLegend(tag[0])
-    # D4.setLegend(tag[1])
-    # D5.setLegend(tag[2])
-    # for i in range(10):
-    #     D[i].setLegend(tag[i+3])
-
+    tag = gpu_tag + cpu_tag
     L1 = TickLabel(PP, tag)
-    argument = [G4, G1, G2, G3] + G
 
+    argument = [G4, G1, G2, G3] + G
 
     D1.setLegend("comm0")
     D2.setLegend("comm1")

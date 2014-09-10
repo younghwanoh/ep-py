@@ -29,6 +29,10 @@ def tMergeCrossSpace(val, func):
         val.insert(idx, func(val, idx))
     return val
 
+def tSetLegend(tag, *argv):
+    for i in range(len(argv)):
+        argv[i].setLegend(tag[i])
+
 def tCheckArgsExists(kwargs, *argv):
     """Checking directory arguments are exists and set values on each index"""
     for key in argv:
@@ -67,6 +71,7 @@ class Group:
         self.keyX = None
         self.keyY = None
 
+        tCheckArgsExists(kwargs, "region")
         if "color" in kwargs:
             self.color = kwargs["color"]
         if "marker" in kwargs:
@@ -74,7 +79,10 @@ class Group:
         if "hatch" in kwargs:
             self.hatch = kwargs["hatch"]
 
-        if len(argv) == 1:
+        if kwargs["region"] is True:
+            # Group data with region surfix
+            self.groupDataWithRegionKey(PP, argv)
+        elif len(argv) == 1:
             # Single data array (for bar)
             if type(argv[0]) is str:
                 self.keyY = argv[0]
@@ -114,6 +122,19 @@ class Group:
 
     def setLegend(self, string):
         self.legend = string
+
+    def groupDataWithRegionKey(self, PP, argv):
+        # Find Start Point
+        self.keyX = argv[0] + " start"
+        idxX = PP.keyList.index(self.keyX)
+        self.X = PP.datList[idxX] 
+
+        # Find End Point
+        self.keyY = argv[0] + " end"
+        idxY = PP.keyList.index(self.keyY)
+        self.Y = PP.datList[idxY]
+        
+
 
 # Label class: grouping correlated data and its configuration
 class TickLabel:

@@ -202,6 +202,7 @@ class SBarPlotter(AbstractBarPlotter):
         # set xtick point and label
         if self.manualBase == False:
             self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
         else:
             self.ax.set_xticks(self.tspace)
             self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
@@ -210,7 +211,8 @@ class SBarPlotter(AbstractBarPlotter):
                 t.set_y( y )
             self.manualBase = True
 
-        self.ax.xaxis.labelpad=10
+        # set label's vertical padding
+        # self.ax.xaxis.labelpad=10
 
         LengthOfWholeBar = self.base[-1] + self.barwidth
         plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
