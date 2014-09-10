@@ -598,6 +598,30 @@ elif style == "jaws-pie":
     PIP.saveToPdf(output)
 
 elif style == "bar-stacked":
+
+    PP = PatternParser(" ")
+    D1 = Group(None, [1,2,3,4], color=mc["red"], hatch="")
+    D2 = Group(None, [2,4,5,3], color=mc["blue"], hatch="")
+    D3 = Group(None, [1,1,1,1], color=mc["yellow"], hatch="")
+
+    D1.setLegend("A")
+    D2.setLegend("B")
+    D3.setLegend("C")
+
+    L1 = TickLabel(None, ["A", "B", "C", "D"])
+
+    ## Draw box
+    SBP = SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value", figmargin=0.1)
+
+    # Set graph style
+    SBP.setLegendStyle(ncol=3, size=10, frame=False)
+
+    # Draw
+    SBP.setTicks(label=L1)
+    SBP.draw(D1, D2, D3, barwidth=1)
+    SBP.saveToPdf(output)
+
+elif style == "bar-stacked-trans":
     key = [ "GPU comm0 start", "GPU comm0 end",
             "GPU comm1 start", "GPU comm1 end",
             "GPU memcp start", "GPU memcp end",
@@ -607,6 +631,7 @@ elif style == "bar-stacked":
             "DONE"]
 
     ## Read raw datas
+    args.signature = "atax"
     text_sm = tRead("dat/jaws/%s.share.log" % args.signature)
     text_nsm = tRead("dat/jaws/%s.noshare.log" % args.signature)
 
@@ -655,7 +680,8 @@ elif style == "bar-stacked":
 
 elif style == "bar-clustacked":
 
-    benchmarks = ["atax", "syrk", "gemm"]
+    # benchmarks = ["atax", "syrk", "gemm"]
+    benchmarks = ["syrk", "gemm"]
 
     ## Assign data directly
     S_CPUresult = []
@@ -664,14 +690,14 @@ elif style == "bar-clustacked":
     NS_GPUresult = []
 
     # atax
-    S_CPUresult.append([3.877490234375, 15.810107421874996, 3.2838867187500007,
-                        1.8818359375, 57.51716308593768])
-    NS_CPUresult.append([1200.7843017578125, 36.7966796875, 53.126953125,
-                         4343.073974609375, 158.7681152343721])
-    S_GPUresult.append([202.099609375, 1.007080078125, 17.988037109375,
-                        1.5107421875, 7.1806640625])
-    NS_GPUresult.append([197.38525390625, 1062.109130859375, 420.0341796875,
-                         6318.2197265625, 746.284423828125])
+    # S_CPUresult.append([3.877490234375, 15.810107421874996, 3.2838867187500007,
+    #                     1.8818359375, 57.51716308593768])
+    # NS_CPUresult.append([1200.7843017578125, 36.7966796875, 53.126953125,
+    #                      4343.073974609375, 158.7681152343721])
+    # S_GPUresult.append([202.099609375, 1.007080078125, 17.988037109375,
+    #                     1.5107421875, 7.1806640625])
+    # NS_GPUresult.append([197.38525390625, 1062.109130859375, 420.0341796875,
+    #                      6318.2197265625, 746.284423828125])
 
     # syrk
     S_CPUresult.append([4.66689453125, 12.704321289062502, 1.7093505859374998,
@@ -742,7 +768,7 @@ elif style == "bar-clustacked":
 
     # Set graph styles
     SBP.setLegendStyle(ncol=3, size=10, frame=False)
-    SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg)
+    SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg) # alert! transposed data
     SBP.setBottomMargin(0.15)
 
     # Draw graphs
@@ -754,3 +780,23 @@ elif style == "bar-clustacked":
         SBP.setBaseOffset(2)
 
     SBP.saveToPdf(output)
+
+
+elif style == "sbp+lp":
+    # Currently combination of Bar + Line style is only meaningful
+
+    # Line data
+    Y1=[1,2,3,4,5]
+    D1 = Group(None, Y1, color=mc["red"], hatch="")
+
+    # Bar data
+    D2 = Group(None, [0.4,0.9,1.7,1.9,2.7], color=mc["blue"], hatch="")
+    D3 = Group(None, [0.45,0.9,1.0,2.0,2.0], color=mc["yellow"], hatch="")
+
+    MP, LP, SBP = MultiPlotter(LinePlotter, SBarPlotter, twinx=True,
+                               title="title", xlabel="", ylabel="")
+    SBP.draw(D2, D3, boxwidth=1)
+    LP.draw(Y1)
+
+    MP.setTicks(label=L1)
+    MP.showToWindow()

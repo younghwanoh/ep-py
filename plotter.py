@@ -161,8 +161,12 @@ class SBarPlotter(AbstractBarPlotter):
     """Draw stacked bar graph with grouped data or column-parsed data"""
     def __init__(self, **kwargs):
         AbstractBarPlotter.__init__(self, **kwargs)
+        self.transposedStack = False
 
     def setStackStyle(self, **kwargs):
+        # only used if transpose optiion is turned on
+        self.transposedStack = True
+
         self.colors = []
         self.hatch = []
 
@@ -176,26 +180,44 @@ class SBarPlotter(AbstractBarPlotter):
     def draw(self, *argv, **kwargs):
         self.callBeforeDraw(**kwargs)
 
+        if self.transposedStack is True:
+            keyLen = len(argv)
+        else:
+            keyLen = len(argv[0].Y)
         # Calculate tick point
-        keyLen = len(argv)
         left = self.base[-1] + self.baseOffset
         right = left + self.barwidth*(keyLen-1)
         self.base = np.linspace(left, right, keyLen)
         print("Offset: %d, Base: %s" % (self.baseOffset, self.base))
 
-        data = tTranspose(argv)
-
         # Accumulate tick bases to global base
         self.globalBase = np.concatenate([self.globalBase, self.base])
 
-        stackLen = len(data)
-        accum = np.array([0 for i in range(keyLen)])
-        for i in range(stackLen):
-            accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
-            self.patch.append(self.ax.bar(self.base, data[i], self.barwidth,
-                              color=self.colors[i], hatch=self.hatch[i], bottom=accum))
+        if self.transposedStack is True:
+            # transposed data
+            data = tTranspose(argv)
+
+            stackLen = len(data)
+            accum = np.array([0 for i in range(keyLen)])
+            for i in range(stackLen):
+                accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
+                self.patch.append(self.ax.bar(self.base, data[i], self.barwidth,
+                                  color=self.colors[i], hatch=self.hatch[i], bottom=accum))
+        else:
+            # not transposed data
+            data = argv
+
+            stackLen = len(data)
+            accum = np.array([0 for i in range(keyLen)])
+            for i in range(stackLen):
+                accum = [accum[j] + data[i-1].Y[j] for j in range(keyLen)] if i > 0 else accum
+                self.patch.append(self.ax.bar(self.base, data[i].Y, self.barwidth,
+                                  color=data[i].color, hatch=data[i].hatch, bottom=accum))
+
 
     def FinalCall(self):
+        self.transposedStack = False
+
         # set legend
         self.drawLegend(self.patch, self.legend);
 
