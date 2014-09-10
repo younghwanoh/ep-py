@@ -103,14 +103,14 @@ L1 = TickLabel(None, tlabel)
 tspace = [.5,1,1.5, 2.05, 2.6,3.1,3.6,
           5.6,6.1,6.6, 7.15, 7.7,8.2,8.7,
           10.7,11.2,11.7, 12.25, 12.8,13.3,13.8]
-vspace = [0,-.04,0, -.08, 0,-.04,0,
-          0,-.04,0, -.08, 0,-.04,0,
-          0,-.04,0, -.08, 0,-.04,0]
+vspace = [0,-.04,0, -.09, 0,-.04,0,
+          0,-.04,0, -.09, 0,-.04,0,
+          0,-.04,0, -.09, 0,-.04,0]
 
-SBP.setTicks(tspace=tspace, voffset=vspace, label=L1, fontsize=10)
+SBP.setTicks(tspace=tspace, voffset=vspace, label=L1, fontsize=14)
 
 # Set graph styles
-SBP.setLegendStyle(ncol=3, size=10, frame=False)
+SBP.setLegendStyle(ncol=3, size=13, frame=False)
 SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg) # alert! transposed data
 SBP.setBottomMargin(0.13)
 

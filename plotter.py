@@ -25,11 +25,11 @@ class AbstractPlotter(object):
         if "figmargin" in kwargs:
             self.FigSideMargin = kwargs["figmargin"]
         if "ylabel" in kwargs:
-            self.ax.set_ylabel(kwargs["ylabel"])
+            self.ax.set_ylabel(kwargs["ylabel"], fontsize=15)
         if "xlabel" in kwargs:
             self.ax.set_xlabel(kwargs["xlabel"])
         if "title" in kwargs:
-            self.ax.set_title(kwargs["title"])
+            self.ax.set_title(kwargs["title"], fontsize=15)
         if ("width" in kwargs) & ("height" in kwargs):
             self.fig.set_size_inches(kwargs["width"], kwargs["height"])
 
@@ -44,6 +44,8 @@ class AbstractPlotter(object):
             self.tickLabel = kwargs["label"]
         if "angle" in kwargs:
             self.tickAngle = kwargs["angle"]
+        if "fontsize" in kwargs:
+            self.fontsize = kwargs["fontsize"]
 
     def setBaseOffset(self, offset):
         # Graph's offset if multiple graphs are drawn
@@ -224,17 +226,23 @@ class SBarPlotter(AbstractBarPlotter):
         # set xtick point and label
         if self.manualBase == False:
             self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
+                                    fontsize=self.fontsize)
+            for tick in self.ax.yaxis.get_major_ticks():
+                tick.label.set_fontsize(self.fontsize)
         else:
             self.ax.set_xticks(self.tspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
+                                    fontsize=self.fontsize)
+            for tick in self.ax.yaxis.get_major_ticks():
+                tick.label.set_fontsize(self.fontsize)
 
             for t, y in zip( self.ax.get_xticklabels( ), self.voffset ):
                 t.set_y( y )
             self.manualBase = True
 
         # set label's vertical padding
-        # self.ax.xaxis.labelpad=10
+        self.ax.xaxis.labelpad=15
 
         LengthOfWholeBar = self.base[-1] + self.barwidth
         plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
