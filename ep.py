@@ -289,7 +289,7 @@ elif style == "bar-key-cc":
 
     # Set label with key
     L1 = TickLabel(PP, "data")
-    L2 = TickLabel(PP, "data")
+    L2 = TickLabel(PP, "data2")
 
     # Normalization must be occured after grouping TickLabel
     PP.datNormTo("SEQavg", opt="speedup") # option: speedup, exetime
