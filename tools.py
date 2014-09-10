@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+import numpy as np
+
 # ad-hoc tools
 # Transpose matrix and make list other than tuple
 def tTranspose(arr):
@@ -66,12 +68,15 @@ class Group:
 
         # set default attributes
         self.color = "black"
+        self.face = "black"
         self.marker = "o"
         self.hatch = ""
         self.keyX = None
         self.keyY = None
 
         tCheckArgsExists(kwargs, "region")
+        if "face" in kwargs:
+            self.face = kwargs["face"]
         if "color" in kwargs:
             self.color = kwargs["color"]
         if "marker" in kwargs:
@@ -88,7 +93,7 @@ class Group:
                 self.keyY = argv[0]
                 idx = PP.keyList.index(argv[0])
                 self.Y = PP.datList[idx] 
-            elif type(argv[0]) is list:
+            elif (type(argv[0]) is list) | (type(argv[0]) is np.ndarray):
                 self.Y = argv[0]
             else:
                 print("Group.dat - Argument type is wrong ! Must be str or list.")
@@ -99,7 +104,7 @@ class Group:
                 self.keyX = argv[0]
                 idxX = PP.keyList.index(argv[0])
                 self.X = PP.datList[idxX] 
-            elif type(argv[0]) is list:
+            elif (type(argv[0]) is list) | (type(argv[0]) is np.ndarray):
                 self.X = argv[0]
             else:
                 print("Group.X - Argument type is wrong ! Must be str or list.")
@@ -109,7 +114,7 @@ class Group:
                 self.keyY = argv[1]
                 idxY = PP.keyList.index(argv[1])
                 self.Y = PP.datList[idxY]
-            elif type(argv[1]) is list:
+            elif (type(argv[1]) is list) | (type(argv[0]) is np.ndarray):
                 self.Y = argv[1]
             else:
                 print("Group.Y - Argument type is wrong ! Must be str or list.")
@@ -146,7 +151,7 @@ class TickLabel:
             self.key = argv[0]
             idx = PP.keyList.index(argv[0])
             self.content = [toint(i) for i in PP.datList[idx]]
-        elif type(argv[0]) is list:
+        elif (type(argv[0]) is list) | (type(argv[0]) is np.ndarray):
             self.content = [toint(i) for i in argv[0]]
         elif isinstance(argv[0], Group):
             print("Type Group")

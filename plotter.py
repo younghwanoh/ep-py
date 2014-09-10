@@ -7,15 +7,12 @@ from matplotlib.backends.backend_pdf import PdfPages
 from tools import tTranspose, tMergeCrossSpace
 
 class AbstractPlotter(object):
-    # patch: graph obj lists, legend: legend lists
-    patch = []
-    legend = []
-
     baseOffset = 0
     globalBase = np.array([])
     def __init__(self, **kwargs):
-        self.fig, self.ax = plt.subplots()
 
+        self.twinxmode = False
+        self.manualYtick = False
         self.manualLegendStyle=False
         self.manualBase = False
         self.fontsize = 12
@@ -23,8 +20,13 @@ class AbstractPlotter(object):
         self.tickAngle = 0
         self.FigSideMargin = 0.12 
 
-        if "AllFontSize" in kwargs:
-            matplotlib.rcParams.update({'font.size': kwargs["AllFontSize"]})
+        if "axis" in kwargs:
+            self.twinxmode = True
+            self.ax = kwargs["axis"]
+        else:
+            self.fig, self.ax = plt.subplots()
+        if "allFontSize" in kwargs:
+            matplotlib.rcParams.update({'font.size': kwargs["allFontSize"]})
         if "figmargin" in kwargs:
             self.FigSideMargin = kwargs["figmargin"]
         if "ylabel" in kwargs:
@@ -36,6 +38,12 @@ class AbstractPlotter(object):
         if ("width" in kwargs) & ("height" in kwargs):
             self.fig.set_size_inches(kwargs["width"], kwargs["height"])
 
+    def getAxis(self):
+        return self.ax.twinx()
+
+    def getGlobalBase(self):
+        return self.globalBase
+
     def annotate(self, text, xy, **kwargs):
         if "fontsize" in kwargs:
             fontsize = kwargs["fontsize"]
@@ -43,9 +51,13 @@ class AbstractPlotter(object):
             self.ax.annotate(text[i], xy=xy[i], fontsize=fontsize, annotation_clip=False)
 
     def setTicks(self, **kwargs):
-        if "tspace" in kwargs:
+        if "yspace" in kwargs:
+            self.manualYtick = True
+            self.yspace=kwargs["yspace"]
+            #FIXME:: Maual y_tick space settings supports only CBoxPlotter
+        if "xspace" in kwargs:
             self.manualBase = True
-            self.tspace = kwargs["tspace"]
+            self.xspace = kwargs["xspace"]
             #FIXME:: Maual tick space settings aren't yet implemented for BoxPlotter
         if "voffset" in kwargs:
             self.voffset = kwargs["voffset"]
@@ -56,6 +68,13 @@ class AbstractPlotter(object):
         if "fontsize" in kwargs:
             self.fontsize = kwargs["fontsize"]
 
+        plt.tick_params(
+            axis='x',          # changes apply to the x-axis
+            which='both',      # both major and minor ticks are affected
+            bottom='off',      # ticks along the bottom edge are off
+            top='off'          # ticks along the top edge are off
+        )
+
     def setBaseOffset(self, offset):
         # Graph's offset if multiple graphs are drawn
         self.baseOffset = offset
@@ -65,10 +84,13 @@ class AbstractPlotter(object):
         self.manualLegendStyle=True
 
         # Initial values
+        self.pos = [0.5, 1]
         self.ncol = 5
         self.legsize = 10
         self.frame = True
 
+        if "pos" in kwargs:
+            self.pos = kwargs["pos"]
         if "ncol" in kwargs:
             self.ncol = kwargs["ncol"]
         if "size" in kwargs:
@@ -113,9 +135,10 @@ class AbstractPlotter(object):
         if len(legend) == 0:
             # No legend is specified
             return;
-
         if self.manualLegendStyle is True:
-            leg = self.ax.legend(target, legend, loc="upper center", 
+            # leg = self.ax.legend(target, legend, loc="upper center", 
+            #                      ncol=self.ncol, prop={'size':self.legsize})
+            leg = self.ax.legend(target, legend, bbox_to_anchor=self.pos, 
                                  ncol=self.ncol, prop={'size':self.legsize})
             leg.draw_frame(self.frame)
         else:
@@ -131,9 +154,13 @@ class tickLabelInit:
 # Back-end plotter
 class LinePlotter(AbstractPlotter):
     """Draw line graph with grouped data or column-parsed data"""
+    # patch: graph obj lists, legend: legend lists
+    patch = []
+    legend = []
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
         self.ax.grid()
+        self.base = 1
 
     def draw(self, *argv):
         self.callBeforeDraw()
@@ -141,26 +168,38 @@ class LinePlotter(AbstractPlotter):
         keyLen = len(argv)
         self.patch = range(keyLen)
 
+        self.base += self.baseOffset
         for i in range(keyLen):
-            self.patch[i], = self.ax.plot(argv[i].X, argv[i].Y, linewidth=1,
-                                          marker=argv[i].marker, color=argv[i].color)
+            shiftedX = np.array(argv[i].X) + self.base 
+            self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=2,
+                                          marker=argv[i].marker, markeredgecolor=argv[i].face,
+                                          color=argv[i].color, markersize=9, mew=2)
             self.legend.append(argv[i].legend)
 
     def FinalCall(self):
         self.drawLegend(self.patch, self.legend);
 
+        if self.manualYtick is True:
+            self.ax.set_yticks(self.yspace)
+
 
 class AbstractBarPlotter(AbstractPlotter):
     """Abstract class for Bar plotter"""
+    # patch: graph obj lists, legend: legend lists
+    patch = []
+    legend = []
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
         # Initial base point
         self.base = [0]
         self.barwidth = 1
+        self.interCmargin = 1.4
 
         if "barwidth" in kwargs:
             # barwidth can be assigned as a style over all bars
             self.barwidth = kwargs["barwidth"] 
+        if "interCmargin" in kwargs:
+            self.interCmargin = kwargs["interCmargin"] + 1 
 
     def callBeforeDraw(self, **kwargs):
         # barwidth can also be assigned to each different elem
@@ -240,7 +279,7 @@ class SBarPlotter(AbstractBarPlotter):
             for tick in self.ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(self.fontsize)
         else:
-            self.ax.set_xticks(self.tspace)
+            self.ax.set_xticks(self.xspace)
             self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
                                     fontsize=self.fontsize)
             for tick in self.ax.yaxis.get_major_ticks():
@@ -269,7 +308,7 @@ class CBarPlotter(AbstractBarPlotter):
         datLen = len(argv[0].Y)
 
         # Interval between clustered bars: 40% of total width in a clustered group
-        interClusterOffset = (self.barwidth*keyLen) * 1.4
+        interClusterOffset = (self.barwidth*keyLen) * self.interCmargin
         self.base = np.arange(datLen) * interClusterOffset + self.baseOffset + self.base[-1]
 
         # Accumulate tick bases to global base
@@ -288,6 +327,9 @@ class CBarPlotter(AbstractBarPlotter):
         # set xtick point and label
         self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
         self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+
+        if self.manualYtick is True:
+            self.ax.set_yticks(self.yspace)
 
         LengthOfWholeBar = self.globalBase[-1] + self.barwidth*self.keyLen
         plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
@@ -322,7 +364,7 @@ class CCBarPlotter(AbstractBarPlotter):
         datLen = len(argv[0].content[0].Y)
 
         # Interval between clustered bars: 40% of total width in a clustered group
-        interClusterOffset = (self.barwidth * keyLen) * 1.4
+        interClusterOffset = (self.barwidth * keyLen) * self.interCmargin
         # Interval between clustered group: 
         interGlobalOffset = interClusterOffset * datLen * self.BtwGroupMargin
 
@@ -358,6 +400,8 @@ class CCBarPlotter(AbstractBarPlotter):
 
 
 class AbstractBoxPlotter(AbstractPlotter):
+    patch = []
+    legend = []
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
         # Initial base point

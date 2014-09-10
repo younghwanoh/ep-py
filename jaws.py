@@ -23,8 +23,8 @@ args = argparser.parse_args()
 
 # color macro dictionary
 mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292",
-      "blue":"#4455D2", "white":"#FFFFFF", "dwhite":"#DFDFDF", "gray":"#888888",
-      "dgray":"#4F4F4F", "black":"#000000"}
+      "blue":"#4455D2", "white":"#FFFFFF", "ddwhite":"#B3B3B3", "dwhite":"#DFDFDF",
+      "gray":"#888888", "dgray":"#4F4F4F", "black":"#000000"}
 
 # output file name
 output = "output.pdf"
@@ -84,7 +84,7 @@ hatch = ["", "", "", "\\\\", "", ""]
 
 
 ## Draw box
-SBP = SBarPlotter(title="Normalized overhead to each device", AllFontSize=15,
+SBP = SBarPlotter(title="Normalized overhead to each device", allFontSize=15,
                   xlabel="", ylabel="Fraction", figmargin=0.09, width=8, height=4.2)
 
 # Set manual ticks
@@ -93,13 +93,13 @@ tlabel =   ["S", "GPU", "N", "S", "CPU", "N"] + \
            ["S", "GPU", "N", "S", "CPU", "N"]
 L1 = TickLabel(None, tlabel)
 
-tspace = [.5,1,1.5, 2.6,3.1,3.6,
+xspace = [.5,1,1.5, 2.6,3.1,3.6,
           5.6,6.1,6.6, 7.7,8.2,8.7,
           10.7,11.2,11.7, 12.8,13.3,13.8]
 vspace = [0,-.08,0, 0,-.08,0,
           0,-.08,0, 0,-.08,0,
           0,-.08,0, 0,-.08,0]
-SBP.setTicks(tspace=tspace, voffset=vspace, label=L1, fontsize=14)
+SBP.setTicks(xspace=xspace, voffset=vspace, label=L1, fontsize=14)
 
 # Set graph styles
 SBP.setLegendStyle(ncol=3, size=13, frame=False)

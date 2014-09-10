@@ -216,23 +216,24 @@ class PatternParser:
                 print("PP::datNormTo - First argument must be key string."), exit()
 
         # Predicate function to determine which data to normalize
+        rowLen = len(self.datList[0])
         if kwargs["predicate"] == "min":
-            pred = min
-            target = [float('inf') for i in idx]
+            pred = lambda x,y: [ min(i,j) for i,j in zip(x,y) ]
+            targetArr = [float('inf') for i in range(rowLen)]
         else:
-            pred = max
-            target = [0 for i in idx]
+            pred = lambda x,y: [ max(i,j) for i,j in zip(x,y) ]
+            targetArr = [0 for i in range(rowLen)]
 
         # List comprehension (idx array) and applying predicate function
         candiArr = [self.datList[i] for i in idx]
         for i, candidate in enumerate(candiArr):
-            targetArr = pred(target, candidate)
+            targetArr = pred(targetArr, candidate)
 
         # Normalization to target
-        for i, datArr in enumerate(self.datList):
+        for i, datRow in enumerate(self.datList):
             # String data(e.g. key) will be skipped
-            if type(datArr[0]) is float:
-                self.datList[i] = [ calc(dat, norm) for dat, norm in zip(datArr, targetArr)]
+            if type(datRow[0]) is float:
+                self.datList[i] = [ calc(dat, norm) for dat, norm in zip(datRow, targetArr)]
 
     # arguments: target index, opt="row"|"col", copy=boolean
     # if no arguments are specified, whole array is returned
