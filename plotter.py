@@ -2,8 +2,8 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 from matplotlib.backends.backend_pdf import PdfPages
-
 from tools import tTranspose, tMergeCrossSpace
 
 class AbstractPlotter(object):
@@ -18,18 +18,21 @@ class AbstractPlotter(object):
 
         self.manualLegendStyle=False
         self.manualBase = False
+        self.fontsize = 12
         self.tickLabel = tickLabelInit()
         self.tickAngle = 0
         self.FigSideMargin = 0.12 
 
+        if "AllFontSize" in kwargs:
+            matplotlib.rcParams.update({'font.size': kwargs["AllFontSize"]})
         if "figmargin" in kwargs:
             self.FigSideMargin = kwargs["figmargin"]
         if "ylabel" in kwargs:
-            self.ax.set_ylabel(kwargs["ylabel"], fontsize=15)
+            self.ax.set_ylabel(kwargs["ylabel"])
         if "xlabel" in kwargs:
             self.ax.set_xlabel(kwargs["xlabel"])
         if "title" in kwargs:
-            self.ax.set_title(kwargs["title"], fontsize=15)
+            self.ax.set_title(kwargs["title"])
         if ("width" in kwargs) & ("height" in kwargs):
             self.fig.set_size_inches(kwargs["width"], kwargs["height"])
 
