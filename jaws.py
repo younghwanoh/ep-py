@@ -92,30 +92,44 @@ hatch = ["", "", "", "\\\\", "", ""]
 
 ## Draw box
 SBP = SBarPlotter(title="Normalized overhead to each device",
-                  xlabel="", ylabel="Fraction", figmargin=0.09)
+                  xlabel="", ylabel="Fraction", figmargin=0.09, width=8, height=4.2)
 
 # Set manual ticks
-tlabel =   ["S", "GPU", "N", "SYRK", "S", "CPU", "N"] + \
-           ["S", "GPU", "N", "GEMM", "S", "CPU", "N"]
+SBP.annotate(["SYRK", "GEMM"], [[1.55, -.32], [6.55, -.32]], fontsize=17)
+
+tlabel =   ["S", "GPU", "N", "S", "CPU", "N"] + \
+           ["S", "GPU", "N", "S", "CPU", "N"]
 
 L1 = TickLabel(None, tlabel)
 
-tspace = [.5,1,1.5, 2.05, 2.6,3.1,3.6,
-          5.6,6.1,6.6, 7.15, 7.7,8.2,8.7,
-          10.7,11.2,11.7, 12.25, 12.8,13.3,13.8]
-vspace = [0,-.04,0, -.09, 0,-.04,0,
-          0,-.04,0, -.09, 0,-.04,0,
-          0,-.04,0, -.09, 0,-.04,0]
+tspace = [.5,1,1.5, 2.6,3.1,3.6,
+          5.6,6.1,6.6, 7.7,8.2,8.7,
+          10.7,11.2,11.7, 12.8,13.3,13.8]
+vspace = [0,-.08,0, 0,-.08,0,
+          0,-.08,0, 0,-.08,0,
+          0,-.08,0, 0,-.08,0]
+
+# tlabel =   ["S", "GPU", "N", "SYRK", "S", "CPU", "N"] + \
+#            ["S", "GPU", "N", "GEMM", "S", "CPU", "N"]
+#
+# L1 = TickLabel(None, tlabel)
+#
+# tspace = [.5,1,1.5, 2.05, 2.6,3.1,3.6,
+#           5.6,6.1,6.6, 7.15, 7.7,8.2,8.7,
+#           10.7,11.2,11.7, 12.25, 12.8,13.3,13.8]
+# vspace = [0,-.09,0, -.18, 0,-.09,0,
+#           0,-.09,0, -.18, 0,-.09,0,
+#           0,-.09,0, -.18, 0,-.09,0]
 
 SBP.setTicks(tspace=tspace, voffset=vspace, label=L1, fontsize=14)
 
 # Set graph styles
 SBP.setLegendStyle(ncol=3, size=13, frame=False)
 SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg) # alert! transposed data
-SBP.setBottomMargin(0.13)
+SBP.setBottomMargin(0.23)
 
 # Draw graphs
-SBP.setLimitOn(y=[0, 1.2])
+SBP.setLimitOn(y=[0, 1.3])
 for i in range(len(benchmarks)):
     SBP.draw(S_GPUresult[i], NS_GPUresult[i], barwidth=1)
     SBP.setBaseOffset(1.1)

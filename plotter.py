@@ -33,6 +33,12 @@ class AbstractPlotter(object):
         if ("width" in kwargs) & ("height" in kwargs):
             self.fig.set_size_inches(kwargs["width"], kwargs["height"])
 
+    def annotate(self, text, xy, **kwargs):
+        if "fontsize" in kwargs:
+            fontsize = kwargs["fontsize"]
+        for i in range(len(text)):
+            self.ax.annotate(text[i], xy=xy[i], fontsize=fontsize, annotation_clip=False)
+
     def setTicks(self, **kwargs):
         if "tspace" in kwargs:
             self.manualBase = True
@@ -242,7 +248,7 @@ class SBarPlotter(AbstractBarPlotter):
             self.manualBase = True
 
         # set label's vertical padding
-        self.ax.xaxis.labelpad=15
+        # self.ax.xaxis.labelpad=-90
 
         LengthOfWholeBar = self.base[-1] + self.barwidth
         plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
