@@ -248,8 +248,11 @@ class PatternParser:
         if len(argv) == 0:
             return [CpyOrNot(i) for i in self.datList]
         else:
-            temp = TransOrNot(self.datList)
-            return CpyOrNot(temp[argv[0]])
+            if type(argv[0]) is str:
+                return self.datList[self.keyList.index(argv[0])]
+            else:
+                temp = TransOrNot(self.datList)
+                return CpyOrNot(temp[argv[0]])
 
     # arguments: target index, copy=boolean
     def getKeyArr(self, *argv, **kwargs):
