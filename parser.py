@@ -200,20 +200,39 @@ class PatternParser:
     # opt  : "speedup": x divided by "where" (default)
     #        "exetime": "where" divided by x
     # skip : skip nomarlization fpr this key
-    def datNormTo(self, where, **kwargs):
+    def datNormTo(self, *argv, **kwargs):
         """Normalize data to spcified row or col"""
-        # calc = lambda x,y: x/y
-        if "opt" in kwargs:
-            calc = lambda x,y: x/y if kwargs["opt"] == "exetime" else y/x
+        tCheckArgsExists(kwargs, "opt", "predicate")
 
-        if type(where) is str:
-            idx = self.keyList.index(where)
-            normArr = self.datList[idx]
-            for i, datArr in enumerate(self.datList):
-                if type(datArr[0]) is float:
-                    self.datList[i] = [ calc(dat, norm) for dat, norm in zip(datArr, normArr)]
+        # Speedup or normalized exetime
+        calc = lambda x,y: x/y if kwargs["opt"] == "exetime" else y/x
+
+        # Find data index using denoted key
+        idx = []
+        for i, where in enumerate(argv):
+            if type(where) is str:
+                idx.append(self.keyList.index(where))
+            else:
+                print("PP::datNormTo - First argument must be key string."), exit()
+
+        # Predicate function to determine which data to normalize
+        if kwargs["predicate"] == "min":
+            pred = min
+            target = [float('inf') for i in idx]
         else:
-            print("PP::datNormTo - First argument must be key string."), exit()
+            pred = max
+            target = [0 for i in idx]
+
+        # List comprehension (idx array) and applying predicate function
+        candiArr = [self.datList[i] for i in idx]
+        for i, candidate in enumerate(candiArr):
+            targetArr = pred(target, candidate)
+
+        # Normalization to target
+        for i, datArr in enumerate(self.datList):
+            # String data(e.g. key) will be skipped
+            if type(datArr[0]) is float:
+                self.datList[i] = [ calc(dat, norm) for dat, norm in zip(datArr, targetArr)]
 
     # arguments: target index, opt="row"|"col", copy=boolean
     # if no arguments are specified, whole array is returned

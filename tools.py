@@ -13,9 +13,9 @@ def tPopRow(arr, idx):
     return temp, popDat
 
 def tPopCol(arr, idx):
-    temp = transpose(arr)
+    temp = tTranspose(arr)
     popDat = temp.pop(idx)
-    temp = transpose(temp)
+    temp = tTranspose(temp)
     return temp, popDat
 
 def tRead(inFile):
