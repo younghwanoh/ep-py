@@ -4,21 +4,41 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 from matplotlib.backends.backend_pdf import PdfPages
-from tools import tTranspose, tMergeCrossSpace
+from tools import tTranspose, tMergeCrossSpace, tCheckArgsExists
 
 class AbstractPlotter(object):
     baseOffset = 0
     globalBase = np.array([])
-    def __init__(self, **kwargs):
+ 
+    class LegendClass:
+        """Holding legend properties"""
+        def __init__(self):
+            self.loc = False
+            self.pos = False
+            self.ncol = False
+            self.legsize = False
+            self.frame = True
 
+        def dump(self):
+            print("\n========= Legend Properties ===========")
+            print("loc: %s" % self.loc)
+            print("pos: %s" % self.pos)
+            print("ncol: %s" % self.ncol)
+            print("frame: %s" % self.frame)
+            print("legsize: %s" % self.legsize)
+            
+
+    def __init__(self, **kwargs):
         self.twinxmode = False
         self.manualYtick = False
-        self.manualLegendStyle=False
         self.manualBase = False
         self.fontsize = 12
         self.tickLabel = tickLabelInit()
         self.tickAngle = 0
         self.FigSideMargin = 0.12 
+
+        # legend properties
+        self.legendProp = self.LegendClass()
 
         if "axis" in kwargs:
             self.twinxmode = True
@@ -80,23 +100,16 @@ class AbstractPlotter(object):
         self.baseOffset = offset
 
     def setLegendStyle(self, **kwargs):
-        # Flag for manual legend style change
-        self.manualLegendStyle=True
+        leg = self.legendProp
 
-        # Initial values
-        self.pos = [0.5, 1]
-        self.ncol = 5
-        self.legsize = 10
-        self.frame = True
-
-        if "pos" in kwargs:
-            self.pos = kwargs["pos"]
-        if "ncol" in kwargs:
-            self.ncol = kwargs["ncol"]
-        if "size" in kwargs:
-            self.legsize = kwargs["size"]
-        if "frame" in kwargs:
-            self.frame = kwargs["frame"]
+        # Check args
+        tCheckArgsExists(kwargs, "pos", "ncol", "size", "frame", "loc",
+                         ifnot = [leg.pos, leg.ncol, leg.legsize, leg.frame, leg.loc])
+        leg.loc = kwargs["loc"]
+        leg.pos = kwargs["pos"]
+        leg.ncol = kwargs["ncol"]
+        leg.legsize = kwargs["size"]
+        leg.frame = kwargs["frame"]
 
     def setLimitOn(self, **kwargs):
         # set y-space
@@ -106,10 +119,6 @@ class AbstractPlotter(object):
         # set x-space
         if "x" in kwargs:
             plt.xlim(kwargs["x"])
-
-    def FinalCall(self):
-        # Virtual function called after all draw methods are executed
-        pass
 
     def setBottomMargin(self, margin):
         # bottom margin for labels of multiple colomns
@@ -128,6 +137,10 @@ class AbstractPlotter(object):
         plt.close()
 
     # Private function start ====================================================
+    def FinalCall(self):
+        # Virtual function called after all draw methods are executed
+        pass
+
     def callBeforeDraw(self):
         pass
 
@@ -135,15 +148,23 @@ class AbstractPlotter(object):
         if len(legend) == 0:
             # No legend is specified
             return;
-        if self.manualLegendStyle is True:
-            # leg = self.ax.legend(target, legend, loc="upper center", 
-            #                      ncol=self.ncol, prop={'size':self.legsize})
-            leg = self.ax.legend(target, legend, bbox_to_anchor=self.pos, 
-                                 ncol=self.ncol, prop={'size':self.legsize})
-            leg.draw_frame(self.frame)
-        else:
-            self.ax.legend(target, legend)
-        self.manualLegendStyle=False
+
+        # Matching properties to legend API of pyplot
+        keyArgs = {}
+        if bool(self.legendProp.ncol) is True:
+            keyArgs["ncol"] = self.legendProp.ncol
+        if bool(self.legendProp.legsize) is True:
+            keyArgs["prop"] = {'size':self.legendProp.legsize}
+        if bool(self.legendProp.pos) is True:
+            keyArgs["bbox_to_anchor"] = self.legendProp.pos
+        if bool(self.legendProp.loc) is True:
+            keyArgs["loc"] = self.legendProp.loc
+        handler = self.ax.legend(target, legend, **keyArgs)
+
+        # self.legendProp.dump()
+
+        handler.draw_frame(self.legendProp.frame)
+
     # Private function end ======================================================
 
 class tickLabelInit:

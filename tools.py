@@ -35,10 +35,13 @@ def tSetLegend(tag, *argv):
     for i in range(len(argv)):
         argv[i].setLegend(tag[i])
 
-def tCheckArgsExists(kwargs, *argv):
+def tCheckArgsExists(t_keys, *argv, **kwargs):
     """Checking directory arguments are exists and set values on each index"""
-    for key in argv:
-        kwargs[key] = kwargs[key] if key in kwargs else False
+    for i, key in enumerate(argv):
+        if "ifnot" in kwargs:
+            t_keys[key] = t_keys[key] if key in t_keys else kwargs["ifnot"][i]
+        else:
+            t_keys[key] = t_keys[key] if key in t_keys else False
 
 def tIsfloat(value):
     try:

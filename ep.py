@@ -320,7 +320,7 @@ elif style == "bar-key-cc":
     CB = CCBarPlotter(title="BarPlot with key format", width=10, height=4,
                       xlabel="Input Size", ylabel="Speedup", figmargin=0.05, groupmargin=1.1)
 
-    CB.setLegendStyle(ncol=8, size=7.5, frame=False)
+    CB.setLegendStyle(ncol=8, size=7.5, frame=False, loc="upper center")
     CB.setTicks(label=[L1, L2], angle=45)
     CB.setLimitOn(y=[0, 4.5])
     CB.draw(G1, G2, barwidth=2)
@@ -405,7 +405,7 @@ elif style == "box-time":
                      xlabel="Time", ylabel="Running Device", figmargin=0.8,
                      vertical=False, timeline=True)
 
-    BOP.setLegendStyle(ncol=5, size=12, frame=False) 
+    BOP.setLegendStyle(ncol=5, size=12, frame=False, loc="upper center") 
     BOP.draw(D1, D2, D3, D4, D5, boxwidth=2)
     BOP.saveToPdf(output)
 
@@ -445,7 +445,7 @@ elif style == "box-multi-time":
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=12, height=5,
                        xlabel="Time (ms)", figmargin=0.4, vertical=False, timeline=True)
 
-    CBOP.setLegendStyle(ncol=5, size=13, frame=False)
+    CBOP.setLegendStyle(ncol=5, size=13, frame=False, loc="upper center")
     CBOP.setTicks(label=L1)
     CBOP.draw(G1, G2, G3, boxwidth=2)
     CBOP.saveToPdf(output)
@@ -496,7 +496,7 @@ elif style == "jaws":
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=14, height=5,
                        xlabel="Time (ms)", figmargin=0.4, vertical=False)
 
-    CBOP.setLegendStyle(ncol=5, size=13, frame=False)
+    CBOP.setLegendStyle(ncol=5, size=13, frame=False, loc="upper center")
     CBOP.setTicks(label=L1)
     CBOP.draw(G1, G2, G3, G4, G5, G6, G7, boxwidth=2)
     CBOP.saveToPdf(output)
@@ -563,7 +563,7 @@ elif style == "jaws-all":
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=12, height=7,
                      xlabel="Time (ms)", figmargin=0.1, vertical=False)
 
-    CBOP.setLegendStyle(ncol=6, size=13, frame=False)
+    CBOP.setLegendStyle(ncol=6, size=13, frame=False, loc="upper center")
     CBOP.setTicks(label=L1)
     CBOP.draw(*argument, boxwidth=2)
     CBOP.saveToPdf(output)
@@ -615,7 +615,7 @@ elif style == "bar-stacked":
     SBP = SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value", figmargin=0.1)
 
     # Set graph style
-    SBP.setLegendStyle(ncol=3, size=10, frame=False)
+    SBP.setLegendStyle(ncol=3, size=10, frame=False, loc="upper center")
 
     # Draw
     SBP.setTicks(label=L1)
@@ -671,7 +671,7 @@ elif style == "bar-stacked-trans":
 
     # Set graph style
     SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg)
-    SBP.setLegendStyle(ncol=5, size=10, frame=False)
+    SBP.setLegendStyle(ncol=5, size=10, frame=False, loc="upper center")
 
     # Draw
     SBP.setLimitOn(y=[0, 1.2])
@@ -768,7 +768,7 @@ elif style == "bar-clustacked":
     SBP.setTicks(xspace=xspace, voffset=vspace, label=L1)
 
     # Set graph styles
-    SBP.setLegendStyle(ncol=3, size=10, frame=False)
+    SBP.setLegendStyle(ncol=3, size=10, frame=False, loc="upper center")
     SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg) # alert! transposed data
     SBP.setBottomMargin(0.15)
 
