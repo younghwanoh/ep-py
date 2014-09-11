@@ -18,6 +18,7 @@ class AbstractPlotter(object):
             self.ncol = False
             self.legsize = False
             self.frame = True
+            self.tight = False
 
         def dump(self):
             print("\n========= Legend Properties ===========")
@@ -45,10 +46,6 @@ class AbstractPlotter(object):
             self.ax = kwargs["axis"]
         else:
             self.fig, self.ax = plt.subplots()
-        if "allFontSize" in kwargs:
-            matplotlib.rcParams.update({'font.size': kwargs["allFontSize"]})
-        if "figmargin" in kwargs:
-            self.FigSideMargin = kwargs["figmargin"]
         if "ylabel" in kwargs:
             self.ax.set_ylabel(kwargs["ylabel"])
         if "xlabel" in kwargs:
@@ -103,26 +100,32 @@ class AbstractPlotter(object):
         leg = self.legendProp
 
         # Check args
-        tCheckArgsExists(kwargs, "pos", "ncol", "size", "frame", "loc",
-                         ifnot = [leg.pos, leg.ncol, leg.legsize, leg.frame, leg.loc])
+        tCheckArgsExists(kwargs, "pos", "ncol", "size", "frame", "loc", "tight",
+            ifnot = [leg.pos, leg.ncol, leg.legsize, leg.frame, leg.loc, leg.tight])
         leg.loc = kwargs["loc"]
         leg.pos = kwargs["pos"]
         leg.ncol = kwargs["ncol"]
         leg.legsize = kwargs["size"]
         leg.frame = kwargs["frame"]
+        leg.tight = kwargs["tight"]
 
-    def setLimitOn(self, **kwargs):
+    def setFigureStyle(self, **kwargs):
+        # set overall figure styles
+        if "bottomMargin" in kwargs:
+            plt.gcf().subplots_adjust(bottom=kwargs["bottomMargin"])
+        if "fontsize" in kwargs:
+            matplotlib.rcParams.update({'font.size': kwargs["fontsize"]})
+        if "figmargin" in kwargs:
+            self.FigSideMargin = kwargs["figmargin"]
+
         # set y-space
-        if "y" in kwargs:
-            plt.ylim(kwargs["y"])
-
+        if "ylim" in kwargs:
+            plt.ylim(kwargs["ylim"])
         # set x-space
-        if "x" in kwargs:
-            plt.xlim(kwargs["x"])
+        if "xlim" in kwargs:
+            plt.xlim(kwargs["xlim"])
 
-    def setBottomMargin(self, margin):
-        # bottom margin for labels of multiple colomns
-        plt.gcf().subplots_adjust(bottom=margin)
+        self.p_setFigureStyle(**kwargs)
 
     def saveToPdf(self, output):
         self.FinalCall()
@@ -137,11 +140,16 @@ class AbstractPlotter(object):
         plt.close()
 
     # Private function start ====================================================
+    def p_setFigureStyle(self, **kwargs):
+        # CCBar:: Virtual function while setFigureStyle
+        pass
+
     def FinalCall(self):
         # Virtual function called after all draw methods are executed
         pass
 
     def callBeforeDraw(self):
+        # Virtual function called before each draw methods is executed
         pass
 
     def drawLegend(self, target, legend):
@@ -159,6 +167,10 @@ class AbstractPlotter(object):
             keyArgs["bbox_to_anchor"] = self.legendProp.pos
         if bool(self.legendProp.loc) is True:
             keyArgs["loc"] = self.legendProp.loc
+        if bool(self.legendProp.tight) is True:
+            keyArgs["handlelength"] = 1.3
+            keyArgs["handletextpad"] = 0.3
+            keyArgs["columnspacing"] = 1
         handler = self.ax.legend(target, legend, **keyArgs)
 
         # self.legendProp.dump()
@@ -217,11 +229,12 @@ class AbstractBarPlotter(AbstractPlotter):
         self.barwidth = 1
         self.interCmargin = 1.4
 
+    def p_setFigureStyle(self, **kwargs):
+        if "interCmargin" in kwargs:
+            self.interCmargin = kwargs["interCmargin"] + 1 
         if "barwidth" in kwargs:
             # barwidth can be assigned as a style over all bars
             self.barwidth = kwargs["barwidth"] 
-        if "interCmargin" in kwargs:
-            self.interCmargin = kwargs["interCmargin"] + 1 
 
     def callBeforeDraw(self, **kwargs):
         # barwidth can also be assigned to each different elem
@@ -362,8 +375,14 @@ class CCBarPlotter(AbstractBarPlotter):
     """Draw clustered*2 bar graph with grouped parsed data"""
     def __init__(self, **kwargs):
         AbstractBarPlotter.__init__(self, **kwargs)
+    
+    def p_setFigureStyle(self, **kwargs):
+        # set overall figure styles
         if "groupmargin" in kwargs:
             self.BtwGroupMargin = kwargs["groupmargin"]
+        if "barwidth" in kwargs:
+            # barwidth can be assigned as a style over all bars
+            self.barwidth = kwargs["barwidth"] 
 
     def setTicks(self, **kwargs):
         if "label" in kwargs:
@@ -432,10 +451,12 @@ class AbstractBoxPlotter(AbstractPlotter):
         self.boxwidth = 1
         self.vertical = True
 
+    def p_setFigureStyle(self, **kwargs):
         if "vertical" in kwargs:
             self.vertical = kwargs["vertical"]
         if "boxwidth" in kwargs:
-            self.boxwidth = float(kwargs["boxwidth"])
+            # boxwidth can be assigned as a style over all bars
+            self.barwidth = kwargs["boxwidth"] 
 
     def callBeforeDraw(self, **kwargs):
         # boxwidth can also be assigned to each different elem

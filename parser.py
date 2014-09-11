@@ -247,11 +247,14 @@ class PatternParser:
         TransOrNot = lambda x: tTranspose(x) if kwargs["opt"] is "col" else x
 
         if len(argv) == 0:
+            # Return total data array
             return [CpyOrNot(i) for i in self.datList]
         else:
             if type(argv[0]) is str:
+                # argv[0] is key, return datList[key]
                 return self.datList[self.keyList.index(argv[0])]
             else:
+                # Return denoted row/col
                 temp = TransOrNot(self.datList)
                 return CpyOrNot(temp[argv[0]])
 

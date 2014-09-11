@@ -52,7 +52,7 @@ if style == "line-key":
     CPUdata.setLegend("CPU") 
 
     LP = LinePlotter(width=5, height=5, title="LinePlot with key", xlabel="abc", ylabel="ee")
-    # LP.setLimitOn(x=[0, 1000], y=[0, 1000])
+    # LP.setFigureStyle(xlim=[0, 1000], ylim=[0, 1000])
     LP.draw(GPUdata, CPUdata)
     LP.saveToPdf(output);
     # LP.drawToWindow();
@@ -72,7 +72,7 @@ if style == "line-raw":
     CPUdata.setLegend("CPU") 
 
     LP = LinePlotter(width=5, height=5, title="LinePlot with raw", xlabel="abc", ylabel="ee")
-    # LP.setLimitOn(x=[0, 1000], y=[0, 1000])
+    # LP.setFigureStyle(xlim=[0, 1000], ylim=[0, 1000])
     LP.draw(GPUdata, CPUdata)
     LP.saveToPdf(output);
     # LP.drawToWindow();
@@ -96,7 +96,7 @@ elif style == "line-flat":
     D4.setLegend("CPU+GPU") 
 
     LP = LinePlotter(title="LinePlot with flattend format", xlabel="abc", ylabel="ee")
-    LP.setLimitOn(x=[0, 10], y=[0, 10])
+    LP.setFigureStyle(xlim=[0, 10], ylim=[0, 10])
     LP.draw(D1,D2,D3,D4)
     LP.saveToPdf(output)
 
@@ -268,15 +268,13 @@ elif style == "bar-key-clustered":
     D3.setLegend("CGCE-only") 
     D4.setLegend("CGCE+profile") 
 
-
     # Set label manually
     # L1 = TickLabel(None, ["label","1","2",1])
 
     # Draw bar
-    CB = CBarPlotter(title="BarPlot with key format", xlabel="Input Size", ylabel="Speedup",
-                     figmargin=0.05)
+    CB = CBarPlotter(title="BarPlot with key format", xlabel="Input Size", ylabel="Speedup")
     CB.setTicks(label=L1, angle=45)
-    # CB.setLimitOn(x=[0, 10], y=[0, 10])
+    CB.setFigureStyle(figmargin=0.05, xlim=[0, 10], ylim=[0, 5])
     CB.draw(D1,D2,D3,D4, barwidth=2)
     CB.saveToPdf(output)
 
@@ -318,11 +316,11 @@ elif style == "bar-key-cc":
 
     # Draw bar
     CB = CCBarPlotter(title="BarPlot with key format", width=10, height=4,
-                      xlabel="Input Size", ylabel="Speedup", figmargin=0.05, groupmargin=1.1)
+                      xlabel="Input Size", ylabel="Speedup")
 
     CB.setLegendStyle(ncol=8, size=7.5, frame=False, loc="upper center")
     CB.setTicks(label=[L1, L2], angle=45)
-    CB.setLimitOn(y=[0, 4.5])
+    CB.setFigureStyle(ylim=[0, 4.5], figmargin=0.05, groupmargin=1.1)
     CB.draw(G1, G2, barwidth=2)
     CB.saveToPdf(output)
 
@@ -342,9 +340,11 @@ elif style == "bar-single":
     L1 = TickLabel(PP, "label")
 
     # Draw bar
-    BP = CBarPlotter(title="BarPlot with flattend format", ticklabel=L1,
-                     xlabel="Input Size", ylabel="Performance", figmargin=0.3)
-    # BP.setLimitOn(x=[0, 10], y=[0, 10])
+    BP = CBarPlotter(title="BarPlot with flattend format",
+                     xlabel="Input Size", ylabel="Performance")
+    # BP.setFigureStyle(xlim=[0, 10], ylim=[0, 10], figmargin=0.3)
+    BP.setFigureStyle(figmargin=0.3)
+    BP.setTicks(label=L1)
     BP.draw(D1, barwidth=2)
     BP.saveToPdf(output)
 
@@ -374,7 +374,8 @@ elif style == "box-key":
 
     # Draw box
     BOP = BoxPlotter(title="BoxPlot with start/end points", xlabel="Device",
-                     ylabel="Degree of process", boxwidth=2, vertical=True, timeline=False)
+                     ylabel="Degree of process")
+    BOP.setFigureStyle(vertical=True, timeline=False, boxwidth=2)
     BOP.setTicks(label=L1)
     BOP.draw(D1, D2, D3, D4, D5)
     BOP.saveToPdf(output)
@@ -402,10 +403,10 @@ elif style == "box-time":
 
     # Draw box
     BOP = BoxPlotter(title="BoxPlot with start/end points", width=10, height=4,
-                     xlabel="Time", ylabel="Running Device", figmargin=0.8,
-                     vertical=False, timeline=True)
+                     xlabel="Time", ylabel="Running Device")
 
     BOP.setLegendStyle(ncol=5, size=12, frame=False, loc="upper center") 
+    BOP.setFigureStyle(vertical=False, timeline=True, figmargin=0.8)
     BOP.draw(D1, D2, D3, D4, D5, boxwidth=2)
     BOP.saveToPdf(output)
 
@@ -443,9 +444,10 @@ elif style == "box-multi-time":
 
     # Draw box
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=12, height=5,
-                       xlabel="Time (ms)", figmargin=0.4, vertical=False, timeline=True)
+                       xlabel="Time (ms)")
 
     CBOP.setLegendStyle(ncol=5, size=13, frame=False, loc="upper center")
+    CBOP.setFigureStyle(vertical=False, timeline=True, figmargin=0.4)
     CBOP.setTicks(label=L1)
     CBOP.draw(G1, G2, G3, boxwidth=2)
     CBOP.saveToPdf(output)
@@ -494,9 +496,10 @@ elif style == "jaws":
 
     # Draw box
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=14, height=5,
-                       xlabel="Time (ms)", figmargin=0.4, vertical=False)
+                       xlabel="Time (ms)")
 
     CBOP.setLegendStyle(ncol=5, size=13, frame=False, loc="upper center")
+    CBOP.setFigureStyle(vertical=False, figmargin=0.4)
     CBOP.setTicks(label=L1)
     CBOP.draw(G1, G2, G3, G4, G5, G6, G7, boxwidth=2)
     CBOP.saveToPdf(output)
@@ -561,9 +564,10 @@ elif style == "jaws-all":
 
     # Draw box
     CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=12, height=7,
-                     xlabel="Time (ms)", figmargin=0.1, vertical=False)
+                     xlabel="Time (ms)")
 
     CBOP.setLegendStyle(ncol=6, size=13, frame=False, loc="upper center")
+    CBOP.setFigureStyle(vertical=False, figmargin=0.1)
     CBOP.setTicks(label=L1)
     CBOP.draw(*argument, boxwidth=2)
     CBOP.saveToPdf(output)
@@ -612,10 +616,11 @@ elif style == "bar-stacked":
     L1 = TickLabel(None, ["A", "B", "C", "D"])
 
     ## Draw box
-    SBP = SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value", figmargin=0.1)
+    SBP = SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value")
 
     # Set graph style
     SBP.setLegendStyle(ncol=3, size=10, frame=False, loc="upper center")
+    SBP.setFigureStyle(figmargin=0.1)
 
     # Draw
     SBP.setTicks(label=L1)
@@ -667,14 +672,14 @@ elif style == "bar-stacked-trans":
 
     ## Draw box
     SBP = SBarPlotter(title=args.signature+" - GPU",
-                      xlabel="Strategy", ylabel="Fraction", figmargin=0.4)
+                      xlabel="Strategy", ylabel="Fraction")
 
     # Set graph style
     SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg)
     SBP.setLegendStyle(ncol=5, size=10, frame=False, loc="upper center")
+    SBP.setFigureStyle(figmargin=0.4, ylim=[0, 1.2])
 
     # Draw
-    SBP.setLimitOn(y=[0, 1.2])
     SBP.setTicks(label=L1)
     SBP.draw(S_GPUresult, NS_GPUresult, barwidth=1)
     SBP.saveToPdf(output)
@@ -749,12 +754,12 @@ elif style == "bar-clustacked":
 
     ## Draw box
     SBP = SBarPlotter(title="Normalized overhead to each device",
-                      xlabel="", ylabel="Fraction", figmargin=0.05)
+                      xlabel="", ylabel="Fraction")
 
     # Set manual ticks
     tlabel = ["S", "GPU", "N", "ATAX", "S", "CPU", "N"] + \
-               ["S", "GPU", "N", "SYRK", "S", "CPU", "N"] + \
-               ["S", "GPU", "N", "GEMM", "S", "CPU", "N"]
+             ["S", "GPU", "N", "SYRK", "S", "CPU", "N"] + \
+             ["S", "GPU", "N", "GEMM", "S", "CPU", "N"]
 
     L1 = TickLabel(None, tlabel)
 
@@ -769,11 +774,10 @@ elif style == "bar-clustacked":
 
     # Set graph styles
     SBP.setLegendStyle(ncol=3, size=10, frame=False, loc="upper center")
+    SBP.setFigureStyle(figmargin=0.05, bottomMargin=0.15, ylim=[0, 1.2])
     SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg) # alert! transposed data
-    SBP.setBottomMargin(0.15)
 
     # Draw graphs
-    SBP.setLimitOn(y=[0, 1.2])
     for i in range(len(benchmarks)):
         SBP.draw(S_GPUresult[i], NS_GPUresult[i], barwidth=1)
         SBP.setBaseOffset(1.1)

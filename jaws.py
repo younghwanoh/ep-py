@@ -58,39 +58,42 @@ for i in range(len(benchmarks)):
     PP2.PickKeyWith(": ")
     PP2.ParseWith(",")
 
-    S_GPUresult.append(PP1.datList[:6])
-    S_CPUresult.append(PP1.datList[6:])
-    NS_GPUresult.append(PP2.datList[:6])
-    NS_CPUresult.append(PP2.datList[6:])
+    S_CPUresult.append(tTranspose(PP1.datList[:4])[0])
+    S_GPUresult.append(tTranspose(PP1.datList[4:])[0])
+    NS_CPUresult.append(tTranspose(PP2.datList[:4])[0])
+    NS_GPUresult.append(tTranspose(PP2.datList[4:])[0])
+
 
 for i in range(len(benchmarks)):
-    GPUOverhead = reduce(np.add, NS_GPUresult[i])
-    CPUOverhead = reduce(np.add, NS_CPUresult[i])
+    GPUOverhead = sum(NS_GPUresult[i])
+    CPUOverhead = sum(NS_CPUresult[i])
 
     # Normalized to total sum of data(NS_CPUresult)
-    S_GPUresult[i] = [ j[0]/GPUOverhead for j in S_GPUresult[i] ]
-    NS_GPUresult[i] = [ j[0]/GPUOverhead for j in NS_GPUresult[i] ]
-    S_CPUresult[i] = [ j[0]/CPUOverhead for j in S_CPUresult[i] ]
-    NS_CPUresult[i] = [ j[0]/CPUOverhead for j in NS_CPUresult[i] ]
+    S_GPUresult[i] = [ j/GPUOverhead for j in S_GPUresult[i] ]
+    NS_GPUresult[i] = [ j/GPUOverhead for j in NS_GPUresult[i] ]
+    S_CPUresult[i] = [ j/CPUOverhead for j in S_CPUresult[i] ]
+    NS_CPUresult[i] = [ j/CPUOverhead for j in NS_CPUresult[i] ]
 
-## Tag lists that will parse
-tag_cpu = ["memcp", "comm0", "comm1", "comm2", "schdl", "merge"]
-tag_gpu = ["memcp", "comm0", "comm1", "comm2", "schdl", "merge"]
-leg = ["memcpy", "init", "task_begin", "task_end", "partition", "merge"]
+    # Change order of stack
+    S_GPUresult[i][0], S_GPUresult[i][2] = S_GPUresult[i][2], S_GPUresult[i][0]
+    NS_GPUresult[i][0], NS_GPUresult[i][2] = NS_GPUresult[i][2], NS_GPUresult[i][0]
+    S_CPUresult[i][0], S_CPUresult[i][2] = S_CPUresult[i][2], S_CPUresult[i][0]
+    NS_CPUresult[i][0], NS_CPUresult[i][2] = NS_CPUresult[i][2], NS_CPUresult[i][0]
 
-## Set style
-colors = [mc["black"], mc["dgray"], mc["gray"], mc["white"], mc["dwhite"], mc["white"]]
+## Legend list
+leg = ["exec", "dispatch", "memcpy", "merge"]
+
+## Assign stack style
+colors = [mc["dgray"], mc["white"], mc["gray"], mc["white"], mc["dwhite"], mc["white"]]
 hatch = ["", "", "", "\\\\", "", ""]
 
+## Stacked Bar Plot =================================================================
+SBP = SBarPlotter(xlabel="", ylabel="Normalized Execution time", width=8, height=4.2)
 
-## Draw box
-SBP = SBarPlotter(title="Normalized overhead to each device", allFontSize=15,
-                  xlabel="", ylabel="Fraction", figmargin=0.09, width=8, height=4.2)
-
-# Set manual ticks
-SBP.annotate(["SYRK", "GEMM"], [[1.55, -.32], [6.55, -.32]], fontsize=17)
-tlabel =   ["S", "GPU", "N", "S", "CPU", "N"] + \
-           ["S", "GPU", "N", "S", "CPU", "N"]
+# Set manual ticks ==================================================================
+SBP.annotate(["Syrk", "Gemm"], [[1.55, -.25], [6.55, -.25]], fontsize=17)
+tlabel =   ["N", "GPU", "S", "N", "CPU", "S"] + \
+           ["N", "GPU", "S", "N", "CPU", "S"]
 L1 = TickLabel(None, tlabel)
 
 xspace = [.5,1,1.5, 2.6,3.1,3.6,
@@ -101,17 +104,19 @@ vspace = [0,-.08,0, 0,-.08,0,
           0,-.08,0, 0,-.08,0]
 SBP.setTicks(xspace=xspace, voffset=vspace, label=L1, fontsize=14)
 
-# Set graph styles
-SBP.setLegendStyle(ncol=3, size=13, frame=False)
-SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg) # alert! transposed data
-SBP.setBottomMargin(0.23)
+# Set graph styles ==================================================================
+SBP.setLegendStyle(ncol=6, size=12, frame=False, pos=[0.83, 1.14], tight=True)
+SBP.setFigureStyle(bottomMargin=0.23, ylim=[0, 1], figmargin=0.09, fontsize=15)
 
-# Draw graphs
-SBP.setLimitOn(y=[0, 1.3])
+# if "setStackStyle" method is used, transposed data will be used
+# otherwise, group will map the styles to each stack
+SBP.setStackStyle(colors=colors, hatch=hatch, legend=leg)
+
+# Draw graphs =======================================================================
 for i in range(len(benchmarks)):
-    SBP.draw(S_GPUresult[i], NS_GPUresult[i], barwidth=1)
+    SBP.draw(NS_GPUresult[i], S_GPUresult[i], barwidth=1)
     SBP.setBaseOffset(1.1)
-    SBP.draw(S_CPUresult[i], NS_CPUresult[i], barwidth=1)
+    SBP.draw(NS_CPUresult[i], S_CPUresult[i], barwidth=1)
     SBP.setBaseOffset(2)
 
 SBP.saveToPdf(output)

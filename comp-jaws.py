@@ -81,17 +81,19 @@ GD.append(Group(PP, "jAWS", color=mc["black"], hatch=""))
 
 # label lists
 poly_list = ["ATAX", "BICG", "SYRK", "SYR2K", "GEMM", "2MM", "CORR"]
+poly_list_l = [ elem.lower() for elem in poly_list ]
 webcl_list = ["Mandelbrot", "Nbody", "Sobel-CorG", "Random"]
 geo_list = ["geomean"]
 
-L1 = TickLabel(None, poly_list + webcl_list + geo_list)
-CB = CBarPlotter(ylabel="Speedup over Best Device", width=15, height=3.4,
-                 figmargin=0.02, interCmargin=.7, allFontSize=13)
+L1 = TickLabel(None, poly_list_l + webcl_list + geo_list)
+CB = CBarPlotter(ylabel="Speedup over Best Device", width=15, height=3.4)
 CB.setTicks(yspace=[0, 0.5, 1, 1.5], label=L1)
-CB.setLegendStyle(ncol=3, size=14, pos=[0.72, 1.18], frame=False)
-CB.setLimitOn(y=[0, 1.5])
 CB.annotate(["Polybench", "WebKit-WebCL"], [[27.5, -.30], [85, -.30]], fontsize=15)
-CB.setBottomMargin(0.18)
+
+# Figure style
+CB.setLegendStyle(ncol=3, size=14, pos=[0.59, 1.18], frame=False)
+CB.setFigureStyle(ylim=[0, 1.5], bottomMargin=0.18, fontsize=13,
+                  interCmargin=.7, figmargin=0.02)
 
 CB.draw(*PD, barwidth=2)
 CB.setBaseOffset(14)
@@ -114,6 +116,7 @@ PP.ParseWith("\t")
 PLB = []
 for i, val in enumerate(poly_list):
     PLB.append(Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
+PLB[0].setLegend("Load Balance Factor")
 
 # WebCL
 PP = PatternParser(tRead("dat/jaws-lbf/webcl.dat"))
@@ -136,6 +139,7 @@ for i, val in enumerate(geo_list):
 twinx = CB.getAxis()
 
 LP = LinePlotter(axis=twinx, ylabel="Load Balance Factor")
+LP.setLegendStyle(frame=False, pos=[0.83, 1.18], size=14)
 LP.setTicks(yspace=[0, 0.5, 1.0, 1.5])
 LP.draw(*PLB)
 LP.setBaseOffset(75.2)
