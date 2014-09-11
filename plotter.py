@@ -194,8 +194,9 @@ class LinePlotter(AbstractPlotter):
             shiftedX = np.array(argv[i].X) + self.base 
             self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=2,
                                           marker=argv[i].marker, markeredgecolor=argv[i].face,
-                                          color=argv[i].color, markersize=9, mew=2)
-            self.legend.append(argv[i].legend)
+                                          color=argv[i].color, markersize=9, mew=1)
+            if len(argv[i].legend) > 0:
+                self.legend.append(argv[i].legend)
 
     def FinalCall(self):
         self.drawLegend(self.patch, self.legend);
