@@ -10,23 +10,31 @@ class AbstractPlotter(object):
     baseOffset = 0
     globalBase = np.array([])
  
-    class LegendClass:
+    class LegendPropClass:
         """Holding legend properties"""
         def __init__(self):
-            self.loc = False
-            self.pos = False
-            self.ncol = False
-            self.legsize = False
-            self.frame = True
-            self.tight = False
+            # All properties are defined as arrays[0] to reference and update it
+            self.loc = [False]
+            self.pos = [False]
+            self.ncol = [False]
+            self.legsize = [False]
+            self.frame = [True]
+            self.tight = [False]
 
         def dump(self):
             print("\n========= Legend Properties ===========")
-            print("loc: %s" % self.loc)
-            print("pos: %s" % self.pos)
-            print("ncol: %s" % self.ncol)
-            print("frame: %s" % self.frame)
-            print("legsize: %s" % self.legsize)
+            attrs = vars(self)
+            print ', '.join("%s: %s" % item for item in attrs.items())
+
+    class PlotterPropClass:
+        """Holding plotter properties"""
+        def __init__(self):
+            self.markersize = [False]
+
+        def dump(self):
+            print("\n========= Plotter Properties ===========")
+            attrs = vars(self)
+            print ', '.join("%s: %s" % item for item in attrs.items())
             
 
     def __init__(self, **kwargs):
@@ -38,8 +46,9 @@ class AbstractPlotter(object):
         self.tickAngle = 0
         self.FigSideMargin = 0.12 
 
-        # legend properties
-        self.legendProp = self.LegendClass()
+        # Property classes
+        self.legendProp = self.LegendPropClass()
+        self.splotterProp = self.PlotterPropClass()
 
         if "axis" in kwargs:
             self.twinxmode = True
@@ -47,9 +56,13 @@ class AbstractPlotter(object):
         else:
             self.fig, self.ax = plt.subplots()
         if "ylabel" in kwargs:
-            self.ax.set_ylabel(kwargs["ylabel"])
+            self.ax.set_ylabel(kwargs["ylabel"], ha="center")
+        if "ylpos" in kwargs:
+            self.ax.yaxis.set_label_coords(*kwargs["ylpos"])
         if "xlabel" in kwargs:
-            self.ax.set_xlabel(kwargs["xlabel"])
+            self.ax.set_xlabel(kwargs["xlabel"], ha="center")
+        if "xlpos" in kwargs:
+            self.ax.xaxis.set_label_coords(*kwargs["xlpos"])
         if "title" in kwargs:
             self.ax.set_title(kwargs["title"])
         if ("width" in kwargs) & ("height" in kwargs):
@@ -71,11 +84,11 @@ class AbstractPlotter(object):
         if "yspace" in kwargs:
             self.manualYtick = True
             self.yspace=kwargs["yspace"]
-            #FIXME:: Maual y_tick space settings supports only CBoxPlotter
+            #FIXME:: Maual ytick space settings supports only CBoxPlotter
         if "xspace" in kwargs:
             self.manualBase = True
             self.xspace = kwargs["xspace"]
-            #FIXME:: Maual tick space settings aren't yet implemented for BoxPlotter
+            #FIXME:: Maual xtick space settings aren't yet implemented for BoxPlotter
         if "voffset" in kwargs:
             self.voffset = kwargs["voffset"]
         if "label" in kwargs:
@@ -102,12 +115,6 @@ class AbstractPlotter(object):
         # Check args
         tCheckArgsExists(kwargs, "pos", "ncol", "size", "frame", "loc", "tight",
             ifnot = [leg.pos, leg.ncol, leg.legsize, leg.frame, leg.loc, leg.tight])
-        leg.loc = kwargs["loc"]
-        leg.pos = kwargs["pos"]
-        leg.ncol = kwargs["ncol"]
-        leg.legsize = kwargs["size"]
-        leg.frame = kwargs["frame"]
-        leg.tight = kwargs["tight"]
 
     def setFigureStyle(self, **kwargs):
         # set overall figure styles
@@ -125,49 +132,50 @@ class AbstractPlotter(object):
         if "xlim" in kwargs:
             plt.xlim(kwargs["xlim"])
 
-        self.p_setFigureStyle(**kwargs)
+        # private virtual method that differs from Plotter classes
+        self.m_setFigureStyle(**kwargs)
 
     def saveToPdf(self, output):
-        self.FinalCall()
+        self.m_finish()
         pp = PdfPages(output)
         plt.savefig(pp, format='pdf')
         pp.close()
         plt.close()
 
     def showToWindow(self):
-        self.FinalCall()
+        self.m_finish()
         plt.show()
         plt.close()
 
     # Private function start ====================================================
-    def p_setFigureStyle(self, **kwargs):
+    def m_setFigureStyle(self, **kwargs):
         # CCBar:: Virtual function while setFigureStyle
         pass
 
-    def FinalCall(self):
+    def m_finish(self):
         # Virtual function called after all draw methods are executed
         pass
 
-    def callBeforeDraw(self):
+    def m_beforeEveryDraw(self):
         # Virtual function called before each draw methods is executed
         pass
 
-    def drawLegend(self, target, legend):
+    def m_drawLegend(self, target, legend):
         if len(legend) == 0:
             # No legend is specified
             return;
 
         # Matching properties to legend API of pyplot
         keyArgs = {}
-        if bool(self.legendProp.ncol) is True:
-            keyArgs["ncol"] = self.legendProp.ncol
-        if bool(self.legendProp.legsize) is True:
-            keyArgs["prop"] = {'size':self.legendProp.legsize}
-        if bool(self.legendProp.pos) is True:
-            keyArgs["bbox_to_anchor"] = self.legendProp.pos
-        if bool(self.legendProp.loc) is True:
-            keyArgs["loc"] = self.legendProp.loc
-        if bool(self.legendProp.tight) is True:
+        if bool(self.legendProp.ncol[0]) is True:
+            keyArgs["ncol"] = self.legendProp.ncol[0]
+        if bool(self.legendProp.legsize[0]) is True:
+            keyArgs["prop"] = {'size':self.legendProp.legsize[0]}
+        if bool(self.legendProp.pos[0]) is True:
+            keyArgs["bbox_to_anchor"] = self.legendProp.pos[0]
+        if bool(self.legendProp.loc[0]) is True:
+            keyArgs["loc"] = self.legendProp.loc[0]
+        if bool(self.legendProp.tight[0]) is True:
             keyArgs["handlelength"] = 1.3
             keyArgs["handletextpad"] = 0.3
             keyArgs["columnspacing"] = 1
@@ -175,7 +183,7 @@ class AbstractPlotter(object):
 
         # self.legendProp.dump()
 
-        handler.draw_frame(self.legendProp.frame)
+        handler.draw_frame(self.legendProp.frame[0])
 
     # Private function end ======================================================
 
@@ -193,10 +201,15 @@ class LinePlotter(AbstractPlotter):
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
         self.ax.grid()
-        self.base = 1
+        self.base = 0
 
     def draw(self, *argv):
-        self.callBeforeDraw()
+        self.m_beforeEveryDraw()
+
+        propArgs = {}
+        prop = self.splotterProp
+        # FIXME:: plotterProp class must have decompressor
+        propArgs["markersize"] = prop.markersize[0]
 
         keyLen = len(argv)
         self.patch = range(keyLen)
@@ -206,12 +219,19 @@ class LinePlotter(AbstractPlotter):
             shiftedX = np.array(argv[i].X) + self.base 
             self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=2,
                                           marker=argv[i].marker, markeredgecolor=argv[i].face,
-                                          color=argv[i].color, markersize=9, mew=1)
+                                          color=argv[i].color, mew=1, **propArgs)
             if len(argv[i].legend) > 0:
                 self.legend.append(argv[i].legend)
 
-    def FinalCall(self):
-        self.drawLegend(self.patch, self.legend);
+    def m_setFigureStyle(self, **kwargs):
+        plotter = self.splotterProp
+
+        # Check args
+        tCheckArgsExists(kwargs, "markersize",
+                         ifnot = [plotter.markersize])
+
+    def m_finish(self):
+        self.m_drawLegend(self.patch, self.legend);
 
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)
@@ -229,14 +249,14 @@ class AbstractBarPlotter(AbstractPlotter):
         self.barwidth = 1
         self.interCmargin = 1.4
 
-    def p_setFigureStyle(self, **kwargs):
+    def m_setFigureStyle(self, **kwargs):
         if "interCmargin" in kwargs:
             self.interCmargin = kwargs["interCmargin"] + 1 
         if "barwidth" in kwargs:
             # barwidth can be assigned as a style over all bars
             self.barwidth = kwargs["barwidth"] 
 
-    def callBeforeDraw(self, **kwargs):
+    def m_beforeEveryDraw(self, **kwargs):
         # barwidth can also be assigned to each different elem
         if "barwidth" in kwargs:
             self.barwidth = kwargs["barwidth"]
@@ -263,7 +283,7 @@ class SBarPlotter(AbstractBarPlotter):
             self.hatch = kwargs["hatch"]
 
     def draw(self, *argv, **kwargs):
-        self.callBeforeDraw(**kwargs)
+        self.m_beforeEveryDraw(**kwargs)
 
         if self.transposedStack is True:
             keyLen = len(argv)
@@ -300,11 +320,11 @@ class SBarPlotter(AbstractBarPlotter):
                                   color=data[i].color, hatch=data[i].hatch, bottom=accum))
 
 
-    def FinalCall(self):
+    def m_finish(self):
         self.transposedStack = False
 
         # set legend
-        self.drawLegend(self.patch, self.legend);
+        self.m_drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.manualBase == False:
@@ -337,7 +357,7 @@ class CBarPlotter(AbstractBarPlotter):
         AbstractBarPlotter.__init__(self, **kwargs)
 
     def draw(self, *argv, **kwargs):
-        self.callBeforeDraw(**kwargs)
+        self.m_beforeEveryDraw(**kwargs)
 
         self.keyLen = keyLen = len(argv)
         datLen = len(argv[0].Y)
@@ -355,9 +375,9 @@ class CBarPlotter(AbstractBarPlotter):
             if bool(argv[i].legend):
                 self.legend.append(argv[i].legend)
 
-    def FinalCall(self):
+    def m_finish(self):
         # set legend
-        self.drawLegend(self.patch, self.legend);
+        self.m_drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
@@ -376,7 +396,7 @@ class CCBarPlotter(AbstractBarPlotter):
     def __init__(self, **kwargs):
         AbstractBarPlotter.__init__(self, **kwargs)
     
-    def p_setFigureStyle(self, **kwargs):
+    def m_setFigureStyle(self, **kwargs):
         # set overall figure styles
         if "groupmargin" in kwargs:
             self.BtwGroupMargin = kwargs["groupmargin"]
@@ -395,7 +415,7 @@ class CCBarPlotter(AbstractBarPlotter):
             self.tickAngle = kwargs["angle"]
 
     def draw(self, *argv, **kwargs):
-        self.callBeforeDraw(**kwargs)
+        self.m_beforeEveryDraw(**kwargs)
 
         base = []
         globalBase = np.array([])
@@ -428,9 +448,9 @@ class CCBarPlotter(AbstractBarPlotter):
         # Accumulate tick bases to global base
         self.cc_globalBase = np.concatenate([self.cc_globalBase, globalBase])
 
-    def FinalCall(self):
+    def m_finish(self):
         # set legend
-        self.drawLegend(self.patch, self.legend);
+        self.m_drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         self.ax.set_xticks(self.cc_globalBase)
@@ -451,14 +471,14 @@ class AbstractBoxPlotter(AbstractPlotter):
         self.boxwidth = 1
         self.vertical = True
 
-    def p_setFigureStyle(self, **kwargs):
+    def m_setFigureStyle(self, **kwargs):
         if "vertical" in kwargs:
             self.vertical = kwargs["vertical"]
         if "boxwidth" in kwargs:
             # boxwidth can be assigned as a style over all bars
             self.barwidth = kwargs["boxwidth"] 
 
-    def callBeforeDraw(self, **kwargs):
+    def m_beforeEveryDraw(self, **kwargs):
         # boxwidth can also be assigned to each different elem
         if "boxwidth" in kwargs:
             self.boxwidth = kwargs["boxwidth"]
@@ -475,7 +495,7 @@ class BoxPlotter(AbstractBoxPlotter):
             self.timeline = kwargs["timeline"]
 
     def draw(self, *argv, **kwargs):
-        self.callBeforeDraw()
+        self.m_beforeEveryDraw()
 
         keyLen = len(argv)
 
@@ -502,9 +522,9 @@ class BoxPlotter(AbstractBoxPlotter):
                 self.patch.append(rect)
                 self.legend.append(argv[i].legend)
 
-    def FinalCall(self):
+    def m_finish(self):
         # set legend
-        self.drawLegend(self.patch, self.legend);
+        self.m_drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.vertical is True:
@@ -531,7 +551,7 @@ class CBoxPlotter(AbstractBoxPlotter):
         AbstractBoxPlotter.__init__(self, **kwargs)
 
     def draw(self, *argv, **kwargs):
-        self.callBeforeDraw()
+        self.m_beforeEveryDraw()
 
         GroupLen = len(argv)
 
@@ -561,9 +581,9 @@ class CBoxPlotter(AbstractBoxPlotter):
                     self.patch.append(rect)
                     self.legend.append(arg[i].legend)
 
-    def FinalCall(self):
+    def m_finish(self):
         # set legend
-        self.drawLegend(self.patch, self.legend);
+        self.m_drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.vertical is True:

@@ -39,7 +39,9 @@ def tCheckArgsExists(t_keys, *argv, **kwargs):
     """Checking directory arguments are exists and set values on each index"""
     for i, key in enumerate(argv):
         if "ifnot" in kwargs:
-            t_keys[key] = t_keys[key] if key in t_keys else kwargs["ifnot"][i]
+            t_keys[key] = kwargs["ifnot"][i][0] \
+                        = t_keys[key] if key in t_keys else kwargs["ifnot"][i][0]
+            # t_keys[key] \
         else:
             t_keys[key] = t_keys[key] if key in t_keys else False
 

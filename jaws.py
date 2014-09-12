@@ -24,7 +24,7 @@ args = argparser.parse_args()
 # color macro dictionary
 mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292",
       "blue":"#4455D2", "white":"#FFFFFF", "ddwhite":"#B3B3B3", "dwhite":"#DFDFDF",
-      "gray":"#888888", "dgray":"#4F4F4F", "black":"#000000"}
+      "gray":"#888888", "dgray":"#3F3F3F", "black":"#000000"}
 
 # output file name
 output = "output.pdf"
@@ -65,6 +65,11 @@ for i in range(len(benchmarks)):
 
 
 for i in range(len(benchmarks)):
+    # del S_GPUresult[i][2]
+    # del NS_GPUresult[i][2]
+    # del S_CPUresult[i][2]
+    # del NS_CPUresult[i][2]
+
     GPUOverhead = sum(NS_GPUresult[i])
     CPUOverhead = sum(NS_CPUresult[i])
 
@@ -81,17 +86,21 @@ for i in range(len(benchmarks)):
     NS_CPUresult[i][0], NS_CPUresult[i][2] = NS_CPUresult[i][2], NS_CPUresult[i][0]
 
 ## Legend list
-leg = ["exec", "dispatch", "memcpy", "merge"]
+leg = ["dispatch", "memcpy", "exec", "merge"]
+# del leg[0]
 
 ## Assign stack style
-colors = [mc["dgray"], mc["white"], mc["gray"], mc["white"], mc["dwhite"], mc["white"]]
-hatch = ["", "", "", "\\\\", "", ""]
+colors = [mc["dgray"], mc["white"], mc["gray"], mc["dwhite"], mc["dwhite"], mc["white"]]
+# del colors[0]
+hatch = ["", "\\\\", "", "", "", ""]
+# del hatch[0]
 
 ## Stacked Bar Plot =================================================================
-SBP = SBarPlotter(xlabel="", ylabel="Normalized Execution time", width=8, height=4.2)
+SBP = SBarPlotter(xlabel="", ylabel="Overhead normalized\n to useful work",
+                  ylpos=[-.1, 0.5], width=8, height=4.2)
 
 # Set manual ticks ==================================================================
-SBP.annotate(["Syrk", "Gemm"], [[1.55, -.25], [6.55, -.25]], fontsize=17)
+SBP.annotate(["syrk", "gemm"], [[1.55, -.24], [6.55, -.24]], fontsize=18)
 tlabel =   ["N", "GPU", "S", "N", "CPU", "S"] + \
            ["N", "GPU", "S", "N", "CPU", "S"]
 L1 = TickLabel(None, tlabel)
@@ -105,7 +114,7 @@ vspace = [0,-.08,0, 0,-.08,0,
 SBP.setTicks(xspace=xspace, voffset=vspace, label=L1, fontsize=14)
 
 # Set graph styles ==================================================================
-SBP.setLegendStyle(ncol=6, size=12, frame=False, pos=[0.83, 1.14], tight=True)
+SBP.setLegendStyle(ncol=6, size=15, pos=[0.93, 1.15], frame=False, tight=True)
 SBP.setFigureStyle(bottomMargin=0.23, ylim=[0, 1], figmargin=0.09, fontsize=15)
 
 # if "setStackStyle" method is used, transposed data will be used

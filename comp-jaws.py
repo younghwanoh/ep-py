@@ -86,13 +86,13 @@ webcl_list = ["Mandelbrot", "Nbody", "Sobel-CorG", "Random"]
 geo_list = ["geomean"]
 
 L1 = TickLabel(None, poly_list_l + webcl_list + geo_list)
-CB = CBarPlotter(ylabel="Speedup over Best Device", width=15, height=3.4)
+CB = CBarPlotter(ylabel="Speedup over Best Device", width=30, height=6.8)
 CB.setTicks(yspace=[0, 0.5, 1, 1.5], label=L1)
-CB.annotate(["Polybench", "WebKit-WebCL"], [[27.5, -.30], [85, -.30]], fontsize=15)
+CB.annotate(["Polybench", "WebKit-WebCL"], [[27.5, -.30], [85, -.30]], fontsize=30)
 
 # Figure style
-CB.setLegendStyle(ncol=3, size=14, pos=[0.59, 1.18], frame=False)
-CB.setFigureStyle(ylim=[0, 1.5], bottomMargin=0.18, fontsize=13,
+CB.setLegendStyle(ncol=3, size=28, pos=[0.59, 1.18], frame=False)
+CB.setFigureStyle(ylim=[0, 1.5], bottomMargin=0.18, fontsize=25,
                   interCmargin=.7, figmargin=0.02)
 
 CB.draw(*PD, barwidth=2)
@@ -139,14 +139,16 @@ for i, val in enumerate(geo_list):
 twinx = CB.getAxis()
 
 LP = LinePlotter(axis=twinx, ylabel="Load Balance Factor")
-LP.setLegendStyle(frame=False, pos=[0.83, 1.18], size=14)
+LP.setLegendStyle(frame=False, pos=[0.80, 1.18], size=28)
+LP.setFigureStyle(markersize=15)
 LP.setTicks(yspace=[0, 0.5, 1.0, 1.5])
+LP.setBaseOffset(1)
 LP.draw(*PLB)
 LP.setBaseOffset(75.2)
 LP.draw(*WLB)
 LP.setBaseOffset(44.6)
 LP.draw(*GLB)
 
-LP.FinalCall()
+LP.m_finish()
 
 CB.saveToPdf(output)
