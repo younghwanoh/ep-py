@@ -112,14 +112,14 @@ leg = ["dispatch", "memcpy", "merge"]
 
 ## Assign stack style
 colors = [mc["dgray"], mc["white"], mc["gray"], mc["dwhite"], mc["dwhite"], mc["white"]]
-hatch = ["", "\\\\", "", "", "", ""]
+hatch = ["", "\\\\\\\\", "", "", "", ""]
 
 ## Stacked Bar Plot =================================================================
 SBP = SBarPlotter(xlabel="", ylabel="Overhead normalized\n to useful work",
                   ylpos=[-.1, 0.5], width=8, height=4.2)
 
 # Set manual ticks ==================================================================
-SBP.annotate(["syrk", "gemm"], [[1.57, -.13], [6.10, -.13]], fontsize=17)
+SBP.annotate(["syrk", "gemm"], [[1.75, -.13], [6.21, -.13]], fontsize=17)
 # SBP.annotate(["syrk", "gemm"], [[1.55, -8.24], [6.55, -8.24]], fontsize=18)
 tlabel =   ["NoShm", "GPU", "Shm", "NoShm", "CPU", "Shm"] + \
            ["NoShm", "GPU", "Shm", "NoShm", "CPU", "Shm"]
@@ -132,7 +132,7 @@ vspace = [0,-.09,0, 0,-.09,0,
 SBP.setTicks(xspace=xspace, voffset=vspace, label=L1, fontsize=14)
 
 # Set graph styles ==================================================================
-SBP.setLegendStyle(ncol=6, size=15, pos=[0.84, 1.15], frame=False, tight=True)
+SBP.setLegendStyle(ncol=6, size=15, pos=[0.81, 1.15], frame=False, tight=True)
 SBP.setFigureStyle(bottomMargin=0.23, figmargin=0.03, fontsize=15, gridy=True)
 
 # if "setStackStyle" method is used, transposed data will be used
