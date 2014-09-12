@@ -125,6 +125,17 @@ class AbstractPlotter(object):
         if "figmargin" in kwargs:
             self.FigSideMargin = kwargs["figmargin"]
 
+        # grid on/off
+        if "grid" in kwargs:
+            if kwargs["grid"] is True:
+                self.ax.grid(zorder=-1)
+        if "gridx" in kwargs:
+            if kwargs["gridx"] is True:
+                self.ax.xaxis.grid(zorder=-1)
+        if "gridy" in kwargs:
+            if kwargs["gridy"] is True:
+                self.ax.yaxis.grid(zorder=-1)
+
         # set y-space
         if "ylim" in kwargs:
             plt.ylim(kwargs["ylim"])
@@ -217,7 +228,7 @@ class LinePlotter(AbstractPlotter):
         self.base += self.baseOffset
         for i in range(keyLen):
             shiftedX = np.array(argv[i].X) + self.base 
-            self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=2,
+            self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=2, zorder=3,
                                           marker=argv[i].marker, markeredgecolor=argv[i].face,
                                           color=argv[i].color, mew=1, **propArgs)
             if len(argv[i].legend) > 0:
@@ -306,7 +317,7 @@ class SBarPlotter(AbstractBarPlotter):
             accum = np.array([0 for i in range(keyLen)])
             for i in range(stackLen):
                 accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
-                self.patch.append(self.ax.bar(self.base, data[i], self.barwidth,
+                self.patch.append(self.ax.bar(self.base, data[i], self.barwidth, zorder=3,
                                   color=self.colors[i], hatch=self.hatch[i], bottom=accum))
         else:
             # not transposed data
@@ -316,7 +327,7 @@ class SBarPlotter(AbstractBarPlotter):
             accum = np.array([0 for i in range(keyLen)])
             for i in range(stackLen):
                 accum = [accum[j] + data[i-1].Y[j] for j in range(keyLen)] if i > 0 else accum
-                self.patch.append(self.ax.bar(self.base, data[i].Y, self.barwidth,
+                self.patch.append(self.ax.bar(self.base, data[i].Y, self.barwidth, zorder=3,
                                   color=data[i].color, hatch=data[i].hatch, bottom=accum))
 
 
@@ -370,8 +381,8 @@ class CBarPlotter(AbstractBarPlotter):
         self.globalBase = np.concatenate([self.globalBase, self.base])
 
         for i in range(keyLen):
-            self.patch.append(self.ax.bar(self.base+i*self.barwidth, argv[i].Y,
-                                          self.barwidth, color=argv[i].color, hatch=argv[i].hatch))
+            self.patch.append(self.ax.bar(self.base+i*self.barwidth, argv[i].Y, self.barwidth,
+                                          color=argv[i].color, zorder=3, hatch=argv[i].hatch))
             if bool(argv[i].legend):
                 self.legend.append(argv[i].legend)
 
@@ -441,7 +452,7 @@ class CCBarPlotter(AbstractBarPlotter):
 
             for i, elem in enumerate(eachGroup.content):
                 self.patch.append(self.ax.bar(base[k]+i*self.barwidth, elem.Y, self.barwidth,
-                                              color=elem.color, hatch=elem.hatch))
+                                              color=elem.color, hatch=elem.hatch, zorder=3))
                 if bool(elem.legend):
                     self.legend.append(elem.legend)
 
