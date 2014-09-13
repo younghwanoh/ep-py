@@ -9,51 +9,91 @@ from tools import tTranspose, tMergeCrossSpace, tCheckArgsExists
 matplotlib.font_manager.findfont('Arial')
 matplotlib.rcParams['font.family']='Arial'
 
+
+class AbstractProp(object):
+    """Holding properties"""
+    def __init__(self):
+        pass
+
+    def store(self, kwargs):
+        myVars = vars(self)
+
+        # tools.py:: Check arguments exist
+        # Store
+        ifnot = []
+        for elem in kwargs.keys():
+            try:
+                ifnot.append(myVars[elem])
+            except:
+                print("Warning! Current class doesn't have requested props. " +
+                      "Eliminate the key.")
+                kwargs.pop(elem)
+
+        tCheckArgsExists(kwargs, *kwargs.keys(), ifnot=ifnot)
+
+    def load(self):
+        result = {}
+        myVars = vars(self)
+        for key, val in myVars.items():
+            result[key] = val[0]
+
+        return result
+
+    def m_dump(self):
+        attrs = vars(self)
+        print ', '.join("%s: %s" % item for item in attrs.items())
+
+class LegendProp(AbstractProp):
+    """Holding legend properties"""
+    def __init__(self):
+        AbstractProp.__init__(self)
+
+        # All properties are defined as arrays[0] to reference and update it
+        self.loc = [False]
+        self.pos = [False]
+        self.ncol = [False]
+        self.size = [False]
+        self.frame = [True]
+        self.tight = [False]
+
+    def load(self):
+        result = {}
+        if bool(self.ncol[0]) is True:
+            result["ncol"] = self.ncol[0]
+        if bool(self.size[0]) is True:
+            result["prop"] = {'size':self.size[0]}
+        if bool(self.pos[0]) is True:
+            result["bbox_to_anchor"] = self.pos[0]
+        if bool(self.loc[0]) is True:
+            result["loc"] = self.loc[0]
+        if bool(self.tight[0]) is True:
+            result["handlelength"] = 1.3
+            result["handletextpad"] = 0.3
+            result["columnspacing"] = 1
+        return result
+
+    def dump(self):
+        print("\n========= Legend Properties ===========")
+        m_dump()
+
+
+class PlotterProp(AbstractProp):
+    """Holding plotter properties"""
+    def __init__(self):
+        AbstractProp.__init__(self)
+
+        self.markersize = [False]
+
+    def dump(self):
+        print("\n========= Plotter Properties ===========")
+        m_dump()
+
+
 class AbstractPlotter(object):
     baseOffset = 0
     globalBase = np.array([])
- 
-    class LegendPropClass:
-        """Holding legend properties"""
-        def __init__(self):
-            # All properties are defined as arrays[0] to reference and update it
-            self.loc = [False]
-            self.pos = [False]
-            self.ncol = [False]
-            self.legsize = [False]
-            self.frame = [True]
-            self.tight = [False]
 
-        def dump(self):
-            print("\n========= Legend Properties ===========")
-            attrs = vars(self)
-            print ', '.join("%s: %s" % item for item in attrs.items())
-
-    class PlotterPropClass:
-        """Holding plotter properties"""
-        def __init__(self):
-            self.markersize = [False]
-
-        def store(self, kwargs):
-            myVars = vars(self)
-
-            # tools.py:: Check arguments exist 
-            tCheckArgsExists(kwargs, *kwargs.keys(), ifnot = [myVars[elem] for elem in kwargs.keys()])
-
-        def load(self):
-            result = {}
-            myVars = vars(self)
-            for key, val in myVars.items():
-                result[key] = val[0]
-
-            return result
-
-        def dump(self):
-            print("\n========= Plotter Properties ===========")
-            myVars = vars(self)
-            print ', '.join("%s: %s" % item for item in myVars.items())
-            
-
+  
     def __init__(self, **kwargs):
         self.twinxmode = False
         self.manualYtick = False
@@ -64,8 +104,8 @@ class AbstractPlotter(object):
         self.FigSideMargin = 0.12 
 
         # Property classes
-        self.legendProp = self.LegendPropClass()
-        self.splotterProp = self.PlotterPropClass()
+        self.legendProp = LegendProp()
+        self.splotterProp = PlotterProp()
 
         if "axis" in kwargs:
             self.twinxmode = True
@@ -84,6 +124,7 @@ class AbstractPlotter(object):
             self.ax.set_title(kwargs["title"])
         if ("width" in kwargs) & ("height" in kwargs):
             self.fig.set_size_inches(kwargs["width"], kwargs["height"])
+
 
     def getAxis(self):
         return self.ax.twinx()
@@ -128,10 +169,7 @@ class AbstractPlotter(object):
 
     def setLegendStyle(self, **kwargs):
         leg = self.legendProp
-
-        # Check args
-        tCheckArgsExists(kwargs, "pos", "ncol", "size", "frame", "loc", "tight",
-            ifnot = [leg.pos, leg.ncol, leg.legsize, leg.frame, leg.loc, leg.tight])
+        self.legendProp.store(kwargs)
 
     def setFigureStyle(self, **kwargs):
         # set overall figure styles
@@ -193,21 +231,9 @@ class AbstractPlotter(object):
             # No legend is specified
             return;
 
-        # Matching properties to legend API of pyplot
-        keyArgs = {}
-        if bool(self.legendProp.ncol[0]) is True:
-            keyArgs["ncol"] = self.legendProp.ncol[0]
-        if bool(self.legendProp.legsize[0]) is True:
-            keyArgs["prop"] = {'size':self.legendProp.legsize[0]}
-        if bool(self.legendProp.pos[0]) is True:
-            keyArgs["bbox_to_anchor"] = self.legendProp.pos[0]
-        if bool(self.legendProp.loc[0]) is True:
-            keyArgs["loc"] = self.legendProp.loc[0]
-        if bool(self.legendProp.tight[0]) is True:
-            keyArgs["handlelength"] = 1.3
-            keyArgs["handletextpad"] = 0.3
-            keyArgs["columnspacing"] = 1
-        handler = self.ax.legend(target, legend, **keyArgs)
+        # Get legend properties
+        p_legendProp = self.legendProp.load()
+        handler = self.ax.legend(target, legend, **p_legendProp)
 
         # self.legendProp.dump()
 
@@ -234,8 +260,7 @@ class LinePlotter(AbstractPlotter):
     def draw(self, *argv):
         self.m_beforeEveryDraw()
 
-        prop = self.splotterProp
-        plotterProp = prop.load()
+        p_plotterProp = self.splotterProp.load()
 
         keyLen = len(argv)
         self.patch = range(keyLen)
@@ -245,13 +270,12 @@ class LinePlotter(AbstractPlotter):
             shiftedX = np.array(argv[i].X) + self.base 
             self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=2, zorder=3,
                                           marker=argv[i].marker, markeredgecolor=argv[i].face,
-                                          color=argv[i].color, mew=1, **plotterProp)
+                                          color=argv[i].color, mew=1, **p_plotterProp)
             if len(argv[i].legend) > 0:
                 self.legend.append(argv[i].legend)
 
     def m_setFigureStyle(self, **kwargs):
-        plotter = self.splotterProp
-        plotter.store(kwargs)
+        self.splotterProp.store(kwargs)
 
     def m_finish(self):
         self.m_drawLegend(self.patch, self.legend);

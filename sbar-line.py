@@ -29,7 +29,7 @@ mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292"
       "black":"#000000"}
 
 # output file name
-output = "output.pdf"
+output = "sbar-line.pdf"
 if bool(args.outFile) == True:
     output = args.outFile
 
