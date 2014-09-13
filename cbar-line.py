@@ -1,25 +1,12 @@
 #!/usr/bin/python
 
-import sys
-import re
-import csv
-from sys import stdout
-
-sys.dont_write_bytecode = True;
+# import sys
+# sys.dont_write_bytecode = True;
 
 # library for ep.py
-from parser import PatternParser
-from tools import *
-from plotter import *
+import epic as ep
 
-# argument parser
-import argparse
-argparser = argparse.ArgumentParser()
-argparser.add_argument("-i", "--inFile", help='Specify the name of input data file')
-argparser.add_argument("-si", "--signature", help='Specify the signature')
-argparser.add_argument("-o","--outFile", help='Specify the name of output PDF file')
-argparser.add_argument("-s","--style", help='Specify the style of graphs')
-args = argparser.parse_args()
+args = ep.parseCommandArgs() 
 
 # color macro dictionary
 mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292",
@@ -29,12 +16,12 @@ mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292"
       "black":"#000000"}
 
 # output file name
-output = "sbar-line.pdf"
+output = "cbar-line.pdf"
 if bool(args.outFile) == True:
     output = args.outFile
 
 if bool(args.inFile) == True:
-    text = tRead(args.inFile)
+    text = ep.tRead(args.inFile)
 
 if bool(args.style) == True:
     style = args.style
@@ -44,40 +31,40 @@ if bool(args.style) == True:
 
 # Comparison clustered bar
 # Polybench
-PP = PatternParser(tRead("dat/jaws-comp/poly.dat"))
+PP = ep.PatternParser(ep.tRead("dat/jaws-comp/poly.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 PP.datNormTo("cpu-only", "gpu-only", predicate="min")
 
 PD = []
-PD.append(Group(PP, "SO", color=mc["white"], hatch=""))
-PD.append(Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
-PD.append(Group(PP, "jAWS", color=mc["black"], hatch=""))
+PD.append(ep.Group(PP, "SO", color=mc["white"], hatch=""))
+PD.append(ep.Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
+PD.append(ep.Group(PP, "jAWS", color=mc["black"], hatch=""))
 
 PD[0].setLegend("FluidiCL")
 PD[1].setLegend("Boyer et al.")
 PD[2].setLegend("jAWS")
 
 # WebCL
-PP = PatternParser(tRead("dat/jaws-comp/webcl.dat"))
+PP = ep.PatternParser(ep.tRead("dat/jaws-comp/webcl.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 PP.datNormTo("cpu-only", "gpu-only", predicate="min")
 
 WD = []
-WD.append(Group(PP, "SO", color=mc["white"], hatch=""))
-WD.append(Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
-WD.append(Group(PP, "jAWS", color=mc["black"], hatch=""))
+WD.append(ep.Group(PP, "SO", color=mc["white"], hatch=""))
+WD.append(ep.Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
+WD.append(ep.Group(PP, "jAWS", color=mc["black"], hatch=""))
 
 # Geomean
-PP = PatternParser(tRead("dat/jaws-comp/geomean-best.dat"))
+PP = ep.PatternParser(ep.tRead("dat/jaws-comp/geomean-best.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 
 GD = []
-GD.append(Group(PP, "SO", color=mc["white"], hatch=""))
-GD.append(Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
-GD.append(Group(PP, "jAWS", color=mc["black"], hatch=""))
+GD.append(ep.Group(PP, "SO", color=mc["white"], hatch=""))
+GD.append(ep.Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
+GD.append(ep.Group(PP, "jAWS", color=mc["black"], hatch=""))
 
 # label lists
 poly_list = ["ATAX", "BICG", "SYRK", "SYR2K", "GEMM", "2MM", "CORR"]
@@ -85,8 +72,8 @@ poly_list_l = [ elem.lower() for elem in poly_list ]
 webcl_list = ["Mandelbrot", "Nbody", "Sobel-CorG", "Random"]
 geo_list = ["geomean"]
 
-L1 = TickLabel(None, poly_list_l + webcl_list + geo_list)
-CB = CBarPlotter(ylabel="Speedup over Best Device", ylpos=[-.035, 0.5], width=30, height=6.8)
+L1 = ep.TickLabel(None, poly_list_l + webcl_list + geo_list)
+CB = ep.CBarPlotter(ylabel="Speedup over Best Device", ylpos=[-.035, 0.5], width=30, height=6.8)
 CB.setTicks(yspace=[0, 0.5, 1, 1.5], label=L1)
 CB.annotate(["Polybench", "WebKit-WebCL"], [[27.5, -.30], [85, -.30]], fontsize=30)
 
@@ -109,36 +96,36 @@ face = mc["black"]
 marker = "o"
 
 # Polybench
-PP = PatternParser(tRead("dat/jaws-lbf/poly.dat"))
+PP = ep.PatternParser(ep.tRead("dat/jaws-lbf/poly.dat"))
 PP.PickKeyWith("col")
 PP.ParseWith("\t")
 
 PLB = []
 for i, val in enumerate(poly_list):
-    PLB.append(Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
+    PLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
 PLB[0].setLegend("Load Balance Factor")
 
 # WebCL
-PP = PatternParser(tRead("dat/jaws-lbf/webcl.dat"))
+PP = ep.PatternParser(ep.tRead("dat/jaws-lbf/webcl.dat"))
 PP.PickKeyWith("col")
 PP.ParseWith("\t")
 
 WLB = []
 for i, val in enumerate(webcl_list):
-    WLB.append(Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
+    WLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
 
 # Geomean
-PP = PatternParser(tRead("dat/jaws-lbf/geomean.dat"))
+PP = ep.PatternParser(ep.tRead("dat/jaws-lbf/geomean.dat"))
 PP.PickKeyWith("col")
 PP.ParseWith("\t")
 
 GLB = []
 for i, val in enumerate(geo_list):
-    GLB.append(Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
+    GLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
 
 twinx = CB.getAxis()
 
-LP = LinePlotter(axis=twinx, ylabel="Load Balance Factor", ylpos=[1.04, 0.5])
+LP = ep.LinePlotter(axis=twinx, ylabel="Load Balance Factor", ylpos=[1.04, 0.5])
 LP.setLegendStyle(frame=False, pos=[0.83, 1.18], size=28)
 LP.setFigureStyle(markersize=15)
 LP.setTicks(yspace=[0, 0.5, 1.0, 1.5])

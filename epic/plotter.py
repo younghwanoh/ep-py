@@ -261,6 +261,8 @@ class LinePlotter(AbstractPlotter):
         self.m_beforeEveryDraw()
 
         p_plotterProp = self.splotterProp.load()
+        if p_plotterProp["markersize"] is False:
+            p_plotterProp.pop("markersize")
 
         keyLen = len(argv)
         self.patch = range(keyLen)

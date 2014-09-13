@@ -1,25 +1,8 @@
 #!/usr/bin/python
 
-import sys
-import re
-import csv
-from sys import stdout
+import epic as ep
 
-sys.dont_write_bytecode = True;
-
-# library for ep.py
-from parser import PatternParser
-from tools import *
-from plotter import *
-
-# argument parser
-import argparse
-argparser = argparse.ArgumentParser()
-argparser.add_argument("-i", "--inFile", help='Specify the name of input data file')
-argparser.add_argument("-si", "--signature", help='Specify the signature')
-argparser.add_argument("-o","--outFile", help='Specify the name of output PDF file')
-argparser.add_argument("-s","--style", help='Specify the style of graphs')
-args = argparser.parse_args()
+args = ep.parseCommandArgs() 
 
 # color macro dictionary
 mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292",
@@ -32,7 +15,7 @@ if bool(args.outFile) == True:
     output = args.outFile
 
 if bool(args.inFile) == True:
-    text = tRead(args.inFile)
+    text = ep.tRead(args.inFile)
 
 if bool(args.style) == True:
     style = args.style
@@ -47,21 +30,21 @@ NS_CPUresult = []
 
 # Reproduce data (Normalization, ...)
 for i in range(len(benchmarks)):
-    txt_share = tRead("dat/jaws-merge/%s.share.log" % benchmarks[i])
-    txt_noshare = tRead("dat/jaws-merge/%s.noshare.log" % benchmarks[i])
+    txt_share = ep.tRead("dat/jaws-merge/%s.share.log" % benchmarks[i])
+    txt_noshare = ep.tRead("dat/jaws-merge/%s.noshare.log" % benchmarks[i])
     
     # Parse text
-    PP1 = PatternParser(txt_share)
+    PP1 = ep.PatternParser(txt_share)
     PP1.PickKeyWith(": ")
     PP1.ParseWith(",")
-    PP2 = PatternParser(txt_noshare)
+    PP2 = ep.PatternParser(txt_noshare)
     PP2.PickKeyWith(": ")
     PP2.ParseWith(",")
 
-    S_CPUresult.append(tTranspose(PP1.datList[:4])[0])
-    S_GPUresult.append(tTranspose(PP1.datList[4:])[0])
-    NS_CPUresult.append(tTranspose(PP2.datList[:4])[0])
-    NS_GPUresult.append(tTranspose(PP2.datList[4:])[0])
+    S_CPUresult.append(ep.tTranspose(PP1.datList[:4])[0])
+    S_GPUresult.append(ep.tTranspose(PP1.datList[4:])[0])
+    NS_CPUresult.append(ep.tTranspose(PP2.datList[:4])[0])
+    NS_GPUresult.append(ep.tTranspose(PP2.datList[4:])[0])
 
 
 for i in range(len(benchmarks)):
@@ -115,15 +98,15 @@ colors = [mc["dgray"], mc["white"], mc["gray"], mc["dwhite"], mc["dwhite"], mc["
 hatch = ["", "\\\\\\\\", "", "", "", ""]
 
 ## Stacked Bar Plot =================================================================
-SBP = SBarPlotter(xlabel="", ylabel="Overhead normalized\n to useful work",
-                  ylpos=[-.1, 0.5], width=8, height=4.2)
+SBP = ep.SBarPlotter(xlabel="", ylabel="Overhead normalized\n to useful work",
+                     ylpos=[-.1, 0.5], width=8, height=4.2)
 
 # Set manual ticks ==================================================================
 SBP.annotate(["syrk", "gemm"], [[1.75, -.13], [6.21, -.13]], fontsize=17)
 # SBP.annotate(["syrk", "gemm"], [[1.55, -8.24], [6.55, -8.24]], fontsize=18)
 tlabel =   ["NoShm", "GPU", "Shm", "NoShm", "CPU", "Shm"] + \
            ["NoShm", "GPU", "Shm", "NoShm", "CPU", "Shm"]
-L1 = TickLabel(None, tlabel)
+L1 = ep.TickLabel(None, tlabel)
 
 xspace = [.47,1,1.5, 2.57,3.1,3.6,
           5.1,5.6,6.1, 7.2,7.7,8.2]

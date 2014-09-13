@@ -1,25 +1,12 @@
 #!/usr/bin/python
 
-import sys
-import re
 import csv
 from sys import stdout
 
-sys.dont_write_bytecode = True;
+import numpy as np
+import epic as ep
 
-# library for ep.py
-from parser import PatternParser
-from tools import *
-from plotter import *
-
-# argument parser
-import argparse
-argparser = argparse.ArgumentParser()
-argparser.add_argument("-i", "--inFile", help='Specify the name of input data file')
-argparser.add_argument("-si", "--signature", help='Specify the signature')
-argparser.add_argument("-o","--outFile", help='Specify the name of output PDF file')
-argparser.add_argument("-s","--style", help='Specify the style of graphs')
-args = argparser.parse_args()
+args = ep.parseCommandArgs() 
 
 # color macro dictionary
 mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292",
@@ -32,26 +19,26 @@ if bool(args.outFile) == True:
     output = args.outFile
 
 if bool(args.inFile) == True:
-    text = tRead(args.inFile)
+    text = ep.tRead(args.inFile)
 
 if bool(args.style) == True:
     style = args.style
 
 # line graph with special key
 if style == "line-key":
-    text = tRead("dat/line.dat")
+    text = ep.tRead("dat/line.dat")
 
-    PP = PatternParser(text)
+    PP = ep.PatternParser(text)
     PP.PickKeyWith(": ")
     PP.ParseWith(",")
 
-    GPUdata = Group(PP, "GPUprofileQuantum", "GPUthput", color="red", marker="o")
-    CPUdata = Group(PP, "CPUprofileQuantum", "CPUthput", color="blue", marker="x")
+    GPUdata = ep.Group(PP, "GPUprofileQuantum", "GPUthput", color="red", marker="o")
+    CPUdata = ep.Group(PP, "CPUprofileQuantum", "CPUthput", color="blue", marker="x")
 
     GPUdata.setLegend("GPU") 
     CPUdata.setLegend("CPU") 
 
-    LP = LinePlotter(width=5, height=5, title="LinePlot with key", xlabel="abc", ylabel="ee")
+    LP = ep.LinePlotter(width=5, height=5, title="LinePlot with key", xlabel="abc", ylabel="ee")
     # LP.setFigureStyle(xlim=[0, 1000], ylim=[0, 1000])
     LP.draw(GPUdata, CPUdata)
     LP.saveToPdf(output);
@@ -59,19 +46,19 @@ if style == "line-key":
 
 # line graph without special key
 if style == "line-raw":
-    text = tRead("dat/line-raw.dat")
+    text = ep.tRead("dat/line-raw.dat")
 
-    PP = PatternParser(text)
+    PP = ep.PatternParser(text)
     PP.ParseWith(",")
 
     # Grouping input with raw matrix data
-    GPUdata = Group(None, PP.datList[1], PP.datList[3], color="red", marker="o")
-    CPUdata = Group(None, PP.datList[0], PP.datList[2], color="blue", marker="x")
+    GPUdata = ep.Group(None, PP.datList[1], PP.datList[3], color="red", marker="o")
+    CPUdata = ep.Group(None, PP.datList[0], PP.datList[2], color="blue", marker="x")
 
     GPUdata.setLegend("GPU") 
     CPUdata.setLegend("CPU") 
 
-    LP = LinePlotter(width=5, height=5, title="LinePlot with raw", xlabel="abc", ylabel="ee")
+    LP = ep.LinePlotter(width=5, height=5, title="LinePlot with raw", xlabel="abc", ylabel="ee")
     # LP.setFigureStyle(xlim=[0, 1000], ylim=[0, 1000])
     LP.draw(GPUdata, CPUdata)
     LP.saveToPdf(output);
@@ -79,71 +66,71 @@ if style == "line-raw":
 
 # line graph with single parsed y-array
 elif style == "line-flat":
-    text = tRead("dat/flat.dat")
+    text = ep.tRead("dat/flat.dat")
 
-    PP = PatternParser(text)
+    PP = ep.PatternParser(text)
     PP.PickKeyWith("row")
     PP.ParseWith("\t")
 
-    D1 = Group(PP, [1,2,3,4], "seq",      color="red", marker="o")
-    D2 = Group(PP, [1,2,3,4], "cpu-only", color="blue", marker="x")
-    D3 = Group(PP, [1,2,3,4], "gpu-only", color="green", marker="o")
-    D4 = Group(PP, [1,2,3,4], "cpu+gpu",  color="black", marker="x")
+    D1 = ep.Group(PP, [1,2,3,4], "seq",      color="red", marker="o")
+    D2 = ep.Group(PP, [1,2,3,4], "cpu-only", color="blue", marker="x")
+    D3 = ep.Group(PP, [1,2,3,4], "gpu-only", color="green", marker="o")
+    D4 = ep.Group(PP, [1,2,3,4], "cpu+gpu",  color="black", marker="x")
 
     D1.setLegend("SEQ") 
     D2.setLegend("CPU-only") 
     D3.setLegend("GPU-only") 
     D4.setLegend("CPU+GPU") 
 
-    LP = LinePlotter(title="LinePlot with flattend format", xlabel="abc", ylabel="ee")
+    LP = ep.LinePlotter(title="LinePlot with flattend format", xlabel="abc", ylabel="ee")
     LP.setFigureStyle(xlim=[0, 10], ylim=[0, 10])
     LP.draw(D1,D2,D3,D4)
     LP.saveToPdf(output)
 
 # line graph with normalization to denoted key
 elif style == "line-norm":
-    text = tRead("dat/line-norm.dat")
+    text = ep.tRead("dat/line-norm.dat")
 
-    PP = PatternParser(text)
+    PP = ep.PatternParser(text)
     PP.PickKeyWith(": ")
     PP.ParseWith("\t")
     PP.datNormTo("SEQavg", opt="speedup") # option: speedup, exetime
 
-    D1 = Group(PP, "data", "Profile", color="red", marker="o")
-    D2 = Group(PP, "data", "CGCEavg", color="blue", marker="x")
-    D3 = Group(PP, "data", "SEQiavg", color="green", marker="o")
-    D4 = Group(PP, "data", "GPUiavg", color="black", marker="x")
+    D1 = ep.Group(PP, "data", "Profile", color="red", marker="o")
+    D2 = ep.Group(PP, "data", "CGCEavg", color="blue", marker="x")
+    D3 = ep.Group(PP, "data", "SEQiavg", color="green", marker="o")
+    D4 = ep.Group(PP, "data", "GPUiavg", color="black", marker="x")
 
     D1.setLegend("SEQ") 
     D2.setLegend("CPU-only") 
     D3.setLegend("GPU-only") 
     D4.setLegend("CPU+GPU") 
 
-    LP = LinePlotter(title="Normalized LinePlot", xlabel="abc", ylabel="ee")
+    LP = ep.LinePlotter(title="Normalized LinePlot", xlabel="abc", ylabel="ee")
     LP.draw(D1,D2,D3,D4)
     LP.saveToPdf(output)
 
 elif style == "pie":
     # Parse text
-    text = tRead("dat/pie.dat")
-    PP = PatternParser(text);
+    text = ep.tRead("dat/pie.dat")
+    PP = ep.PatternParser(text);
     PP.PickKeyWith(": ")
 
     tag = ["CN", "HL", "YH"]
     colors = [mc["red"], mc["yellow"], mc["blue"]]
 
     # Draw box
-    PIP = PiePlotter(title="PiePlot with start/end points")
+    PIP = ep.PiePlotter(title="PiePlot with start/end points")
 
     PIP.draw(PP.rowData, legend=tag, colors=colors)
     PIP.saveToPdf(output)
 
 # getter test
 elif style == "getter-test":
-    text = tRead("dat/box.dat")
+    text = ep.tRead("dat/box.dat")
     writeLine = csv.writer(stdout, delimiter='\n')
 
-    PP = PatternParser(text);
+    PP = ep.PatternParser(text);
     PP.PickKeyWith(": ")
     PP.ParseWith(",")
     print("Key ---------------------------------------------")
@@ -177,18 +164,18 @@ elif style == "getter-test":
 
 # bar graph
 elif style == "bar-clustered":
-    text = tRead("dat/bar-clustered.dat")
+    text = ep.tRead("dat/bar-clustered.dat")
 
     # Parse text
-    PP = PatternParser(text)
+    PP = ep.PatternParser(text)
     PP.PickKeyWith("row")
     PP.ParseWith("\t")
 
     # Set data
-    D1 = Group(PP, "seq",      color="red", hatch="-")
-    D2 = Group(PP, "cpu-only", color="blue")
-    D3 = Group(PP, "gpu-only", color="green", hatch="||")
-    D4 = Group(PP, "cpu+gpu",  color="black")
+    D1 = ep.Group(PP, "seq",      color="red", hatch="-")
+    D2 = ep.Group(PP, "cpu-only", color="blue")
+    D3 = ep.Group(PP, "gpu-only", color="green", hatch="||")
+    D4 = ep.Group(PP, "cpu+gpu",  color="black")
 
     D1.setLegend("SEQ") 
     D2.setLegend("CPU-only") 
@@ -196,13 +183,13 @@ elif style == "bar-clustered":
     D4.setLegend("CPU+GPU") 
 
     # Set label with key
-    L1 = TickLabel(PP, "label")
+    L1 = ep.TickLabel(PP, "label")
 
     # Set label manually
-    # L1 = TickLabel(None, ["label","1","2",1])
+    # L1 = ep.TickLabel(None, ["label","1","2",1])
 
     # Draw bar
-    CB = CBarPlotter(title="BarPlot with flattend format",
+    CB = ep.CBarPlotter(title="BarPlot with flattend format",
                      xlabel="Input Size", ylabel="Exe time")
     # CB.setLimitOn(x=[0, 10], y=[0, 10])
     CB.draw(D1,D2,D3,D4, barwidth=2)
@@ -210,19 +197,19 @@ elif style == "bar-clustered":
     CB.saveToPdf(output)
 
 elif style == "bar-norm-clustered":
-    text = tRead("dat/bar-clustered.dat")
+    text = ep.tRead("dat/bar-clustered.dat")
 
     # Parse text
-    PP = PatternParser(text)
+    PP = ep.PatternParser(text)
     PP.PickKeyWith("row")
     PP.ParseWith("\t")
     PP.datNormTo("gpu-only", opt="speedup") # option: speedup, exetime
 
     # Set data
-    D1 = Group(PP, "seq",      color="red", hatch="-")
-    D2 = Group(PP, "cpu-only", color="blue")
-    D3 = Group(PP, "gpu-only", color="green", hatch="||")
-    D4 = Group(PP, "cpu+gpu",  color="black")
+    D1 = ep.Group(PP, "seq",      color="red", hatch="-")
+    D2 = ep.Group(PP, "cpu-only", color="blue")
+    D3 = ep.Group(PP, "gpu-only", color="green", hatch="||")
+    D4 = ep.Group(PP, "cpu+gpu",  color="black")
 
     D1.setLegend("SEQ") 
     D2.setLegend("CPU-only") 
@@ -230,13 +217,13 @@ elif style == "bar-norm-clustered":
     D4.setLegend("CPU+GPU") 
 
     # Set label with key
-    L1 = TickLabel(PP, "label")
+    L1 = ep.TickLabel(PP, "label")
 
     # Set label manually
-    # L1 = TickLabel(None, ["label","1","2",1])
+    # L1 = ep.TickLabel(None, ["label","1","2",1])
 
     # Draw bar
-    CB = CBarPlotter(title="Normalized BarPlot with flattend format",
+    CB = ep.CBarPlotter(title="Normalized BarPlot with flattend format",
                      xlabel="Input Size", ylabel="Speedup")
     # CB.setLimitOn(x=[0, 10], y=[0, 10])
     CB.setTicks(label=L1)
@@ -244,24 +231,24 @@ elif style == "bar-norm-clustered":
     CB.saveToPdf(output)
 
 elif style == "bar-key-clustered":
-    text = tRead("dat/bar-key.dat")
+    text = ep.tRead("dat/bar-key.dat")
 
     # Parse text
-    PP = PatternParser(text)
+    PP = ep.PatternParser(text)
     PP.PickKeyWith(": ")
     PP.ParseWith("\t")
 
     # Set label with key
-    L1 = TickLabel(PP, "data")
+    L1 = ep.TickLabel(PP, "data")
 
     # Normalization must be occured after grouping TickLabel
     PP.datNormTo("SEQavg", opt="speedup") # option: speedup, exetime
 
     # Set data
-    D1 = Group(PP, "SEQiavg", color="red", hatch="-")
-    D2 = Group(PP, "GPUiavg", color="blue")
-    D3 = Group(PP, "CGCEavg", color="green", hatch="||")
-    D4 = Group(PP, "Profile", color="black")
+    D1 = ep.Group(PP, "SEQiavg", color="red", hatch="-")
+    D2 = ep.Group(PP, "GPUiavg", color="blue")
+    D3 = ep.Group(PP, "CGCEavg", color="green", hatch="||")
+    D4 = ep.Group(PP, "Profile", color="black")
 
     D1.setLegend("CPU-only") 
     D2.setLegend("GPU-only") 
@@ -269,41 +256,41 @@ elif style == "bar-key-clustered":
     D4.setLegend("CGCE+profile") 
 
     # Set label manually
-    # L1 = TickLabel(None, ["label","1","2",1])
+    # L1 = ep.TickLabel(None, ["label","1","2",1])
 
     # Draw bar
-    CB = CBarPlotter(title="BarPlot with key format", xlabel="Input Size", ylabel="Speedup")
+    CB = ep.CBarPlotter(title="BarPlot with key format", xlabel="Input Size", ylabel="Speedup")
     CB.setTicks(label=L1, angle=45)
     CB.setFigureStyle(figmargin=0.05, xlim=[0, 10], ylim=[0, 5])
     CB.draw(D1,D2,D3,D4, barwidth=2)
     CB.saveToPdf(output)
 
 elif style == "bar-key-cc":
-    text = tRead("dat/bar-key-cc.dat")
+    text = ep.tRead("dat/bar-key-cc.dat")
 
     # Parse text
-    PP = PatternParser(text)
+    PP = ep.PatternParser(text)
     PP.PickKeyWith(": ")
     PP.ParseWith("\t")
 
     # Set label with key
-    L1 = TickLabel(PP, "data")
-    L2 = TickLabel(PP, "data2")
+    L1 = ep.TickLabel(PP, "data")
+    L2 = ep.TickLabel(PP, "data2")
 
     # Normalization must be occured after grouping TickLabel
     PP.datNormTo("SEQavg", opt="speedup") # option: speedup, exetime
 
     # Set data
-    D1 = Group(PP, "SEQiavg", color="red", hatch="-")
-    D2 = Group(PP, "GPUiavg", color="blue")
-    D3 = Group(PP, "CGCEavg", color="green", hatch="||")
-    D4 = Group(PP, "Profile", color="black")
-    G1 = Group(D1, D2, D3, D4)
+    D1 = ep.Group(PP, "SEQiavg", color="red", hatch="-")
+    D2 = ep.Group(PP, "GPUiavg", color="blue")
+    D3 = ep.Group(PP, "CGCEavg", color="green", hatch="||")
+    D4 = ep.Group(PP, "Profile", color="black")
+    G1 = ep.Group(D1, D2, D3, D4)
 
-    D5 = Group(PP, "Savg", color="red", hatch="-")
-    D6 = Group(PP, "Cavg", color="green", hatch="||")
-    D7 = Group(PP, "Prof", color="black")
-    G2 = Group(D5, D6, D7)
+    D5 = ep.Group(PP, "Savg", color="red", hatch="-")
+    D6 = ep.Group(PP, "Cavg", color="green", hatch="||")
+    D7 = ep.Group(PP, "Prof", color="black")
+    G2 = ep.Group(D5, D6, D7)
 
     D1.setLegend("CPU-only") 
     D2.setLegend("GPU-only") 
@@ -315,8 +302,8 @@ elif style == "bar-key-cc":
     D7.setLegend("CG+profile") 
 
     # Draw bar
-    CB = CCBarPlotter(title="BarPlot with key format", width=10, height=4,
-                      xlabel="Input Size", ylabel="Speedup")
+    CB = ep.CCBarPlotter(title="BarPlot with key format", width=10, height=4,
+                         xlabel="Input Size", ylabel="Speedup")
 
     CB.setLegendStyle(ncol=8, size=7.5, frame=False, loc="upper center")
     CB.setTicks(label=[L1, L2], angle=45)
@@ -325,23 +312,23 @@ elif style == "bar-key-cc":
     CB.saveToPdf(output)
 
 elif style == "bar-single":
-    text = tRead("dat/flat.dat")
+    text = ep.tRead("dat/flat.dat")
 
     # Parse text
-    PP = PatternParser(text)
+    PP = ep.PatternParser(text)
     PP.PickKeyWith("row")
     PP.ParseWith("\t")
 
     # Set data
-    D1 = Group(PP, "gpu-only", color="green", hatch="||")
+    D1 = ep.Group(PP, "gpu-only", color="green", hatch="||")
     D1.setLegend("GPU-only") 
 
     # Set label with key
-    L1 = TickLabel(PP, "label")
+    L1 = ep.TickLabel(PP, "label")
 
     # Draw bar
-    BP = CBarPlotter(title="BarPlot with flattend format",
-                     xlabel="Input Size", ylabel="Performance")
+    BP = ep.CBarPlotter(title="BarPlot with flattend format",
+                        xlabel="Input Size", ylabel="Performance")
     # BP.setFigureStyle(xlim=[0, 10], ylim=[0, 10], figmargin=0.3)
     BP.setFigureStyle(figmargin=0.3)
     BP.setTicks(label=L1)
@@ -350,30 +337,30 @@ elif style == "bar-single":
 
 # box graph
 elif style == "box-key":
-    text = tRead("dat/box.dat")
+    text = ep.tRead("dat/box.dat")
 
     # Parse text
-    PP = PatternParser(text);
+    PP = ep.PatternParser(text);
     PP.PickKeyWith(": ")
     PP.ParseWith(",")
 
     # Set data
-    D1 = Group(PP, "CPU 0 S", "CPU 0 E", color="#225522", hatch="")
+    D1 = ep.Group(PP, "CPU 0 S", "CPU 0 E", color="#225522", hatch="")
     D1.setLegend("CPU 0")
-    D2 = Group(PP, "CPU 1 S", "CPU 1 E", color="#BC434C", hatch="")
+    D2 = ep.Group(PP, "CPU 1 S", "CPU 1 E", color="#BC434C", hatch="")
     D2.setLegend("CPU 1")
-    D3 = Group(PP, "CPU 2 S", "CPU 2 E", color="#FFBB00", hatch="")
+    D3 = ep.Group(PP, "CPU 2 S", "CPU 2 E", color="#FFBB00", hatch="")
     D3.setLegend("CPU 2")
-    D4 = Group(PP, "CPU 3 S", "CPU 3 E", color="#B82E92", hatch="")
+    D4 = ep.Group(PP, "CPU 3 S", "CPU 3 E", color="#B82E92", hatch="")
     D4.setLegend("CPU 3")
-    D5 = Group(PP, "GPU S", "GPU E", color="#4455D2", hatch="")
+    D5 = ep.Group(PP, "GPU S", "GPU E", color="#4455D2", hatch="")
     D5.setLegend("GPU")
 
     # Set label with key
-    L1 = TickLabel(None, ["CPU 0", "CPU 1", "CPU 2", "CPU 3", "GPU 0"])
+    L1 = ep.TickLabel(None, ["CPU 0", "CPU 1", "CPU 2", "CPU 3", "GPU 0"])
 
     # Draw box
-    BOP = BoxPlotter(title="BoxPlot with start/end points", xlabel="Device",
+    BOP = ep.BoxPlotter(title="BoxPlot with start/end points", xlabel="Device",
                      ylabel="Degree of process")
     BOP.setFigureStyle(vertical=True, timeline=False, boxwidth=2)
     BOP.setTicks(label=L1)
@@ -382,27 +369,27 @@ elif style == "box-key":
 
 # box graph
 elif style == "box-time":
-    text = tRead("dat/box-time.dat")
+    text = ep.tRead("dat/box-time.dat")
 
     # Parse text
-    PP = PatternParser(text);
+    PP = ep.PatternParser(text);
     PP.PickKeyWith(": ")
     PP.ParseWith(",")
 
     # Set data
-    D1 = Group(PP, "CPU 0 S", "CPU 0 E", color="#225522", hatch="")
+    D1 = ep.Group(PP, "CPU 0 S", "CPU 0 E", color="#225522", hatch="")
     D1.setLegend("CPU 0")
-    D2 = Group(PP, "CPU 1 S", "CPU 1 E", color="#BC434C", hatch="")
+    D2 = ep.Group(PP, "CPU 1 S", "CPU 1 E", color="#BC434C", hatch="")
     D2.setLegend("CPU 1")
-    D3 = Group(PP, "CPU 2 S", "CPU 2 E", color="#FFBB00", hatch="")
+    D3 = ep.Group(PP, "CPU 2 S", "CPU 2 E", color="#FFBB00", hatch="")
     D3.setLegend("CPU 2")
-    D4 = Group(PP, "CPU 3 S", "CPU 3 E", color="#B82E92", hatch="")
+    D4 = ep.Group(PP, "CPU 3 S", "CPU 3 E", color="#B82E92", hatch="")
     D4.setLegend("CPU 3")
-    D5 = Group(PP, "GPU S", "GPU E", color="#4455D2", hatch="")
+    D5 = ep.Group(PP, "GPU S", "GPU E", color="#4455D2", hatch="")
     D5.setLegend("GPU")
 
     # Draw box
-    BOP = BoxPlotter(title="BoxPlot with start/end points", width=10, height=4,
+    BOP = ep.BoxPlotter(title="BoxPlot with start/end points", width=10, height=4,
                      xlabel="Time", ylabel="Running Device")
 
     BOP.setLegendStyle(ncol=5, size=12, frame=False, loc="upper center") 
@@ -413,37 +400,37 @@ elif style == "box-time":
 elif style == "box-multi-time":
 
     # Parse text
-    text = tRead("dat/box-multi-time.dat")
-    PP = PatternParser(text);
+    text = ep.tRead("dat/box-multi-time.dat")
+    PP = ep.PatternParser(text);
     PP.PickKeyWith(": ")
     PP.ParseWith(",")
 
     # Set data
-    D1 = Group(PP, "Schedule 0 S", "Schedule 0 E", color=mc["red"], hatch="")
-    D2 = Group(PP, "Memory 0 S", "Memory 0 E", color=mc["yellow"], hatch="//")
-    D3 = Group(PP, "Compute 0 S", "Compute 0 E", color=mc["blue"], hatch="")
-    G1 = Group(D1, D2, D3)
+    D1 = ep.Group(PP, "Schedule 0 S", "Schedule 0 E", color=mc["red"], hatch="")
+    D2 = ep.Group(PP, "Memory 0 S", "Memory 0 E", color=mc["yellow"], hatch="//")
+    D3 = ep.Group(PP, "Compute 0 S", "Compute 0 E", color=mc["blue"], hatch="")
+    G1 = ep.Group(D1, D2, D3)
 
     D1.setLegend("Schedule")
     D2.setLegend("Memory")
     D3.setLegend("Compute")
 
     # Set data
-    D4 = Group(PP, "Schedule 1 S", "Schedule 1 E", color=mc["red"], hatch="")
-    D5 = Group(PP, "Memory 1 S", "Memory 1 E", color=mc["yellow"], hatch="//")
-    D6 = Group(PP, "Compute 1 S", "Compute 1 E", color=mc["blue"], hatch="")
-    G2 = Group(D4, D5, D6)
+    D4 = ep.Group(PP, "Schedule 1 S", "Schedule 1 E", color=mc["red"], hatch="")
+    D5 = ep.Group(PP, "Memory 1 S", "Memory 1 E", color=mc["yellow"], hatch="//")
+    D6 = ep.Group(PP, "Compute 1 S", "Compute 1 E", color=mc["blue"], hatch="")
+    G2 = ep.Group(D4, D5, D6)
 
     # Set data
-    D7 = Group(PP, "Schedule G S", "Schedule G E", color=mc["red"], hatch="")
-    D8 = Group(PP, "Memory G S", "Memory G E", color=mc["yellow"], hatch="//")
-    D9 = Group(PP, "Compute G S", "Compute G E", color=mc["blue"], hatch="")
-    G3 = Group(D7, D8, D9)
+    D7 = ep.Group(PP, "Schedule G S", "Schedule G E", color=mc["red"], hatch="")
+    D8 = ep.Group(PP, "Memory G S", "Memory G E", color=mc["yellow"], hatch="//")
+    D9 = ep.Group(PP, "Compute G S", "Compute G E", color=mc["blue"], hatch="")
+    G3 = ep.Group(D7, D8, D9)
 
-    L1 = TickLabel(PP, ["CPU 0", "CPU 1", "GPU"])
+    L1 = ep.TickLabel(PP, ["CPU 0", "CPU 1", "GPU"])
 
     # Draw box
-    CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=12, height=5,
+    CBOP = ep.CBoxPlotter(title="BoxPlot with start/end points", width=12, height=5,
                        xlabel="Time (ms)")
 
     CBOP.setLegendStyle(ncol=5, size=13, frame=False, loc="upper center")
@@ -457,45 +444,45 @@ elif style == "jaws":
     key = ["GPU comm0", "GPU comm1", "GPU memcp",
            "GPU exe", "CPU comm0", "CPU exe0",
            "CPU exe1", "CPU comm1", "GPU comm2"]
-    # text = tRead("dat/breakSM.dat")
-    text = tRead("dat/breakNoSM.dat")
+    # text = ep.tRead("dat/breakSM.dat")
+    text = ep.tRead("dat/breakNoSM.dat")
 
     # Use custom parser mode
-    PP = PatternParser(text, arrange=key, region=True, subtfromfirst=True);
+    PP = ep.PatternParser(text, arrange=key, region=True, subtfromfirst=True);
 
     # Set GPU data
-    D1 = Group(PP, "GPU comm0", region=True, color=mc["yellow"], hatch="//")
-    D2 = Group(PP, "GPU comm1", region=True, color=mc["yellow"], hatch="//")
-    D3 = Group(PP, "GPU comm2", region=True, color=mc["yellow"], hatch="//")
-    G1 = Group(D1, D2, D3)
+    D1 = ep.Group(PP, "GPU comm0", region=True, color=mc["yellow"], hatch="//")
+    D2 = ep.Group(PP, "GPU comm1", region=True, color=mc["yellow"], hatch="//")
+    D3 = ep.Group(PP, "GPU comm2", region=True, color=mc["yellow"], hatch="//")
+    G1 = ep.Group(D1, D2, D3)
 
-    D4 = Group(PP, "GPU memcp", region=True, color=mc["red"], hatch="")
-    G2 = Group(D4)
+    D4 = ep.Group(PP, "GPU memcp", region=True, color=mc["red"], hatch="")
+    G2 = ep.Group(D4)
 
-    D5 = Group(PP, "GPU exe", region=True, color=mc["blue"], hatch="")
-    G3 = Group(D5)
+    D5 = ep.Group(PP, "GPU exe", region=True, color=mc["blue"], hatch="")
+    G3 = ep.Group(D5)
 
     # Set CPU data
-    D6 = Group(PP, "CPU comm0", region=True, color=mc["yellow"], hatch="//")
-    G4 = Group(D6)
+    D6 = ep.Group(PP, "CPU comm0", region=True, color=mc["yellow"], hatch="//")
+    G4 = ep.Group(D6)
 
-    D7 = Group(PP, "CPU comm1", region=True, color=mc["yellow"], hatch="//")
-    G5 = Group(D7)
+    D7 = ep.Group(PP, "CPU comm1", region=True, color=mc["yellow"], hatch="//")
+    G5 = ep.Group(D7)
 
-    D8 = Group(PP, "CPU exe0", region=True, color=mc["blue"], hatch="")
-    G6 = Group(D8)
+    D8 = ep.Group(PP, "CPU exe0", region=True, color=mc["blue"], hatch="")
+    G6 = ep.Group(D8)
 
-    D9 = Group(PP, "CPU exe1", region=True, color=mc["blue"], hatch="")
-    G7 = Group(D9)
+    D9 = ep.Group(PP, "CPU exe1", region=True, color=mc["blue"], hatch="")
+    G7 = ep.Group(D9)
 
     tag = ["GPU comm", "GPU memcp", "GPU exe", "CPU comm0", "CPU comm1", "CPU exe0", "CPU exe1"]
 
     # Set legend and label to data
-    tSetLegend(tag, D1,D4,D5,D6,D7,D8,D9)
-    L1 = TickLabel(PP, tag)
+    ep.tSetLegend(tag, D1,D4,D5,D6,D7,D8,D9)
+    L1 = ep.TickLabel(PP, tag)
 
     # Draw box
-    CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=14, height=5,
+    CBOP = ep.CBoxPlotter(title="BoxPlot with start/end points", width=14, height=5,
                        xlabel="Time (ms)")
 
     CBOP.setLegendStyle(ncol=5, size=13, frame=False, loc="upper center")
@@ -507,9 +494,9 @@ elif style == "jaws":
 elif style == "jaws-all":
 
     key = [ "GPU comm0","GPU comm1","GPU memcp","GPU exe","GPU comm2","GPU schdl"]
-    # text = tRead("dat/jaws/atax.share.log")
-    # text = tRead("dat/breakSM.dat")
-    ## text = tRead("dat/breakNoSM.dat")
+    # text = ep.tRead("dat/jaws/atax.share.log")
+    # text = ep.tRead("dat/breakSM.dat")
+    ## text = ep.tRead("dat/breakNoSM.dat")
 
     cpu_tag = []
     gpu_tag = ["GPU schdl", "GPU memcp", "GPU comm", "GPU exe"]
@@ -523,35 +510,35 @@ elif style == "jaws-all":
         key_exe.append("CPU%d exe" % i)
     key = key + key_comm + key_exe
     # Use custom parser mode
-    PP = PatternParser(text, arrange=key, region=True, subtfromfirst=True);
+    PP = ep.PatternParser(text, arrange=key, region=True, subtfromfirst=True);
 
     # Set GPU data
-    D4 = Group(PP, "GPU memcp", region=True, color=mc["green"], hatch="")
-    G1 = Group(D4)
+    D4 = ep.Group(PP, "GPU memcp", region=True, color=mc["green"], hatch="")
+    G1 = ep.Group(D4)
 
-    D1 = Group(PP, "GPU comm0", region=True, color=mc["red"], hatch="\\")
-    D2 = Group(PP, "GPU comm1", region=True, color=mc["yellow"], hatch="\\")
-    D3 = Group(PP, "GPU comm2", region=True, color=mc["yellow"], hatch="//")
-    G2 = Group(D1, D2, D3)
+    D1 = ep.Group(PP, "GPU comm0", region=True, color=mc["red"], hatch="\\")
+    D2 = ep.Group(PP, "GPU comm1", region=True, color=mc["yellow"], hatch="\\")
+    D3 = ep.Group(PP, "GPU comm2", region=True, color=mc["yellow"], hatch="//")
+    G2 = ep.Group(D1, D2, D3)
 
-    D5 = Group(PP, "GPU exe", region=True, color=mc["blue"], hatch="")
-    G3 = Group(D5)
+    D5 = ep.Group(PP, "GPU exe", region=True, color=mc["blue"], hatch="")
+    G3 = ep.Group(D5)
 
-    D6 = Group(PP, "GPU schdl", region=True, color="#428bca", hatch="")
-    G4 = Group(D6)
+    D6 = ep.Group(PP, "GPU schdl", region=True, color="#428bca", hatch="")
+    G4 = ep.Group(D6)
 
     D = []
     G = []
     # Set CPU data
     for i in range(10):
-        D7 = Group(PP, "CPU%d comm0" % i, region=True, color=mc["red"], hatch="\\")
-        D8 = Group(PP, "CPU%d comm1" % i, region=True, color=mc["yellow"], hatch="\\")
-        D9 = Group(PP, "CPU%d comm2" % i, region=True, color=mc["yellow"], hatch="//")
-        D10= Group(PP, "CPU%d exe" % i, region=True, color=mc["blue"], hatch="")
-        G.append(Group(D7, D8, D9, D10))
+        D7 = ep.Group(PP, "CPU%d comm0" % i, region=True, color=mc["red"], hatch="\\")
+        D8 = ep.Group(PP, "CPU%d comm1" % i, region=True, color=mc["yellow"], hatch="\\")
+        D9 = ep.Group(PP, "CPU%d comm2" % i, region=True, color=mc["yellow"], hatch="//")
+        D10= ep.Group(PP, "CPU%d exe" % i, region=True, color=mc["blue"], hatch="")
+        G.append(ep.Group(D7, D8, D9, D10))
 
     tag = gpu_tag + cpu_tag
-    L1 = TickLabel(PP, tag)
+    L1 = ep.TickLabel(PP, tag)
 
     argument = [G4, G1, G2, G3] + G
 
@@ -563,7 +550,7 @@ elif style == "jaws-all":
     D6.setLegend("schdl")
 
     # Draw box
-    CBOP = CBoxPlotter(title="BoxPlot with start/end points", width=12, height=7,
+    CBOP = ep.CBoxPlotter(title="BoxPlot with start/end points", width=12, height=7,
                      xlabel="Time (ms)")
 
     CBOP.setLegendStyle(ncol=6, size=13, frame=False, loc="upper center")
@@ -581,11 +568,11 @@ elif style == "jaws-pie":
             "GPU schdl start", "GPU schdl end",
             "DONE"]
 
-    text = tRead("dat/jaws/atax.share.log")
+    text = ep.tRead("dat/jaws/atax.share.log")
 
     ## Use custom parser mode
     tag = ["memcp", "comm0", "comm1", "comm2", "schdl"]
-    PP = PatternParser(text, arrange=key, subtfromfirst=True);
+    PP = ep.PatternParser(text, arrange=key, subtfromfirst=True);
     PP.sumWithRegionKey(tag, prefix="GPU ")
     fraction = PP.getDataArr()
 
@@ -604,19 +591,19 @@ elif style == "jaws-pie":
 
 elif style == "bar-stacked":
 
-    PP = PatternParser(" ")
-    D1 = Group(None, [1,2,3,4], color=mc["red"], hatch="")
-    D2 = Group(None, [2,4,5,3], color=mc["blue"], hatch="")
-    D3 = Group(None, [1,1,1,1], color=mc["yellow"], hatch="")
+    PP = ep.PatternParser(" ")
+    D1 = ep.Group(None, [1,2,3,4], color=mc["red"], hatch="")
+    D2 = ep.Group(None, [2,4,5,3], color=mc["blue"], hatch="")
+    D3 = ep.Group(None, [1,1,1,1], color=mc["yellow"], hatch="")
 
     D1.setLegend("A")
     D2.setLegend("B")
     D3.setLegend("C")
 
-    L1 = TickLabel(None, ["A", "B", "C", "D"])
+    L1 = ep.TickLabel(None, ["A", "B", "C", "D"])
 
     ## Draw box
-    SBP = SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value")
+    SBP = ep.SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value")
 
     # Set graph style
     SBP.setLegendStyle(ncol=3, size=10, frame=False, loc="upper center")
@@ -638,20 +625,20 @@ elif style == "bar-stacked-trans":
 
     ## Read raw datas
     args.signature = "atax"
-    text_sm = tRead("dat/jaws/%s.share.log" % args.signature)
-    text_nsm = tRead("dat/jaws/%s.noshare.log" % args.signature)
+    text_sm = ep.tRead("dat/jaws/%s.share.log" % args.signature)
+    text_nsm = ep.tRead("dat/jaws/%s.noshare.log" % args.signature)
 
     ## Tag lists that will parse
     tag = ["memcp", "comm0", "comm1", "comm2", "schdl"]
     leg = ["memcpy", "init", "task_begin", "task_end", "partition"]
 
     ## First parsing
-    PP = PatternParser(text_sm, arrange=key, subtfromfirst=True);
+    PP = ep.PatternParser(text_sm, arrange=key, subtfromfirst=True);
     PP.sumWithRegionKey(tag, prefix="GPU ")
     S_GPUresult = PP.getDataArr()
 
     ## Second parsing
-    PN = PatternParser(text_nsm, arrange=key, subtfromfirst=True);
+    PN = ep.PatternParser(text_nsm, arrange=key, subtfromfirst=True);
     PN.sumWithRegionKey(tag, prefix="GPU ")
     NS_GPUresult = PN.getDataArr()
 
@@ -668,10 +655,10 @@ elif style == "bar-stacked-trans":
     colors = [mc["black"], mc["dgray"], mc["gray"], mc["white"], mc["white"]]
     hatch = ["", "", "", "\\\\", ""]
 
-    L1 = TickLabel(PP, ["with-Shared", "without-Shared"])
+    L1 = ep.TickLabel(PP, ["with-Shared", "without-Shared"])
 
     ## Draw box
-    SBP = SBarPlotter(title=args.signature+" - GPU",
+    SBP = ep.SBarPlotter(title=args.signature+" - GPU",
                       xlabel="Strategy", ylabel="Fraction")
 
     # Set graph style
@@ -753,7 +740,7 @@ elif style == "bar-clustacked":
 
 
     ## Draw box
-    SBP = SBarPlotter(title="Normalized overhead to each device",
+    SBP = ep.SBarPlotter(title="Normalized overhead to each device",
                       xlabel="", ylabel="Fraction")
 
     # Set manual ticks
@@ -761,7 +748,7 @@ elif style == "bar-clustacked":
              ["S", "GPU", "N", "SYRK", "S", "CPU", "N"] + \
              ["S", "GPU", "N", "GEMM", "S", "CPU", "N"]
 
-    L1 = TickLabel(None, tlabel)
+    L1 = ep.TickLabel(None, tlabel)
 
     xspace = [.5,1,1.5, 2.05, 2.6,3.1,3.6,
               5.6,6.1,6.6, 7.15, 7.7,8.2,8.7,
@@ -792,14 +779,14 @@ elif style == "sbp+lp":
 
     # Line data
     Y1=[1,2,3,4,5]
-    D1 = Group(None, Y1, color=mc["red"], hatch="")
+    D1 = ep.Group(None, Y1, color=mc["red"], hatch="")
 
     # Bar data
-    D2 = Group(None, [0.4,0.9,1.7,1.9,2.7], color=mc["blue"], hatch="")
-    D3 = Group(None, [0.45,0.9,1.0,2.0,2.0], color=mc["yellow"], hatch="")
+    D2 = ep.Group(None, [0.4,0.9,1.7,1.9,2.7], color=mc["blue"], hatch="")
+    D3 = ep.Group(None, [0.45,0.9,1.0,2.0,2.0], color=mc["yellow"], hatch="")
 
-    MP, LP, SBP = MultiPlotter(LinePlotter, SBarPlotter, twinx=True,
-                               title="title", xlabel="", ylabel="")
+    MP, LP, SBP = ep.MultiPlotter(ep.LinePlotter, ep.SBarPlotter, twinx=True,
+                                  title="title", xlabel="", ylabel="")
     SBP.draw(D2, D3, boxwidth=1)
     LP.draw(Y1)
 
