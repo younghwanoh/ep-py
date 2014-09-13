@@ -86,7 +86,7 @@ webcl_list = ["Mandelbrot", "Nbody", "Sobel-CorG", "Random"]
 geo_list = ["geomean"]
 
 L1 = TickLabel(None, poly_list_l + webcl_list + geo_list)
-CB = CBarPlotter(ylabel="Speedup over Best Device", width=30, height=6.8)
+CB = CBarPlotter(ylabel="Speedup over Best Device", ylpos=[-.035, 0.5], width=30, height=6.8)
 CB.setTicks(yspace=[0, 0.5, 1, 1.5], label=L1)
 CB.annotate(["Polybench", "WebKit-WebCL"], [[27.5, -.30], [85, -.30]], fontsize=30)
 
@@ -138,8 +138,8 @@ for i, val in enumerate(geo_list):
 
 twinx = CB.getAxis()
 
-LP = LinePlotter(axis=twinx, ylabel="Load Balance Factor")
-LP.setLegendStyle(frame=False, pos=[0.80, 1.18], size=28)
+LP = LinePlotter(axis=twinx, ylabel="Load Balance Factor", ylpos=[1.04, 0.5])
+LP.setLegendStyle(frame=False, pos=[0.83, 1.18], size=28)
 LP.setFigureStyle(markersize=15)
 LP.setTicks(yspace=[0, 0.5, 1.0, 1.5])
 LP.setBaseOffset(1)

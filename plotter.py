@@ -34,10 +34,24 @@ class AbstractPlotter(object):
         def __init__(self):
             self.markersize = [False]
 
+        def store(self, kwargs):
+            myVars = vars(self)
+
+            # tools.py:: Check arguments exist 
+            tCheckArgsExists(kwargs, *kwargs.keys(), ifnot = [myVars[elem] for elem in kwargs.keys()])
+
+        def load(self):
+            result = {}
+            myVars = vars(self)
+            for key, val in myVars.items():
+                result[key] = val[0]
+
+            return result
+
         def dump(self):
             print("\n========= Plotter Properties ===========")
-            attrs = vars(self)
-            print ', '.join("%s: %s" % item for item in attrs.items())
+            myVars = vars(self)
+            print ', '.join("%s: %s" % item for item in myVars.items())
             
 
     def __init__(self, **kwargs):
@@ -220,10 +234,8 @@ class LinePlotter(AbstractPlotter):
     def draw(self, *argv):
         self.m_beforeEveryDraw()
 
-        propArgs = {}
         prop = self.splotterProp
-        # FIXME:: plotterProp class must have decompressor
-        propArgs["markersize"] = prop.markersize[0]
+        plotterProp = prop.load()
 
         keyLen = len(argv)
         self.patch = range(keyLen)
@@ -233,16 +245,13 @@ class LinePlotter(AbstractPlotter):
             shiftedX = np.array(argv[i].X) + self.base 
             self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=2, zorder=3,
                                           marker=argv[i].marker, markeredgecolor=argv[i].face,
-                                          color=argv[i].color, mew=1, **propArgs)
+                                          color=argv[i].color, mew=1, **plotterProp)
             if len(argv[i].legend) > 0:
                 self.legend.append(argv[i].legend)
 
     def m_setFigureStyle(self, **kwargs):
         plotter = self.splotterProp
-
-        # Check args
-        tCheckArgsExists(kwargs, "markersize",
-                         ifnot = [plotter.markersize])
+        plotter.store(kwargs)
 
     def m_finish(self):
         self.m_drawLegend(self.patch, self.legend);
