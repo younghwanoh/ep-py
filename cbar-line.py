@@ -34,7 +34,7 @@ if bool(args.style) == True:
 PP = ep.PatternParser(ep.tRead("dat/jaws-comp/poly.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
-PP.datNormTo("cpu-only", "gpu-only", predicate="min")
+PP.datNormTo("cpu-only", "gpu-only", select="min")
 
 PD = []
 PD.append(ep.Group(PP, "SO", color=mc["white"], hatch=""))
@@ -49,7 +49,7 @@ PD[2].setLegend("jAWS")
 PP = ep.PatternParser(ep.tRead("dat/jaws-comp/webcl.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
-PP.datNormTo("cpu-only", "gpu-only", predicate="min")
+PP.datNormTo("cpu-only", "gpu-only", select="min")
 
 WD = []
 WD.append(ep.Group(PP, "SO", color=mc["white"], hatch=""))

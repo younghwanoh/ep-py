@@ -202,7 +202,7 @@ class PatternParser:
     # skip : skip nomarlization fpr this key
     def datNormTo(self, *argv, **kwargs):
         """Normalize data to spcified row or col"""
-        tCheckArgsExists(kwargs, "opt", "predicate")
+        tCheckArgsExists(kwargs, "opt", "select")
 
         # Speedup or normalized exetime
         calc = lambda x,y: x/y if kwargs["opt"] == "exetime" else y/x
@@ -217,17 +217,17 @@ class PatternParser:
 
         # Predicate function to determine which data to normalize
         rowLen = len(self.datList[0])
-        if kwargs["predicate"] == "min":
-            pred = lambda x,y: [ min(i,j) for i,j in zip(x,y) ]
+        if kwargs["select"] == "min":
+            sel = lambda x,y: [ min(i,j) for i,j in zip(x,y) ]
             targetArr = [float('inf') for i in range(rowLen)]
         else:
-            pred = lambda x,y: [ max(i,j) for i,j in zip(x,y) ]
+            sel = lambda x,y: [ max(i,j) for i,j in zip(x,y) ]
             targetArr = [0 for i in range(rowLen)]
 
-        # List comprehension (idx array) and applying predicate function
+        # List comprehension (idx array) and applying "select" function
         candiArr = [self.datList[i] for i in idx]
         for i, candidate in enumerate(candiArr):
-            targetArr = pred(targetArr, candidate)
+            targetArr = sel(targetArr, candidate)
 
         # Normalization to target
         for i, datRow in enumerate(self.datList):
