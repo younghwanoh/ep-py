@@ -177,6 +177,8 @@ class PatternParser:
         # subtract all data to initial 0 row's data if flag is set
         if bool(initial) == True:
             initial = text[0].split(": ")[1]
+        else:
+            initial = 0
 
         value = []
         for k in range(len(key)):
