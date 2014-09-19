@@ -448,31 +448,32 @@ elif style == "jaws":
     text = ep.tRead("dat/breakNoSM.dat")
 
     # Use custom parser mode
-    PP = ep.PatternParser(text, arrange=key, region=True, subtfromfirst=True);
+    PP = ep.PatternParser(text);
+    PP.PickKeyWith(": ", clusterByRegion=key, subtfromfirst=True)
 
     # Set GPU data
-    D1 = ep.Group(PP, "GPU comm0", region=True, color=mc["yellow"], hatch="//")
-    D2 = ep.Group(PP, "GPU comm1", region=True, color=mc["yellow"], hatch="//")
-    D3 = ep.Group(PP, "GPU comm2", region=True, color=mc["yellow"], hatch="//")
+    D1 = ep.Group(PP, "GPU comm0", color=mc["yellow"], hatch="//")
+    D2 = ep.Group(PP, "GPU comm1", color=mc["yellow"], hatch="//")
+    D3 = ep.Group(PP, "GPU comm2", color=mc["yellow"], hatch="//")
     G1 = ep.Group(D1, D2, D3)
 
-    D4 = ep.Group(PP, "GPU memcp", region=True, color=mc["red"], hatch="")
+    D4 = ep.Group(PP, "GPU memcp", color=mc["red"], hatch="")
     G2 = ep.Group(D4)
 
-    D5 = ep.Group(PP, "GPU exe", region=True, color=mc["blue"], hatch="")
+    D5 = ep.Group(PP, "GPU exe", color=mc["blue"], hatch="")
     G3 = ep.Group(D5)
 
     # Set CPU data
-    D6 = ep.Group(PP, "CPU comm0", region=True, color=mc["yellow"], hatch="//")
+    D6 = ep.Group(PP, "CPU comm0", color=mc["yellow"], hatch="//")
     G4 = ep.Group(D6)
 
-    D7 = ep.Group(PP, "CPU comm1", region=True, color=mc["yellow"], hatch="//")
+    D7 = ep.Group(PP, "CPU comm1", color=mc["yellow"], hatch="//")
     G5 = ep.Group(D7)
 
-    D8 = ep.Group(PP, "CPU exe0", region=True, color=mc["blue"], hatch="")
+    D8 = ep.Group(PP, "CPU exe0", color=mc["blue"], hatch="")
     G6 = ep.Group(D8)
 
-    D9 = ep.Group(PP, "CPU exe1", region=True, color=mc["blue"], hatch="")
+    D9 = ep.Group(PP, "CPU exe1", color=mc["blue"], hatch="")
     G7 = ep.Group(D9)
 
     tag = ["GPU comm", "GPU memcp", "GPU exe", "CPU comm0", "CPU comm1", "CPU exe0", "CPU exe1"]
@@ -509,32 +510,34 @@ elif style == "jaws-all":
         key_comm.append("CPU%d comm2" % i)
         key_exe.append("CPU%d exe" % i)
     key = key + key_comm + key_exe
+
     # Use custom parser mode
-    PP = ep.PatternParser(text, arrange=key, region=True, subtfromfirst=True);
+    PP = ep.PatternParser(text);
+    PP.PickKeyWith(": ", clusterByRegion=key, subtfromfirst=True)
 
     # Set GPU data
-    D4 = ep.Group(PP, "GPU memcp", region=True, color=mc["green"], hatch="")
+    D4 = ep.Group(PP, "GPU memcp", color=mc["green"], hatch="")
     G1 = ep.Group(D4)
 
-    D1 = ep.Group(PP, "GPU comm0", region=True, color=mc["red"], hatch="\\")
-    D2 = ep.Group(PP, "GPU comm1", region=True, color=mc["yellow"], hatch="\\")
-    D3 = ep.Group(PP, "GPU comm2", region=True, color=mc["yellow"], hatch="//")
+    D1 = ep.Group(PP, "GPU comm0", color=mc["red"], hatch="\\")
+    D2 = ep.Group(PP, "GPU comm1", color=mc["yellow"], hatch="\\")
+    D3 = ep.Group(PP, "GPU comm2", color=mc["yellow"], hatch="//")
     G2 = ep.Group(D1, D2, D3)
 
-    D5 = ep.Group(PP, "GPU exe", region=True, color=mc["blue"], hatch="")
+    D5 = ep.Group(PP, "GPU exe", color=mc["blue"], hatch="")
     G3 = ep.Group(D5)
 
-    D6 = ep.Group(PP, "GPU schdl", region=True, color="#428bca", hatch="")
+    D6 = ep.Group(PP, "GPU schdl", color="#428bca", hatch="")
     G4 = ep.Group(D6)
 
     D = []
     G = []
     # Set CPU data
     for i in range(10):
-        D7 = ep.Group(PP, "CPU%d comm0" % i, region=True, color=mc["red"], hatch="\\")
-        D8 = ep.Group(PP, "CPU%d comm1" % i, region=True, color=mc["yellow"], hatch="\\")
-        D9 = ep.Group(PP, "CPU%d comm2" % i, region=True, color=mc["yellow"], hatch="//")
-        D10= ep.Group(PP, "CPU%d exe" % i, region=True, color=mc["blue"], hatch="")
+        D7 = ep.Group(PP, "CPU%d comm0" % i, color=mc["red"], hatch="\\")
+        D8 = ep.Group(PP, "CPU%d comm1" % i, color=mc["yellow"], hatch="\\")
+        D9 = ep.Group(PP, "CPU%d comm2" % i, color=mc["yellow"], hatch="//")
+        D10= ep.Group(PP, "CPU%d exe" % i, color=mc["blue"], hatch="")
         G.append(ep.Group(D7, D8, D9, D10))
 
     tag = gpu_tag + cpu_tag
@@ -572,7 +575,7 @@ elif style == "jaws-pie":
 
     ## Use custom parser mode
     tag = ["memcp", "comm0", "comm1", "comm2", "schdl"]
-    PP = ep.PatternParser(text, arrange=key, subtfromfirst=True);
+    PP = ep.PatternParser(text, clusterBy=key, subtfromfirst=True);
     PP.sumWithRegionKey(tag, prefix="GPU ")
     fraction = PP.getDataArr()
 
@@ -633,12 +636,12 @@ elif style == "bar-stacked-trans":
     leg = ["memcpy", "init", "task_begin", "task_end", "partition"]
 
     ## First parsing
-    PP = ep.PatternParser(text_sm, arrange=key, subtfromfirst=True);
+    PP = ep.PatternParser(text_sm, clusterBy=key, subtfromfirst=True);
     PP.sumWithRegionKey(tag, prefix="GPU ")
     S_GPUresult = PP.getDataArr()
 
     ## Second parsing
-    PN = ep.PatternParser(text_nsm, arrange=key, subtfromfirst=True);
+    PN = ep.PatternParser(text_nsm, clusterBy=key, subtfromfirst=True);
     PN.sumWithRegionKey(tag, prefix="GPU ")
     NS_GPUresult = PN.getDataArr()
 

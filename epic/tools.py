@@ -89,7 +89,7 @@ class Group:
         if "hatch" in kwargs:
             self.hatch = kwargs["hatch"]
 
-        if kwargs["region"] is True:
+        if PP.regionKey is True:
             # Group data with region surfix
             self.groupDataWithRegionKey(PP, argv)
         elif len(argv) == 1:

@@ -12,29 +12,10 @@ class PatternParser:
         self.isParsedBefore = False
         self.keyParseType = None
         self.RAWdata = argv[0]
+        self.regionKey = False
 
-        tCheckArgsExists(kwargs, "region", "arrange", "subtfromfirst")
-        if kwargs["arrange"] is False:
-            # The case that keys are denoted in files.
-            self.rowParse()
-        else:
-            # The case that keys are denoted manually and must be clustered.
-            subtract = None;
-            if kwargs["subtfromfirst"] is True:
-                subtract = kwargs["subtfromfirst"]
-            if kwargs["region"] is True:
-                # Cluster with region key
-                key = []
-                for elem in kwargs["arrange"]:
-                    key.append(elem + " start")
-                    key.append(elem + " end")
-            else:
-                # Cluster withh manual start/end key
-                key = kwargs["arrange"]
-                    
-            assert bool(key) & (len(key) > 0)
-
-            self.cluster(subtract, key)
+        # The case that keys are denoted in files.
+        self.rowParse()
 
     def rowParse(self):
         """Parse col data with \n"""
@@ -84,11 +65,46 @@ class PatternParser:
     # 3) PickKeyWith("col") : with column 0
     # 4) PickKeyWith("row" or "col", number): column or row wuith denoted number
 
-    def PickKeyWith(self, *argv):
+    def PickKeyWith(self, *argv, **kwargs):
         """PickKeyWith treats the data with special keys"""
         if self.isParsedBefore is True:
             print("Alert: You must pick key first before parsing data!"), exit()
         self.isParsedBefore = False
+
+
+        tCheckArgsExists(kwargs, "clusterByRegion", "clusterBy", "subtfromfirst")
+
+        # Subtract data on first line with all data
+        subtract = None;
+        if kwargs["subtfromfirst"] is True:
+            subtract = kwargs["subtfromfirst"]
+
+        # Cluster data into array with manually denoted key/region
+        if bool(kwargs["clusterBy"]) is True:
+            # Cluster with manual start/end key
+            self.regionKey = True
+            key = kwargs["clusterBy"]
+ 
+            assert bool(key) & (len(key) > 0)
+
+            delimiter = ": " if len(argv[0]) == 0 else argv[0]
+            self.cluster(subtract, key, delimiter)
+            return
+
+        elif bool(kwargs["clusterByRegion"]) is True:
+            # Cluster with region key
+            self.regionKey = True
+            key = []
+            for elem in kwargs["clusterByRegion"]:
+                key.append(elem + " start")
+                key.append(elem + " end")
+                
+            assert bool(key) & (len(key) > 0)
+
+            delimiter = ": " if len(argv[0]) == 0 else argv[0]
+            self.cluster(subtract, key, delimiter)
+            return
+
 
         # Parse the denoted row/col key
         if argv[0] is "row":
@@ -171,12 +187,12 @@ class PatternParser:
     # initial: all values are subtracted by initial
     #          if "initial" is None, first line's value is used for "initial"
     # key: key list to customly parse (or clustered)
-    def cluster(self, initial, key):
+    def cluster(self, initial, key, delimiter):
         text = self.RAWdata.split("\n")
 
         # subtract all data to initial 0 row's data if flag is set
         if bool(initial) == True:
-            initial = text[0].split(": ")[1]
+            initial = text[0].split(delimiter)[1]
         else:
             initial = 0
 
@@ -184,7 +200,7 @@ class PatternParser:
         for k in range(len(key)):
             value.append([])
             for i in range(len(text)):
-                raw = text[i].split(": ")
+                raw = text[i].split(delimiter)
                 if raw[0] == key[k]:
                     value[k].append(float(raw[1]) - float(initial))
 
@@ -198,10 +214,11 @@ class PatternParser:
     # 2) datNormTo("normalizeToThisKey", skip="skipThisKey")
     #
     # ==== Argument specification ====
-    # where: target key to normalize data. (normalized to "where")
-    # opt  : "speedup": x divided by "where" (default)
-    #        "exetime": "where" divided by x
-    # skip : skip nomarlization fpr this key
+    # where  : target key to normalize data. (normalized to "where")
+    # opt    : "speedup": x divided by "where" (default)
+    #          "exetime": "where" divided by x
+    # skip   : skip nomarlization fpr this key
+    # select : select one target data among elements in argv list with min/max condition
     def datNormTo(self, *argv, **kwargs):
         """Normalize data to spcified row or col"""
         tCheckArgsExists(kwargs, "opt", "select")

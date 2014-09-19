@@ -102,7 +102,8 @@ PP.ParseWith("\t")
 
 PLB = []
 for i, val in enumerate(poly_list):
-    PLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
+    PLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4], val,
+                            color=color, face=face, marker=marker))
 PLB[0].setLegend("Load Balance Factor")
 
 # WebCL
@@ -112,7 +113,8 @@ PP.ParseWith("\t")
 
 WLB = []
 for i, val in enumerate(webcl_list):
-    WLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
+    WLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4], val,
+                            color=color, face=face, marker=marker))
 
 # Geomean
 PP = ep.PatternParser(ep.tRead("dat/jaws-lbf/geomean.dat"))
@@ -121,8 +123,10 @@ PP.ParseWith("\t")
 
 GLB = []
 for i, val in enumerate(geo_list):
-    GLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4],   val, color=color, face=face, marker=marker))
+    GLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4], val,
+                            color=color, face=face, marker=marker))
 
+# get duplicated axis from previous plotter
 twinx = CB.getAxis()
 
 LP = ep.LinePlotter(axis=twinx, ylabel="Load Balance Factor", ylpos=[1.04, 0.5])
