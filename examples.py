@@ -779,21 +779,23 @@ elif style == "bar-clustacked":
     SBP.saveToPdf(output)
 
 
-elif style == "sbp+lp":
+elif style == "cbp+lp":
     # Currently combination of Bar + Line style is only meaningful
 
     # Line data
-    Y1=[1,2,3,4,5]
-    D1 = ep.Group(None, Y1, color=mc["red"], hatch="")
+    X1=[1,3,5,7,9]
+    Y1=[1,1.5,2,2.5,3]
+    D1 = ep.Group(None, X1, Y1, color=mc["red"], hatch="")
 
     # Bar data
     D2 = ep.Group(None, [0.4,0.9,1.7,1.9,2.7], color=mc["blue"], hatch="")
     D3 = ep.Group(None, [0.45,0.9,1.0,2.0,2.0], color=mc["yellow"], hatch="")
 
-    MP = ep.MultiPlotter(ep.LinePlotter, ep.SBarPlotter, twinx=True,
-                         title="title", xlabel="", ylabel="")
-    MP[0].draw(D2, D3, boxwidth=1)
-    MP[1].draw(Y1)
+    LP = ep.LinePlotter(title="title", xlabel="", ylabel="")
+    LP.draw(D1)
 
-    MP.setTicks(label=L1)
-    MP.showToWindow()
+    BP = ep.CBarPlotter(axis=LP.getAxis())
+    BP.draw(D2, D3)
+    BP.finish()
+
+    LP.saveToPdf(output)
