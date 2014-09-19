@@ -636,12 +636,14 @@ elif style == "bar-stacked-trans":
     leg = ["memcpy", "init", "task_begin", "task_end", "partition"]
 
     ## First parsing
-    PP = ep.PatternParser(text_sm, clusterBy=key, subtfromfirst=True);
+    PP = ep.PatternParser(text_sm)
+    PP.PickKeyWith(": ", clusterBy=key, subtfromfirst=True);
     PP.sumWithRegionKey(tag, prefix="GPU ")
     S_GPUresult = PP.getDataArr()
 
     ## Second parsing
-    PN = ep.PatternParser(text_nsm, clusterBy=key, subtfromfirst=True);
+    PN = ep.PatternParser(text_nsm);
+    PN.PickKeyWith(": ", clusterBy=key, subtfromfirst=True);
     PN.sumWithRegionKey(tag, prefix="GPU ")
     NS_GPUresult = PN.getDataArr()
 
@@ -788,10 +790,10 @@ elif style == "sbp+lp":
     D2 = ep.Group(None, [0.4,0.9,1.7,1.9,2.7], color=mc["blue"], hatch="")
     D3 = ep.Group(None, [0.45,0.9,1.0,2.0,2.0], color=mc["yellow"], hatch="")
 
-    MP, LP, SBP = ep.MultiPlotter(ep.LinePlotter, ep.SBarPlotter, twinx=True,
-                                  title="title", xlabel="", ylabel="")
-    SBP.draw(D2, D3, boxwidth=1)
-    LP.draw(Y1)
+    MP = ep.MultiPlotter(ep.LinePlotter, ep.SBarPlotter, twinx=True,
+                         title="title", xlabel="", ylabel="")
+    MP[0].draw(D2, D3, boxwidth=1)
+    MP[1].draw(Y1)
 
     MP.setTicks(label=L1)
     MP.showToWindow()

@@ -41,7 +41,6 @@ def tCheckArgsExists(t_keys, *argv, **kwargs):
         if "ifnot" in kwargs:
             t_keys[key] = kwargs["ifnot"][i][0] \
                         = t_keys[key] if key in t_keys else kwargs["ifnot"][i][0]
-            # t_keys[key] \
         else:
             t_keys[key] = t_keys[key] if key in t_keys else False
 
@@ -89,10 +88,16 @@ class Group:
         if "hatch" in kwargs:
             self.hatch = kwargs["hatch"]
 
-        if PP.regionKey is True:
-            # Group data with region surfix
-            self.groupDataWithRegionKey(PP, argv)
-        elif len(argv) == 1:
+        # self.legend = self.keyY if type(self.keyY) is str else None
+        self.legend = []
+
+        if bool(PP) is True:
+            if PP.regionKey is True:
+                # Group data with region surfix
+                self.groupDataWithRegionKey(PP, argv)
+                return
+
+        if len(argv) == 1:
             # Single data array (for bar)
             if type(argv[0]) is str:
                 self.keyY = argv[0]
@@ -126,9 +131,6 @@ class Group:
         else:
             # Over-dimensional data array
             print("Group::init - Multi-dimensional data isn't supported yet")
-
-        # self.legend = self.keyY if type(self.keyY) is str else None
-        self.legend = []
 
     def setLegend(self, string):
         self.legend = string

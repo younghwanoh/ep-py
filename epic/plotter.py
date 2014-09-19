@@ -25,8 +25,7 @@ class AbstractProp(object):
             try:
                 ifnot.append(myVars[elem])
             except:
-                print("Warning! Current class doesn't have requested props. " +
-                      "Eliminate the key.")
+                print("Warning! Current plotter doesn't have requested props. Remove it.")
                 kwargs.pop(elem)
 
         tCheckArgsExists(kwargs, *kwargs.keys(), ifnot=ifnot)
@@ -91,11 +90,9 @@ class PlotterProp(AbstractProp):
 
 class AbstractPlotter(object):
     baseOffset = 0
-    globalBase = np.array([])
-
   
     def __init__(self, **kwargs):
-        self.twinxmode = False
+        self.externalAxisMode = False
         self.manualYtick = False
         self.manualBase = False
         self.fontsize = 12
@@ -108,7 +105,7 @@ class AbstractPlotter(object):
         self.splotterProp = PlotterProp()
 
         if "axis" in kwargs:
-            self.twinxmode = True
+            self.externalAxisMode = True
             self.ax = kwargs["axis"]
         else:
             self.fig, self.ax = plt.subplots()
@@ -125,12 +122,12 @@ class AbstractPlotter(object):
         if ("width" in kwargs) & ("height" in kwargs):
             self.fig.set_size_inches(kwargs["width"], kwargs["height"])
 
-
-    def getAxis(self):
-        return self.ax.twinx()
-
-    def getGlobalBase(self):
-        return self.globalBase
+    def getAxis(self, **kwargs):
+        tCheckArgsExists(kwargs, "twinx")
+        if kwargs["twinx"] is True:
+            return self.ax.twinx()
+        else:
+            return self.ax
 
     def annotate(self, text, xy, **kwargs):
         if "fontsize" in kwargs:
@@ -200,6 +197,9 @@ class AbstractPlotter(object):
 
         # private virtual method that differs from Plotter classes
         self.m_setFigureStyle(**kwargs)
+
+    def finish(self):
+        self.m_finish()
 
     def saveToPdf(self, output):
         self.m_finish()
@@ -291,12 +291,17 @@ class AbstractBarPlotter(AbstractPlotter):
     # patch: graph obj lists, legend: legend lists
     patch = []
     legend = []
+    globalBase = np.array([])
+
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
         # Initial base point
         self.base = [0]
         self.barwidth = 1
         self.interCmargin = 1.4
+
+    def getGlobalBase(self):
+        return self.globalBase
 
     def m_setFigureStyle(self, **kwargs):
         if "interCmargin" in kwargs:
@@ -402,6 +407,7 @@ class SBarPlotter(AbstractBarPlotter):
 
 class CBarPlotter(AbstractBarPlotter):
     """Draw clustered bar graph with grouped data or column-parsed data"""
+
     def __init__(self, **kwargs):
         AbstractBarPlotter.__init__(self, **kwargs)
 
@@ -512,6 +518,7 @@ class CCBarPlotter(AbstractBarPlotter):
 class AbstractBoxPlotter(AbstractPlotter):
     patch = []
     legend = []
+    globalBase = np.array([])
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
         # Initial base point
@@ -519,6 +526,9 @@ class AbstractBoxPlotter(AbstractPlotter):
 
         self.boxwidth = 1
         self.vertical = True
+
+    def getGlobalBase(self):
+        return self.globalBase
 
     def m_setFigureStyle(self, **kwargs):
         if "vertical" in kwargs:

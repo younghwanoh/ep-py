@@ -27,9 +27,11 @@ if bool(args.style) == True:
     style = args.style
 
 
-# Start ===============================================================================
+# Clustered bar graph =======================================================================
+# ===========================================================================================
 
-# Comparison clustered bar
+# Parse ======================================================================
+
 # Polybench
 PP = ep.PatternParser(ep.tRead("dat/jaws-comp/poly.dat"))
 PP.PickKeyWith("row")
@@ -72,8 +74,14 @@ poly_list_l = [ elem.lower() for elem in poly_list ]
 webcl_list = ["Mandelbrot", "Nbody", "Sobel-CorG", "Random"]
 geo_list = ["geomean"]
 
+
+# Draw ======================================================================
+
+CB = ep.CBarPlotter(ylabel="Speedup over Best Device", ylpos=[-.035, 0.5],
+                    width=30, height=6.8)
+
+# Set Ticks
 L1 = ep.TickLabel(None, poly_list_l + webcl_list + geo_list)
-CB = ep.CBarPlotter(ylabel="Speedup over Best Device", ylpos=[-.035, 0.5], width=30, height=6.8)
 CB.setTicks(yspace=[0, 0.5, 1, 1.5], label=L1)
 CB.annotate(["Polybench", "WebKit-WebCL"], [[27.5, -.30], [85, -.30]], fontsize=30)
 
@@ -91,10 +99,12 @@ CB.draw(*GD, barwidth=2)
 g_base = CB.getGlobalBase()
 
 # Line Graph ================================================================================
+# ===========================================================================================
 color = mc["ddgray"]
 face = mc["black"]
 marker = "o"
 
+# Parse ======================================================================
 # Polybench
 PP = ep.PatternParser(ep.tRead("dat/jaws-lbf/poly.dat"))
 PP.PickKeyWith("col")
@@ -126,13 +136,18 @@ for i, val in enumerate(geo_list):
     GLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4], val,
                             color=color, face=face, marker=marker))
 
+# Draw ======================================================================
+
 # get duplicated axis from previous plotter
-twinx = CB.getAxis()
+twinx = CB.getAxis(twinx=True)
 
 LP = ep.LinePlotter(axis=twinx, ylabel="Load Balance Factor", ylpos=[1.04, 0.5])
+
+# set styles
+LP.setTicks(yspace=[0, 0.5, 1.0, 1.5])
 LP.setLegendStyle(frame=False, pos=[0.83, 1.18], size=28)
 LP.setFigureStyle(markersize=15)
-LP.setTicks(yspace=[0, 0.5, 1.0, 1.5])
+
 LP.setBaseOffset(1)
 LP.draw(*PLB)
 LP.setBaseOffset(75.2)
@@ -140,6 +155,6 @@ LP.draw(*WLB)
 LP.setBaseOffset(44.6)
 LP.draw(*GLB)
 
-LP.m_finish()
+LP.finish()
 
 CB.saveToPdf(output)
