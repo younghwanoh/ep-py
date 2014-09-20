@@ -284,6 +284,11 @@ class LinePlotter(AbstractPlotter):
 
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)
+        # set xtick point and label
+        if self.manualBase == True:
+            self.ax.set_xticks(self.xspace)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
+                                    fontsize=self.fontsize)
 
 
 class AbstractBarPlotter(AbstractPlotter):
@@ -434,9 +439,14 @@ class CBarPlotter(AbstractBarPlotter):
         # set legend
         self.m_drawLegend(self.patch, self.legend);
 
-        # set xtick point and label
-        self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
-        self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+        if self.manualBase is True:
+            # set xtick point and label
+            self.ax.set_xticks(self.xspace)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+        else:
+            # set xtick point and label
+            self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
 
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)

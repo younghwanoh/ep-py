@@ -780,8 +780,6 @@ elif style == "bar-clustacked":
 
 
 elif style == "cbp+lp":
-    # Currently combination of Bar + Line style is only meaningful
-
     # Line data
     X1=[1,3,5,7,9]
     Y1=[1,1.5,2,2.5,3]
@@ -797,5 +795,43 @@ elif style == "cbp+lp":
     BP = ep.CBarPlotter(axis=LP.getAxis())
     BP.draw(D2, D3)
     BP.finish()
+
+    LP.saveToPdf(output)
+
+elif style == "cbp+sbp+line":
+    # SBar data
+    A1=[1,3,7]
+    A2=[1,1.5,2]
+    D1 = ep.Group(None, A1, color=mc["purple"], hatch="")
+    D2 = ep.Group(None, A2, color=mc["blue"], hatch="")
+
+    # CBar data
+    D3 = ep.Group(None, [0.4,0.9,1.7,1.9,2.7], color=mc["green"], hatch="")
+    D4 = ep.Group(None, [0.45,0.9,1.0,2.0,2.0], color=mc["yellow"], hatch="")
+
+    # plot SBP
+    SBP = ep.SBarPlotter(title="title", xlabel="", ylabel="")
+    SBP.draw(D1, D2)
+
+    # plot CBP
+    BP = ep.CBarPlotter(axis=SBP.getAxis())
+    BP.setBaseOffset(4)
+    BP.draw(D3, D4)
+    BP.finish()
+
+    # line data from bar's base
+    xpoint = np.concatenate([SBP.getGlobalBase(), BP.getGlobalBase()]) + 0.5
+    ypoint = np.array(range(len(xpoint))) + 9.5
+    LD = ep.Group(None, xpoint, ypoint, color=mc["black"], hatch="")
+
+    # plot Line
+    LP = ep.LinePlotter(axis=SBP.getAxis())
+    LP.draw(LD)
+
+    # FIXME:: Currently, automatic tickers for multiplot isn't supported
+    # Combination of ticker with bar plotting is needed, that merges bases
+    label = ep.TickLabel(None, ["l1", "l2", "l3"] +
+                               ["clus1", "clus2", "clus3", "clus4", "clus5"])
+    BP.setTicks(xspace=[0.5,1.5,2.5] + [4.5,7.3,10.1,12.9,15.7], label=label)
 
     LP.saveToPdf(output)
