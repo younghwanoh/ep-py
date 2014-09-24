@@ -6,9 +6,8 @@ import matplotlib
 from matplotlib.backends.backend_pdf import PdfPages
 from tools import tTranspose, tMergeCrossSpace, tCheckArgsExists
 
-matplotlib.font_manager.findfont('Arial')
-matplotlib.rcParams['font.family']='Arial'
-
+# matplotlib.font_manager.findfont('Arial')
+# matplotlib.rcParams['font.family']='Arial'
 
 class AbstractProp(object):
     """Holding properties"""
@@ -301,8 +300,8 @@ class AbstractBarPlotter(AbstractPlotter):
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
         # Initial base point
-        self.base = [0]
-        self.barwidth = 1
+        self.base = [0.0]
+        self.barwidth = 1.0
         self.interCmargin = 1.4
 
     def getGlobalBase(self):
@@ -313,12 +312,12 @@ class AbstractBarPlotter(AbstractPlotter):
             self.interCmargin = kwargs["interCmargin"] + 1 
         if "barwidth" in kwargs:
             # barwidth can be assigned as a style over all bars
-            self.barwidth = kwargs["barwidth"] 
+            self.barwidth = float(kwargs["barwidth"])
 
     def m_beforeEveryDraw(self, **kwargs):
         # barwidth can also be assigned to each different elem
         if "barwidth" in kwargs:
-            self.barwidth = kwargs["barwidth"]
+            self.barwidth = float(kwargs["barwidth"])
 
 
 class SBarPlotter(AbstractBarPlotter):
@@ -387,7 +386,7 @@ class SBarPlotter(AbstractBarPlotter):
 
         # set xtick point and label
         if self.manualBase == False:
-            self.ax.set_xticks(self.globalBase+float(self.barwidth)/2)
+            self.ax.set_xticks(self.globalBase+self.barwidth/2)
             self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
                                     fontsize=self.fontsize)
             for tick in self.ax.yaxis.get_major_ticks():
@@ -532,9 +531,9 @@ class AbstractBoxPlotter(AbstractPlotter):
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
         # Initial base point
-        self.base = [0]
+        self.base = [0.0]
 
-        self.boxwidth = 1
+        self.boxwidth = 1.0
         self.vertical = True
 
     def getGlobalBase(self):
@@ -545,12 +544,12 @@ class AbstractBoxPlotter(AbstractPlotter):
             self.vertical = kwargs["vertical"]
         if "boxwidth" in kwargs:
             # boxwidth can be assigned as a style over all bars
-            self.barwidth = kwargs["boxwidth"] 
+            self.boxwidth = float(kwargs["boxwidth"])
 
     def m_beforeEveryDraw(self, **kwargs):
         # boxwidth can also be assigned to each different elem
         if "boxwidth" in kwargs:
-            self.boxwidth = kwargs["boxwidth"]
+            self.boxwidth = float(kwargs["boxwidth"])
 
 
 class BoxPlotter(AbstractBoxPlotter):
@@ -573,7 +572,6 @@ class BoxPlotter(AbstractBoxPlotter):
             base = np.linspace(0, 0, keyLen) + self.baseOffset
         else:
             base = np.linspace(0, self.boxwidth*(keyLen+2), keyLen) + self.baseOffset
-
         # Accumulate tick bases to global base
         self.globalBase = np.concatenate([self.globalBase, base])
 

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys
-# sys.dont_write_bytecode = True;
+sys.dont_write_bytecode = True;
 
 # library for ep.py
 from parser import *
@@ -17,4 +17,5 @@ def parseCommandArgs():
     argparser.add_argument("-si", "--signature", help='Specify the signature')
     argparser.add_argument("-o","--outFile", help='Specify the name of output PDF file')
     argparser.add_argument("-s","--style", help='Specify the style of graphs')
+
     return argparser.parse_args()
