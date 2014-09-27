@@ -832,6 +832,7 @@ elif style == "cbp+sbp+line":
     # Combination of ticker with bar plotting is needed, that merges bases
     label = ep.TickLabel(None, ["l1", "l2", "l3"] +
                                ["clus1", "clus2", "clus3", "clus4", "clus5"])
-    BP.setTicks(xspace=[0.5,1.5,2.5] + [4.5,7.3,10.1,12.9,15.7], label=label)
+    # LP.setTicks(xspace=[0.5,1.5,2.5] + [4.5,7.3,10.1,12.9,15.7], label=label)
+    LP.setTicks(xspace=xpoint, label=label)
 
     LP.saveToPdf(output)

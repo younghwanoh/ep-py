@@ -44,17 +44,17 @@ ref. "jaws-\*" examples can be also tested with "draw.sh" styles
 
 ### Example usages
 
-* ./ep.py -i \[input\] \[attributes ...\]
-  1) ./ep.py -i dat/line.dat -s line-key
-  2) ./ep.py -i dat/line-norm.dat -s line-norm
-  3) ./ep.py -i dat/bar-clustered.dat -s bar-clustered
-  4) ./ep.py -i dat/bar-clustered.dat -s bar-norm-clustered
-  5) ./ep.py -i dat/bar-key-cc.dat -s bar-key-cc
-  6-1) ./ep.py -si atax -s bar-stacked
-  6-2) ./ep.py -s bar-clustacked
-  7) ./ep.py -i dat/box.dat -s box-key
-  8) ./ep.py -i dat/box.dat -s box-time
-  9) ./ep.py -i dat/jaws/atax.share.log -s jaws-pie
+* ./examples.py -i \[input\] \[attributes ...\]
+  1) ./examples.py -i dat/line.dat -s line-key
+  2) ./examples.py -i dat/line-norm.dat -s line-norm
+  3) ./examples.py -i dat/bar-clustered.dat -s bar-clustered
+  4) ./examples.py -i dat/bar-clustered.dat -s bar-norm-clustered
+  5) ./examples.py -i dat/bar-key-cc.dat -s bar-key-cc
+  6-1) ./examples.py -si atax -s bar-stacked
+  6-2) ./examples.py -s bar-clustacked
+  7) ./examples.py -i dat/box.dat -s box-key
+  8) ./examples.py -i dat/box.dat -s box-time
+  9) ./examples.py -i dat/jaws/atax.share.log -s jaws-pie
 
 * Sub attributes
   - -f data format
@@ -85,14 +85,12 @@ all styles of classes must be defined case by case. Here are the list of classes
   - LinePlotter
   - BoxPlotter
   - CBoxPlotter
-  - BarPlotter (...ing)
+  - BarPlotter
   - CBarPlotter
   - CCBarPlotter
   - SBarPlotter
   - PiePlotter
-  - MultiPlotter (Not yet)
-  - StackBarPlotter (Not yet)
-  - CStackBarPlotter (Not yet)
+  - StackBarPlotter
 
 ## Prefix of GIT log messages
   - \*: Major version update
