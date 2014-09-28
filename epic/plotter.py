@@ -556,11 +556,6 @@ class BoxPlotter(AbstractBoxPlotter):
     """Draw clustered bar graph with grouped data or column-parsed data"""
     def __init__(self, **kwargs):
         AbstractBoxPlotter.__init__(self, **kwargs)
-        # Default properties
-        self.timeline = False
-
-        if "timeline" in kwargs:
-            self.timeline = kwargs["timeline"]
 
     def draw(self, *argv, **kwargs):
         self.m_beforeEveryDraw()
@@ -568,10 +563,7 @@ class BoxPlotter(AbstractBoxPlotter):
         keyLen = len(argv)
 
         # Calculate global/local base
-        if self.timeline is True:
-            base = np.linspace(0, 0, keyLen) + self.baseOffset
-        else:
-            base = np.linspace(0, self.boxwidth*(keyLen+2), keyLen) + self.baseOffset
+        base = np.linspace(0, self.boxwidth*(keyLen+2), keyLen) + self.baseOffset
         # Accumulate tick bases to global base
         self.globalBase = np.concatenate([self.globalBase, base])
 
