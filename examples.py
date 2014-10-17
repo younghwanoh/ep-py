@@ -42,7 +42,7 @@ if style == "line-key":
     # LP.setFigureStyle(xlim=[0, 1000], ylim=[0, 1000])
     LP.draw(GPUdata, CPUdata)
     LP.saveToPdf(output);
-    # LP.drawToWindow();
+    # LP.showToWindow();
 
 # line graph without special key
 if style == "line-raw":
@@ -62,7 +62,7 @@ if style == "line-raw":
     # LP.setFigureStyle(xlim=[0, 1000], ylim=[0, 1000])
     LP.draw(GPUdata, CPUdata)
     LP.saveToPdf(output);
-    # LP.drawToWindow();
+    # LP.showToWindow();
 
 # line graph with single parsed y-array
 elif style == "line-flat":

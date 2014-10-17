@@ -376,6 +376,7 @@ class SBarPlotter(AbstractBarPlotter):
                 accum = [accum[j] + data[i-1].Y[j] for j in range(keyLen)] if i > 0 else accum
                 self.patch.append(self.ax.bar(self.base, data[i].Y, self.barwidth, zorder=3,
                                   color=data[i].color, hatch=data[i].hatch, bottom=accum))
+                self.legend.append(data[i].legend)
 
 
     def m_finish(self):
