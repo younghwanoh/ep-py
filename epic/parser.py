@@ -271,7 +271,13 @@ class PatternParser:
         else:
             if type(argv[0]) is str:
                 # argv[0] is key, return datList[key]
-                return self.datList[self.keyList.index(argv[0])]
+                value = []
+                for idx, val in enumerate(self.keyList):
+                    if val == argv[0]:
+                        value.append(self.datList[idx])
+                if len(value) == 1:
+                    value = value[0]
+                return value
             else:
                 # Return denoted row/col
                 temp = TransOrNot(self.datList)
