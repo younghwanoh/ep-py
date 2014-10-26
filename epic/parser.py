@@ -31,7 +31,7 @@ class PatternParser:
         """Subtool: delete comment line starting with #"""
         rowDataTemp = []
         for eachRow in target:
-            if eachRow[0] != "#":
+            if (eachRow[0] != "#") & (eachRow[0:2] != "//"):
                 rowDataTemp.append(eachRow)
         return rowDataTemp
 
