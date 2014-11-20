@@ -303,6 +303,7 @@ class AbstractBarPlotter(AbstractPlotter):
         self.base = [0.0]
         self.barwidth = 1.0
         self.interCmargin = 1.4
+        self.interMargin = 0
 
     def getGlobalBase(self):
         return self.globalBase
@@ -310,6 +311,8 @@ class AbstractBarPlotter(AbstractPlotter):
     def m_setFigureStyle(self, **kwargs):
         if "interCmargin" in kwargs:
             self.interCmargin = kwargs["interCmargin"] + 1 
+        if "interMargin" in kwargs:
+            self.interMargin = kwargs["interMargin"] 
         if "barwidth" in kwargs:
             # barwidth can be assigned as a style over all bars
             self.barwidth = float(kwargs["barwidth"])
@@ -349,7 +352,7 @@ class SBarPlotter(AbstractBarPlotter):
             keyLen = len(argv[0].Y)
         # Calculate tick point
         left = self.base[-1] + self.baseOffset
-        right = left + self.barwidth*(keyLen-1)
+        right = left + self.barwidth*(keyLen-1) + self.interMargin
         self.base = np.linspace(left, right, keyLen)
         print("Offset: %d, Base: %s" % (self.baseOffset, self.base))
 

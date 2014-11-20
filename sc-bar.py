@@ -48,21 +48,6 @@ for i in range(len(benchmarks)):
 
 
 for i in range(len(benchmarks)):
-#     # Normalized to each device's run time
-#     GPUOverhead = sum(NS_GPUresult[i])
-#     CPUOverhead = sum(NS_CPUresult[i])
-#     Overhead = max(CPUOverhead,GPUOverhead)
-#
-#     S_GPUresult[i].pop(2)
-#     NS_GPUresult[i].pop(2)
-#     S_CPUresult[i].pop(2)
-#     NS_CPUresult[i].pop(2)
-#
-#     S_GPUresult[i] = [ j/Overhead*100 for j in S_GPUresult[i] ]
-#     NS_GPUresult[i] = [ j/Overhead*100 for j in NS_GPUresult[i] ]
-#     S_CPUresult[i] = [ j/Overhead*100 for j in S_CPUresult[i] ]
-#     NS_CPUresult[i] = [ j/Overhead*100 for j in NS_CPUresult[i] ]
-
     # Normalized to each device's exec
     SGPUOverhead = S_GPUresult[i].pop(2)
     GPUOverhead = NS_GPUresult[i].pop(2)
@@ -73,22 +58,6 @@ for i in range(len(benchmarks)):
     NS_GPUresult[i] = [ j/GPUOverhead for j in NS_GPUresult[i] ]
     S_CPUresult[i] = [ j/SCPUOverhead for j in S_CPUresult[i] ]
     NS_CPUresult[i] = [ j/CPUOverhead for j in NS_CPUresult[i] ]
-
-#    # Normalized to each device's totaloverhead
-#     S_GPUresult[i].pop(2)
-#     NS_GPUresult[i].pop(2)
-#     S_CPUresult[i].pop(2)
-#     NS_CPUresult[i].pop(2)
-#
-#     GPUOverhead = sum(NS_GPUresult[i])
-#     CPUOverhead = sum(NS_CPUresult[i])
-#     Overhead = max(CPUOverhead,GPUOverhead)
-#
-#     S_GPUresult[i] = [ j/GPUOverhead for j in S_GPUresult[i] ]
-#     NS_GPUresult[i] = [ j/GPUOverhead for j in NS_GPUresult[i] ]
-#     S_CPUresult[i] = [ j/CPUOverhead for j in S_CPUresult[i] ]
-#     NS_CPUresult[i] = [ j/CPUOverhead for j in NS_CPUresult[i] ]
-
 
 ## Legend list
 leg = ["dispatch", "memcpy", "merge"]
