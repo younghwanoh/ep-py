@@ -33,7 +33,7 @@ if bool(args.style) == True:
 # Parse ======================================================================
 
 # Polybench
-PP = ep.PatternParser(ep.tRead("dat/jaws-comp/poly.dat"))
+PP = ep.PatternParser(ep.tRead("dat/cbar-line/poly.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 PP.datNormTo("cpu-only", "gpu-only", select="min")
@@ -48,7 +48,7 @@ PD[1].setLegend("Boyer et al.")
 PD[2].setLegend("jAWS")
 
 # WebCL
-PP = ep.PatternParser(ep.tRead("dat/jaws-comp/webcl.dat"))
+PP = ep.PatternParser(ep.tRead("dat/cbar-line/webcl.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 PP.datNormTo("cpu-only", "gpu-only", select="min")
@@ -59,7 +59,7 @@ WD.append(ep.Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
 WD.append(ep.Group(PP, "jAWS", color=mc["black"], hatch=""))
 
 # Geomean
-PP = ep.PatternParser(ep.tRead("dat/jaws-comp/geomean-best.dat"))
+PP = ep.PatternParser(ep.tRead("dat/cbar-line/geomean-best.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 
