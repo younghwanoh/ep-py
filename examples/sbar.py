@@ -5,6 +5,7 @@
 
 # library for ep.py
 import epic as ep
+import numpy as np
 
 args = ep.parseCommandArgs() 
 
@@ -30,6 +31,28 @@ PP = ep.PatternParser(ep.tRead("../dat/sbar/optimize.data"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 
+# Normalize data to total sum
+key = ["s1", "s2", "s3"]
+accum = np.array(range(len(key)))
+for i in key:
+    accum += np.array(PP.getDataArr(i))
+totalArr = PP.getDataArr()
+print accum
+print totalArr
+
+for i, val1 in enumerate(totalArr):
+    if i == 0:
+        pass
+    else:
+        norm = accum[i-1]
+        for j, val2 in enumerate(val1):
+            if j == 0:
+                pass
+            else:
+                totalArr[i][j] = float(val2) / float(norm)
+
+PP.datList = totalArr 
+
 D1 = ep.Group(PP, "s1", color=mc["dgray"], hatch="")
 D2 = ep.Group(PP, "s2", color=mc["white"], hatch="\\\\\\")
 D3 = ep.Group(PP, "s3", color=mc["dwhite"], hatch="")
@@ -49,11 +72,9 @@ SBP = ep.SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value")
 
 # Set graph style
 SBP.setLegendStyle(ncol=3, size=10, frame=False, loc="upper center")
-SBP.setFigureStyle(figmargin=0.1, barwidth=1)
+SBP.setFigureStyle(figmargin=0.1, barwidth=1, interMargin=0.1)
 
 # draw =======================================================================
 SBP.setTicks(label=L1)
 SBP.draw(D1, D2, D3)
 SBP.saveToPdf(output)
-
-
