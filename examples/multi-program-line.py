@@ -12,7 +12,7 @@ args = ep.parseCommandArgs()
 mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292",
       "blue":"#4455D2",
       "white":"#FFFFFF", "dwhite":"#DFDFDF", "ddwhite":"#B3B3B3",
-      "gray":"#888888", "wgray":"#CECECE", "dgray":"#909090", "ddgray":"#5F5F5F",
+      "gray":"#888888", "wgray":"#CECECE", "dgray":"#808080", "ddgray":"#5F5F5F",
       "black":"#000000"}
 
 # output file name
@@ -40,9 +40,9 @@ PP.ParseWith("\t")
 
 PD = []
 PD.append(ep.Group(PP, "col1", color=mc["white"], hatch=""))
-PD.append(ep.Group(PP, "col2", color=mc["ddwhite"], hatch=""))
-PD.append(ep.Group(PP, "col3", color=mc["red"], hatch=""))
-PD.append(ep.Group(PP, "col4", color=mc["green"], hatch=""))
+PD.append(ep.Group(PP, "col2", color=mc["white"], hatch="\\\\"))
+PD.append(ep.Group(PP, "col3", color=mc["ddwhite"], hatch=""))
+PD.append(ep.Group(PP, "col4", color=mc["dgray"], hatch=""))
 PD.append(ep.Group(PP, "col5", color=mc["black"], hatch=""))
 
 PD[0].setLegend("off")
@@ -90,7 +90,8 @@ CB.setTicks(yspace=[0, 0.5, 1, 1.9], label=L1)
 CB.annotate(["Polybench", "WebKit-WebCL"], [[27.5, -.30], [85, -.30]], fontsize=30)
 
 # Figure style
-CB.setLegendStyle(ncol=3, size=28, pos=[0.59, 1.18], frame=False)
+CB.setLegendStyle(ncol=5, size=28, pos=[0.59, 1.18], frame=False)
+CB.setLegendStyle(ncol=5, size=28, pos=[0.65, 1.18], frame=False)
 CB.setFigureStyle(ylim=[0, 1.5], bottomMargin=0.18, fontsize=25,
                   interCmargin=.7, figmargin=0.02)
 
@@ -150,7 +151,7 @@ LP = ep.LinePlotter(axis=twinx, ylabel="Load Balance Factor", ylpos=[1.04, 0.5])
 
 # set styles
 LP.setTicks(yspace=[0, 0.5, 1.0, 1.5])
-LP.setLegendStyle(frame=False, pos=[0.83, 1.18], size=28)
+LP.setLegendStyle(frame=False, pos=[0.89, 1.18], size=28)
 LP.setFigureStyle(markersize=15)
 
 LP.setBaseOffset(1)
