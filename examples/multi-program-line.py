@@ -16,7 +16,7 @@ mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292"
       "black":"#000000"}
 
 # output file name
-output = "cbar-line.pdf"
+output = "multi.pdf"
 if bool(args.outFile) == True:
     output = args.outFile
 
@@ -36,7 +36,7 @@ if bool(args.style) == True:
 PP = ep.PatternParser(ep.tRead("../dat/cbar-line/multi-program.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
-PP.datNormTo("col1", "col2", select="min")
+# PP.datNormTo("col1", "col2", select="min")
 
 PD = []
 PD.append(ep.Group(PP, "col1", color=mc["white"], hatch=""))
@@ -73,7 +73,7 @@ PD[4].setLegend("\"ideal\"")
 #  GD.append(ep.Group(PP, "col3", color=mc["black"], hatch=""))
 
 # label lists
-poly_list = ["HM1", "HM2", "HM3", "HM4", "HM4", "HM5", "HM6", "HM7", "HM8"]
+poly_list = ["HM1", "HM2", "HM3", "HM4", "HM5", "HM6", "HM7", "HM8"]
 #webcl_list = ["Mandelbrot", "Nbody", "Sobel-CorG", "Random"]
 #geo_list = ["geomean"]
 
@@ -86,7 +86,7 @@ CB = ep.CBarPlotter(ylabel="Speedup over Best Device", ylpos=[-.035, 0.5],
 # Set Ticks
 #L1 = ep.TickLabel(None, poly_list + webcl_list + geo_list)
 L1 = ep.TickLabel(None, poly_list)
-CB.setTicks(yspace=[0, 0.5, 1, 1.5], label=L1)
+CB.setTicks(yspace=[0, 0.5, 1, 1.9], label=L1)
 CB.annotate(["Polybench", "WebKit-WebCL"], [[27.5, -.30], [85, -.30]], fontsize=30)
 
 # Figure style
@@ -116,7 +116,8 @@ PP.ParseWith("\t")
 
 PLB = []
 for i, val in enumerate(poly_list):
-    PLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4], val,
+    print [g_base[i], g_base[i]+2, g_base[i]+4, g_base[i]+6, g_base[i]+8]
+    PLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4, g_base[i]+6, g_base[i]+8], val, 
                             color=color, face=face, marker=marker))
 PLB[0].setLegend("Load Balance Factor")
 
@@ -154,11 +155,6 @@ LP.setFigureStyle(markersize=15)
 
 LP.setBaseOffset(1)
 LP.draw(*PLB)
-LP.setBaseOffset(75.2)
-LP.draw(*WLB)
-LP.setBaseOffset(44.6)
-LP.draw(*GLB)
-
 LP.finish()
 
 CB.saveToPdf(output)
