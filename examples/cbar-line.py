@@ -33,10 +33,10 @@ if bool(args.style) == True:
 # Parse ======================================================================
 
 # Polybench
-PP = ep.PatternParser(ep.tRead("dat/cbar-line/poly.dat"))
+PP = ep.PatternParser(ep.tRead("../dat/cbar-line/poly.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
-PP.datNormTo("cpu-only", "gpu-only", select="min")
+PP.datNormTo("col1", "col2", select="min")
 
 PD = []
 PD.append(ep.Group(PP, "col1", color=mc["white"], hatch=""))
@@ -48,10 +48,10 @@ PD[1].setLegend("Boyer et al.")
 PD[2].setLegend("jAWS")
 
 # WebCL
-PP = ep.PatternParser(ep.tRead("dat/cbar-line/webcl.dat"))
+PP = ep.PatternParser(ep.tRead("../dat/cbar-line/webcl.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
-PP.datNormTo("cpu-only", "gpu-only", select="min")
+PP.datNormTo("col1", "col2", select="min")
 
 WD = []
 WD.append(ep.Group(PP, "col1", color=mc["white"], hatch=""))
@@ -59,7 +59,7 @@ WD.append(ep.Group(PP, "col2", color=mc["ddwhite"], hatch=""))
 WD.append(ep.Group(PP, "col3", color=mc["black"], hatch=""))
 
 # Geomean
-PP = ep.PatternParser(ep.tRead("dat/cbar-line/geomean-best.dat"))
+PP = ep.PatternParser(ep.tRead("../dat/cbar-line/geomean-best.dat"))
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 
@@ -70,7 +70,6 @@ GD.append(ep.Group(PP, "col3", color=mc["black"], hatch=""))
 
 # label lists
 poly_list = ["ATAX", "BICG", "SYRK", "SYR2K", "GEMM", "2MM", "CORR"]
-poly_list_l = [ elem.lower() for elem in poly_list ]
 webcl_list = ["Mandelbrot", "Nbody", "Sobel-CorG", "Random"]
 geo_list = ["geomean"]
 
@@ -81,7 +80,7 @@ CB = ep.CBarPlotter(ylabel="Speedup over Best Device", ylpos=[-.035, 0.5],
                     width=30, height=6.8)
 
 # Set Ticks
-L1 = ep.TickLabel(None, poly_list_l + webcl_list + geo_list)
+L1 = ep.TickLabel(None, poly_list + webcl_list + geo_list)
 CB.setTicks(yspace=[0, 0.5, 1, 1.5], label=L1)
 CB.annotate(["Polybench", "WebKit-WebCL"], [[27.5, -.30], [85, -.30]], fontsize=30)
 
@@ -106,7 +105,7 @@ marker = "o"
 
 # Parse ======================================================================
 # Polybench
-PP = ep.PatternParser(ep.tRead("dat/jaws-lbf/poly.dat"))
+PP = ep.PatternParser(ep.tRead("../dat/cbar-line/poly-line.dat"))
 PP.PickKeyWith("col")
 PP.ParseWith("\t")
 
@@ -117,7 +116,7 @@ for i, val in enumerate(poly_list):
 PLB[0].setLegend("Load Balance Factor")
 
 # WebCL
-PP = ep.PatternParser(ep.tRead("dat/jaws-lbf/webcl.dat"))
+PP = ep.PatternParser(ep.tRead("../dat/cbar-line/webcl-line.dat"))
 PP.PickKeyWith("col")
 PP.ParseWith("\t")
 
@@ -127,7 +126,7 @@ for i, val in enumerate(webcl_list):
                             color=color, face=face, marker=marker))
 
 # Geomean
-PP = ep.PatternParser(ep.tRead("dat/jaws-lbf/geomean.dat"))
+PP = ep.PatternParser(ep.tRead("../dat/cbar-line/geomean-line.dat"))
 PP.PickKeyWith("col")
 PP.ParseWith("\t")
 
