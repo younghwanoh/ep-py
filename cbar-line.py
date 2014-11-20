@@ -39,9 +39,9 @@ PP.ParseWith("\t")
 PP.datNormTo("cpu-only", "gpu-only", select="min")
 
 PD = []
-PD.append(ep.Group(PP, "SO", color=mc["white"], hatch=""))
-PD.append(ep.Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
-PD.append(ep.Group(PP, "jAWS", color=mc["black"], hatch=""))
+PD.append(ep.Group(PP, "col1", color=mc["white"], hatch=""))
+PD.append(ep.Group(PP, "col2", color=mc["ddwhite"], hatch=""))
+PD.append(ep.Group(PP, "col3", color=mc["black"], hatch=""))
 
 PD[0].setLegend("FluidiCL")
 PD[1].setLegend("Boyer et al.")
@@ -54,9 +54,9 @@ PP.ParseWith("\t")
 PP.datNormTo("cpu-only", "gpu-only", select="min")
 
 WD = []
-WD.append(ep.Group(PP, "SO", color=mc["white"], hatch=""))
-WD.append(ep.Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
-WD.append(ep.Group(PP, "jAWS", color=mc["black"], hatch=""))
+WD.append(ep.Group(PP, "col1", color=mc["white"], hatch=""))
+WD.append(ep.Group(PP, "col2", color=mc["ddwhite"], hatch=""))
+WD.append(ep.Group(PP, "col3", color=mc["black"], hatch=""))
 
 # Geomean
 PP = ep.PatternParser(ep.tRead("dat/cbar-line/geomean-best.dat"))
@@ -64,9 +64,9 @@ PP.PickKeyWith("row")
 PP.ParseWith("\t")
 
 GD = []
-GD.append(ep.Group(PP, "SO", color=mc["white"], hatch=""))
-GD.append(ep.Group(PP, "Boyer", color=mc["ddwhite"], hatch=""))
-GD.append(ep.Group(PP, "jAWS", color=mc["black"], hatch=""))
+GD.append(ep.Group(PP, "col1", color=mc["white"], hatch=""))
+GD.append(ep.Group(PP, "col2", color=mc["ddwhite"], hatch=""))
+GD.append(ep.Group(PP, "col3", color=mc["black"], hatch=""))
 
 # label lists
 poly_list = ["ATAX", "BICG", "SYRK", "SYR2K", "GEMM", "2MM", "CORR"]
