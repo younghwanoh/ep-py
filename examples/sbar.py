@@ -33,25 +33,23 @@ PP.ParseWith("\t")
 
 # Normalize data to total sum
 key = ["s1", "s2", "s3"]
-accum = np.array(range(len(key)))
-for i in key:
-    accum += np.array(PP.getDataArr(i))
-totalArr = PP.getDataArr()
-print accum
-print totalArr
+accum = np.array([0 for i in range(len(key))])
 
-for i, val1 in enumerate(totalArr):
-    if i == 0:
-        pass
-    else:
-        norm = accum[i-1]
-        for j, val2 in enumerate(val1):
-            if j == 0:
-                pass
-            else:
-                totalArr[i][j] = float(val2) / float(norm)
+rawArr = PP.getDataArr()
+transArr = ep.tools.tTranspose(rawArr)
 
-PP.datList = totalArr 
+for i, val in enumerate(key):
+    temp = transArr[i]
+    accum[i] += np.array(sum(temp[1:]))
+
+for i, val in enumerate(key):
+    for j, val in enumerate(transArr[i]):
+        if j == 0:
+            pass
+        else:
+            transArr[i][j] /= accum[i]
+
+PP.datList = ep.tools.tTranspose(transArr)
 
 D1 = ep.Group(PP, "s1", color=mc["dgray"], hatch="")
 D2 = ep.Group(PP, "s2", color=mc["white"], hatch="\\\\\\")
@@ -72,7 +70,7 @@ SBP = ep.SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value")
 
 # Set graph style
 SBP.setLegendStyle(ncol=3, size=10, frame=False, loc="upper center")
-SBP.setFigureStyle(figmargin=0.1, barwidth=1, interMargin=0.1)
+SBP.setFigureStyle(figmargin=0.1, barwidth=1, interMargin=0.1, ylim=[0, 1.2])
 
 # draw =======================================================================
 SBP.setTicks(label=L1)
