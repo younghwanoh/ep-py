@@ -391,13 +391,13 @@ class SBarPlotter(AbstractBarPlotter):
         # set xtick point and label
         if self.manualBase == False:
             self.ax.set_xticks(self.globalBase+self.barwidth/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right",
                                     fontsize=self.fontsize)
             for tick in self.ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(self.fontsize)
         else:
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right",
                                     fontsize=self.fontsize)
             for tick in self.ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(self.fontsize)

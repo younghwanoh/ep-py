@@ -154,7 +154,11 @@ class TickLabel:
     def __init__(self, PP, *argv, **kwargs):
         # cut out if label has floating point
         toint = lambda x: int(x) if type(x) is float else x
-        if type(argv[0]) is str:
+        if (type(argv[0]) is float) | (type(argv[0]) is int):
+            self.content = [toint(i) for i in PP.datList[argv[0]]]
+        elif argv[0] is "key":
+            self.content = [toint(i) for i in PP.keyList]
+        elif type(argv[0]) is str:
             self.key = argv[0]
             idx = PP.keyList.index(argv[0])
             self.content = [toint(i) for i in PP.datList[idx]]
