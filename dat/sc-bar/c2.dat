@@ -1,0 +1,3 @@
+void	off-package	Bank-interleaving	SRAM-tag	Our proposed	"Ideal"
+on-package bandwidth	0	0.589885	12.40329	12.760176	10.153139
+off-package bandwidth	6.68236	6.524945	3.602034	3.689467	0
