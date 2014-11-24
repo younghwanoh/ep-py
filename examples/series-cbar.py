@@ -43,19 +43,21 @@ print xspace
 xticklabel = ep.TickLabel(PP, 0)
 CB = ep.CBarPlotter(width=13, height=4, title="BarPlot", xlabel="", ylabel="")
 CB.setTicks(label=xticklabel, angle=45)
-CB.setLegendStyle(ncol=2, loc="upper center", frame=False)
+CB.setLegendStyle(ncol=3, loc="upper center", frame=False)
 CB.setFigureStyle(figmargin=0.05, bottomMargin=0.3, xlim=[-1, 39], ylim=[0.5, 2], gridx=False, gridy=True)
 
 first = True
 for i in np.arange(8)*4:
     series1 = ep.Group(None, PP.getDataArr(1)[i:i+4], color=mc["ddwhite"])
     series2 = ep.Group(None, PP.getDataArr(2)[i:i+4], color="black")
+    series3 = ep.Group(None, PP.getDataArr(2)[i:i+4], color="white")
     if first is True:
         series1.setLegend("Series1") 
         series2.setLegend("Series2") 
+        series3.setLegend("Series3") 
         first = False
 
-    CB.draw(series1, series2)
+    CB.draw(series1, series2, series3)
     CB.setBaseOffset(5)
 
 
