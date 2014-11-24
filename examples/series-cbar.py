@@ -15,7 +15,7 @@ mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292"
       "gray":"#AAAAAA", "dgray":"#3F3F3F", "black":"#000000"}
 
 # output file name
-output = "line.pdf"
+output = "series-cbar.pdf"
 if bool(args.outFile) == True:
     output = args.outFile
 
@@ -41,18 +41,22 @@ for i in range(8):
 print xspace
 
 xticklabel = ep.TickLabel(PP, 0)
-LP = ep.LinePlotter(width=13, height=4, title="LinePlot with key", xlabel="", ylabel="")
-LP.setTicks(xspace=xspace, label=xticklabel, angle=45)
-LP.setLegendStyle(ncol=2, loc="upper center", frame=False)
-LP.setFigureStyle(bottomMargin=0.3, xlim=[-1, 39], ylim=[0.5, 2], gridx=False, markersize=9)
+CB = ep.CBarPlotter(width=13, height=4, title="BarPlot", xlabel="", ylabel="")
+CB.setTicks(label=xticklabel, angle=45)
+CB.setLegendStyle(ncol=2, loc="upper center", frame=False)
+CB.setFigureStyle(figmargin=0.05, bottomMargin=0.3, xlim=[-1, 39], ylim=[0.5, 2], gridx=False, gridy=True)
 
+first = True
 for i in np.arange(8)*4:
-    series1 = ep.Group(PP, xspace[i:i+4], PP.getDataArr(1)[i:i+4], color=mc["ddwhite"], marker="s")
-    series2 = ep.Group(PP, xspace[i:i+4], PP.getDataArr(2)[i:i+4], color="black", marker="x")
+    series1 = ep.Group(None, PP.getDataArr(1)[i:i+4], color=mc["ddwhite"])
+    series2 = ep.Group(None, PP.getDataArr(2)[i:i+4], color="black")
+    if first is True:
+        series1.setLegend("Series1") 
+        series2.setLegend("Series2") 
+        first = False
 
-    series1.setLegend("Series1") 
-    series2.setLegend("Series2") 
+    CB.draw(series1, series2)
+    CB.setBaseOffset(5)
 
-    LP.draw(series1, series2)
 
-LP.saveToPdf(output);
+CB.saveToPdf(output);

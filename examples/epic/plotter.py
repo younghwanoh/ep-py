@@ -253,8 +253,8 @@ class LinePlotter(AbstractPlotter):
     legend = []
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
-        self.ax.grid()
         self.base = 0
+        self.ax.yaxis.grid(zorder=-1)
 
     def draw(self, *argv):
         self.m_beforeEveryDraw()
@@ -286,7 +286,7 @@ class LinePlotter(AbstractPlotter):
         # set xtick point and label
         if self.manualBase == True:
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right",
                                     fontsize=self.fontsize)
 
 
@@ -446,11 +446,11 @@ class CBarPlotter(AbstractBarPlotter):
         if self.manualBase is True:
             # set xtick point and label
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right")
         else:
             # set xtick point and label
             self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right")
 
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)
