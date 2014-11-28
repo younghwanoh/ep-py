@@ -253,8 +253,8 @@ class LinePlotter(AbstractPlotter):
     legend = []
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
-        self.ax.grid()
         self.base = 0
+        self.ax.yaxis.grid(zorder=-1)
 
     def draw(self, *argv):
         self.m_beforeEveryDraw()
@@ -286,7 +286,7 @@ class LinePlotter(AbstractPlotter):
         # set xtick point and label
         if self.manualBase == True:
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right",
                                     fontsize=self.fontsize)
 
 
@@ -379,7 +379,8 @@ class SBarPlotter(AbstractBarPlotter):
                 accum = [accum[j] + data[i-1].Y[j] for j in range(keyLen)] if i > 0 else accum
                 self.patch.append(self.ax.bar(self.base, data[i].Y, self.barwidth, zorder=3,
                                   color=data[i].color, hatch=data[i].hatch, bottom=accum))
-                self.legend.append(data[i].legend)
+                if data[i].legend != []:
+                    self.legend.append(data[i].legend)
 
 
     def m_finish(self):
@@ -391,13 +392,13 @@ class SBarPlotter(AbstractBarPlotter):
         # set xtick point and label
         if self.manualBase == False:
             self.ax.set_xticks(self.globalBase+self.barwidth/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right",
                                     fontsize=self.fontsize)
             for tick in self.ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(self.fontsize)
         else:
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle,
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right",
                                     fontsize=self.fontsize)
             for tick in self.ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(self.fontsize)
@@ -445,11 +446,11 @@ class CBarPlotter(AbstractBarPlotter):
         if self.manualBase is True:
             # set xtick point and label
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right")
         else:
             # set xtick point and label
             self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right")
 
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)
