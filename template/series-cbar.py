@@ -27,7 +27,7 @@ if bool(args.style) == True:
 
 
 # parse ======================================================================
-text = ep.tRead("../dat/cline/series.dat")
+text = ep.tRead("../dat/series-cbar/series.dat")
 
 PP = ep.PatternParser(text)
 PP.ParseWith("\t")
