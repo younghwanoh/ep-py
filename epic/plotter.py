@@ -148,12 +148,8 @@ class AbstractPlotter(object):
             self.fig = kwargs["fig"]
         if "ylabel" in kwargs:
             self.ax.set_ylabel(kwargs["ylabel"], ha="center")
-        if "ylpos" in kwargs:
-            self.ax.yaxis.set_label_coords(*kwargs["ylpos"])
         if "xlabel" in kwargs:
             self.ax.set_xlabel(kwargs["xlabel"], ha="center")
-        if "xlpos" in kwargs:
-            self.ax.xaxis.set_label_coords(*kwargs["xlpos"])
         if "title" in kwargs:
             self.ax.set_title(kwargs["title"])
         if ("width" in kwargs) & ("height" in kwargs):
@@ -231,6 +227,13 @@ class AbstractPlotter(object):
         # set x-space
         if "xlim" in kwargs:
             self.ax.set_xlim(kwargs["xlim"])
+
+        # adjust y-label position
+        if "ylpos" in kwargs:
+            self.ax.yaxis.set_label_coords(*kwargs["ylpos"])
+        # adjust x-label position
+        if "xlpos" in kwargs:
+            self.ax.xaxis.set_label_coords(*kwargs["xlpos"])
 
         # private virtual method that differs from Plotter classes
         self.m_setFigureStyle(**kwargs)

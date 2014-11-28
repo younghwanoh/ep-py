@@ -68,7 +68,7 @@ hatch = ["", "\\\\\\\\", "", "", "", ""]
 
 ## Stacked Bar Plot =================================================================
 SBP = ep.SBarPlotter(xlabel="", ylabel="Overhead normalized\n to useful work",
-                     ylpos=[-.1, 0.5], width=8, height=4.2)
+                     width=8, height=4.2)
 
 # Set manual ticks ==================================================================
 SBP.annotate(["syrk", "gemm"], [[1.75, -.13], [6.21, -.13]], fontsize=17)
@@ -85,7 +85,7 @@ SBP.setTicks(xspace=xspace, voffset=vspace, label=L1, fontsize=14)
 
 # Set graph styles ==================================================================
 SBP.setLegendStyle(ncol=6, size=15, pos=[0.81, 1.15], frame=False, tight=True)
-SBP.setFigureStyle(bottomMargin=0.23, figmargin=0.03, fontsize=15, gridy=True)
+SBP.setFigureStyle(bottomMargin=0.23, figmargin=0.03, fontsize=15, gridy=True, ylpos=[-.1, 0.5])
 
 # if "setStackStyle" method is used, transposed data will be used
 # otherwise, group will map the styles to each stack
