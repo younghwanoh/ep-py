@@ -87,6 +87,42 @@ class PlotterProp(AbstractProp):
         m_dump()
 
 
+# shell class for subplots
+class SubPlotter(object):
+    baseOffset = 0
+  
+    def __init__(self, *argv, **kwargs):
+        assert(len(argv) > 0), "Assign the number of subplots @ SubPlotter!"
+        if "sharex" in kwargs:
+            self.fig, self.ax = plt.subplots(argv[0], sharex=kwargs["sharex"])
+        else:
+            self.fig, self.ax = plt.subplots(argv[0])
+        if "title" in kwargs:
+            self.ax[0].set_title(kwargs["title"])
+        if ("width" in kwargs) & ("height" in kwargs):
+            self.fig.set_size_inches(kwargs["width"], kwargs["height"])
+
+    def getAxis(self, *argv, **kwargs):
+        tCheckArgsExists(kwargs, "twinx")
+        assert(len(argv) > 0), "Assign the index ofi a subplot @ SubPlotter!"
+        if kwargs["twinx"] is True:
+            return self.ax[argv[0]].twinx()
+        else:
+            return self.ax[argv[0]]
+
+    def getFig(self):
+        return self.fig
+
+    def saveToPdf(self, output):
+        pp = PdfPages(output)
+        plt.savefig(pp, format='pdf')
+        pp.close()
+        plt.close()
+
+    def showToWindow(self):
+        plt.show()
+        plt.close()
+
 class AbstractPlotter(object):
     baseOffset = 0
   
@@ -103,11 +139,13 @@ class AbstractPlotter(object):
         self.legendProp = LegendProp()
         self.splotterProp = PlotterProp()
 
+        if (not ("axis" in kwargs)) & (not ("fig" in kwargs)):
+            self.fig, self.ax = plt.subplots()
         if "axis" in kwargs:
             self.externalAxisMode = True
             self.ax = kwargs["axis"]
-        else:
-            self.fig, self.ax = plt.subplots()
+        if "fig" in kwargs:
+            self.fig = kwargs["fig"]
         if "ylabel" in kwargs:
             self.ax.set_ylabel(kwargs["ylabel"], ha="center")
         if "ylpos" in kwargs:
@@ -189,10 +227,10 @@ class AbstractPlotter(object):
 
         # set y-space
         if "ylim" in kwargs:
-            plt.ylim(kwargs["ylim"])
+            self.ax.set_ylim(kwargs["ylim"])
         # set x-space
         if "xlim" in kwargs:
-            plt.xlim(kwargs["xlim"])
+            self.ax.set_xlim(kwargs["xlim"])
 
         # private virtual method that differs from Plotter classes
         self.m_setFigureStyle(**kwargs)
@@ -602,11 +640,11 @@ class BoxPlotter(AbstractBoxPlotter):
         if self.vertical is True:
             self.ax.autoscale(enable=True, axis='y', tight=False)
             LengthOfWholeBar = self.globalBase[-1] + self.boxwidth
-            plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
+            self.ax.set_xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
         else:
             self.ax.autoscale(enable=True, axis='x', tight=False)
             LengthOfWholeBar = self.globalBase[-1] + self.boxwidth
-            plt.ylim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
+            self.ax.set_ylim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
 class CBoxPlotter(AbstractBoxPlotter):
@@ -661,11 +699,11 @@ class CBoxPlotter(AbstractBoxPlotter):
         if self.vertical is True:
             self.ax.autoscale(enable=True, axis='y', tight=False)
             LengthOfWholeBar = self.globalBase[-1] + self.boxwidth
-            plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
+            self.ax.set_xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
         else:
             self.ax.autoscale(enable=True, axis='x', tight=False)
             LengthOfWholeBar = self.globalBase[-1] + self.boxwidth
-            plt.ylim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
+            self.ax.set_ylim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
 class PiePlotter(AbstractPlotter):
