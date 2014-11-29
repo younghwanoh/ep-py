@@ -99,8 +99,10 @@ class SubPlotter(object):
             self.fig, self.ax = plt.subplots(argv[0])
         if "title" in kwargs:
             self.ax[0].set_title(kwargs["title"])
-        if ("width" in kwargs) & ("height" in kwargs):
-            self.fig.set_size_inches(kwargs["width"], kwargs["height"])
+        if "height" in kwargs:
+            self.fig.set_figheight(kwargs["height"])
+        if "width" in kwargs:
+            self.fig.set_figwidth(kwargs["width"])
 
     def getAxis(self, *argv, **kwargs):
         tCheckArgsExists(kwargs, "twinx")
@@ -112,6 +114,9 @@ class SubPlotter(object):
 
     def getFig(self):
         return self.fig
+
+    def adjust(self, **kwargs):
+        plt.subplots_adjust(**kwargs)
 
     def saveToPdf(self, output):
         pp = PdfPages(output)
@@ -147,9 +152,19 @@ class AbstractPlotter(object):
         if "fig" in kwargs:
             self.fig = kwargs["fig"]
         if "ylabel" in kwargs:
-            self.ax.set_ylabel(kwargs["ylabel"], ha="center", fontweight="bold")
+            if type(kwargs["ylabel"]) is list:
+                ylabel = kwargs["ylabel"]
+                self.ax.set_ylabel(ylabel[0], ha="center",
+                                   fontweight=ylabel[1], fontsize=ylabel[2])
+            else:
+                self.ax.set_ylabel(kwargs["ylabel"], ha="center")
         if "xlabel" in kwargs:
-            self.ax.set_xlabel(kwargs["xlabel"], ha="center")
+            if type(kwargs["xlabel"]) is list:
+                xlabel = kwargs["xlabel"]
+                self.ax.set_xlabel(xlabel[0], ha="center",
+                                   fontweight=xlabel[1], fontsize=xlabel[2])
+            else:
+                self.ax.set_xlabel(kwargs["xlabel"], ha="center")
         if "title" in kwargs:
             self.ax.set_title(kwargs["title"])
         if ("width" in kwargs) & ("height" in kwargs):
@@ -166,7 +181,9 @@ class AbstractPlotter(object):
         if "fontsize" in kwargs:
             fontsize = kwargs["fontsize"]
         for i in range(len(text)):
-            self.ax.annotate(text[i], xy=xy[i], fontsize=fontsize, annotation_clip=False)
+            trans = self.ax.get_xaxis_transform()
+            self.ax.annotate(text[i], xy=xy[i], xycoords=trans,
+                             fontsize=fontsize, annotation_clip=False)
 
     def setTicks(self, **kwargs):
         if "yspace" in kwargs:
@@ -309,7 +326,7 @@ class LinePlotter(AbstractPlotter):
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
         self.base = 0
-        self.ax.yaxis.grid(zorder=-1)
+        # self.ax.yaxis.grid(zorder=-1)
 
     def draw(self, *argv):
         self.m_beforeEveryDraw()

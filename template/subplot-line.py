@@ -23,11 +23,11 @@ for idx, val in enumerate(freq_data):
     freq_data[idx] = float(val.split(",")[0])/1000000
 
 # Assign data to style
-xTickSpace = range(len(PP.getDataArr(0)))
-core = ep.Group(PP, xTickSpace, "core", color=mc["green"], marker="x")
-freq = ep.Group(PP, xTickSpace, "freq", color=mc["red"], marker="o")
-qpr_power = ep.Group(PP, xTickSpace, "power", color=mc["yellow"], marker="s")
-qpr_thput = ep.Group(PP, xTickSpace, "thput", color=mc["blue"], marker="x")
+xpoints = range(len(PP.getDataArr(0)))
+core = ep.Group(PP, xpoints, "core", color="#a0a0a0", marker="o")
+freq = ep.Group(PP, xpoints, "freq", color=mc["black"], marker="s")
+qpr_power = ep.Group(PP, xpoints, "power", color=mc["black"], marker="s")
+qpr_thput = ep.Group(PP, xpoints, "thput", color=mc["black"], marker="s")
 
 # FIXME: legend partially appears now
 # Assign legend to data
@@ -37,34 +37,38 @@ qpr_thput = ep.Group(PP, xTickSpace, "thput", color=mc["blue"], marker="x")
 # qpr_thput.setLegend("QPR.js")
 
 # Subplotter for multiple plot
-SP = ep.SubPlotter(3, title="subplots")
+SP = ep.SubPlotter(3, sharex=True, height=9.0)
+SP.adjust(hspace=0.38)
 
 # Draw thput
-LP0 = ep.LinePlotter(axis=SP.getAxis(0), ylabel="Throughput (1/s)")
-LP0.setFigureStyle(ylim=[0.2,1.8], ylpos=[-0.07, 0.5])
+LP0 = ep.LinePlotter(axis=SP.getAxis(0), ylabel=["Throughput (1/s)", "bold", 14])
+LP0.setFigureStyle(ylim=[0.2,1.8], ylpos=[-0.07, 0.5], grid=True)
+LP0.annotate(["(i)"], [[24.15,-0.13]], fontsize=14)
 LP0.draw(qpr_thput)
 LP0.finish()
 
 # Share subplots
 cf_axis = SP.getAxis(1)
 
-# Draw core
-LP1_core = ep.LinePlotter(axis=cf_axis, ylabel="# of actice cores")
-LP1_core.setTicks(yspace=[1,2,3,4])
-LP1_core.setFigureStyle(ylim=[0,6.3], ylpos=[-0.07, 0.5])
-LP1_core.draw(core)
-LP1_core.finish()
-
 # Draw freq
-LP1_freq = ep.LinePlotter(axis=cf_axis.twinx(), ylabel="Frequency (Ghz)")
-LP1_freq.setTicks(yspace=[1, 1.4, 1.8, 2.2, 2.6, 3])
-LP1_freq.setFigureStyle(ylim=[1,3.5], ylpos=[1.08, 0.5])
+LP1_freq = ep.LinePlotter(axis=cf_axis, ylabel=["Frequency (GHz)", "bold", 14])
+LP1_freq.setFigureStyle(ylim=[0,3], ylpos=[-0.07, 0.5], grid=True)
+LP1_freq.annotate(["(ii)"], [[24.15,-0.13]], fontsize=14)
 LP1_freq.draw(freq)
 LP1_freq.finish()
 
+# Draw core
+LP1_core = ep.LinePlotter(axis=cf_axis.twinx(), ylabel=["# of active cores", "bold", 14])
+LP1_core.setFigureStyle(ylim=[0,4.99], ylpos=[1.06, 0.5])
+LP1_core.draw(core)
+LP1_core.finish()
+
 # Draw power
-LP2 = ep.LinePlotter(axis=SP.getAxis(2), ylabel="Power (Watt)")
-LP2.setFigureStyle(ylim=[0,28], ylpos=[-0.07, 0.5])
+LP2 = ep.LinePlotter(axis=SP.getAxis(2), ylabel=["Power (Watt)", "bold", 14], xlabel=["Iteration", "bold", 14])
+LP2.setFigureStyle(ylim=[0,30], ylpos=[-0.07, 0.5], grid=True)
+
+LP2.annotate(["(iii)"], [[23.94,-0.36]], fontsize=14)
+LP2.setTicks(label=ep.TickLabel(None, range(0,51,5)), xspace=range(0,51,5))
 LP2.hline(y=8, xrange=[0, 50], color="#434343", linestyle="--")
 LP2.draw(qpr_power)
 LP2.finish()
