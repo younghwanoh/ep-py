@@ -48,6 +48,7 @@ LP0_freq.finish()
 # Draw power
 LP1 = ep.LinePlotter(axis=SP.getAxis(1), ylabel="Power (Watt)")
 LP1.setFigureStyle(ylim=[5,28], ylpos=[-0.07, 0.5])
+LP1.hline(y=13, xrange=[0, 50], color="#434343", linestyle="--")
 LP1.draw(qpr_power)
 LP1.finish()
 
