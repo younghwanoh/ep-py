@@ -6,7 +6,7 @@ import matplotlib
 from matplotlib.backends.backend_pdf import PdfPages
 from tools import tTranspose, tMergeCrossSpace, tCheckArgsExists
 
-# matplotlib.font_manager.findfont('Arial')
+matplotlib.font_manager.findfont('Arial')
 # matplotlib.rcParams['font.family']='Arial'
 
 class AbstractProp(object):
@@ -147,7 +147,7 @@ class AbstractPlotter(object):
         if "fig" in kwargs:
             self.fig = kwargs["fig"]
         if "ylabel" in kwargs:
-            self.ax.set_ylabel(kwargs["ylabel"], ha="center")
+            self.ax.set_ylabel(kwargs["ylabel"], ha="center", fontweight="bold")
         if "xlabel" in kwargs:
             self.ax.set_xlabel(kwargs["xlabel"], ha="center")
         if "title" in kwargs:
