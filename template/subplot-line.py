@@ -6,10 +6,21 @@ mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292"
       "gray":"#AAAAAA", "dgray":"#3F3F3F", "black":"#111111"}
 
 # Parse data
-text = ep.tRead("../dat/subplot-line/total.data")
+# text = ep.tRead("../dat/subplot-line/total.data")
+text = ep.tRead("../dat/subplot-line/syrk.data")
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
-PP.ParseWith("\t")
+PP.ParseWith("\t", forceType=float)
+
+# Post processing of data
+core_data = PP.getDataArr(3)
+core_alias = {"0-3":4, "0-2":3, "0-1":2, 0.0:1}
+for idx, val in enumerate(core_data):
+    core_data[idx] = core_alias[val]
+
+freq_data = PP.getDataArr(4)
+for idx, val in enumerate(freq_data):
+    freq_data[idx] = float(val.split(",")[0])/1000000
 
 # Assign data to style
 xTickSpace = range(len(PP.getDataArr(0)))
@@ -48,7 +59,7 @@ LP0_freq.finish()
 # Draw power
 LP1 = ep.LinePlotter(axis=SP.getAxis(1), ylabel="Power (Watt)")
 LP1.setFigureStyle(ylim=[5,28], ylpos=[-0.07, 0.5])
-LP1.hline(y=13, xrange=[0, 50], color="#434343", linestyle="--")
+LP1.hline(y=8, xrange=[0, 50], color="#434343", linestyle="--")
 LP1.draw(qpr_power)
 LP1.finish()
 

@@ -13,6 +13,7 @@ class PatternParser:
         self.keyParseType = None
         self.RAWdata = argv[0]
         self.regionKey = False
+        self.forceType = float
 
         # The case that keys are denoted in files.
         self.rowParse()
@@ -41,10 +42,12 @@ class PatternParser:
         for eachRow in self.rowData:
             self.datList.append(eachRow.split(delimiter))
 
-    def ParseWith(self, delimiter):
+    def ParseWith(self, delimiter, **kwargs):
         """Parse data with delimiter"""
         self.isParsedBefore = True
         self.colParse(delimiter)
+        if "forceType" in kwargs:
+            self.forceType = kwargs["forceType"]
 
         # Lazy key parse for the denoted row/col
         if self.keyParseType is "row":
@@ -54,7 +57,7 @@ class PatternParser:
             self.datList, self.keyList = tPopCol(self.datList, self.keyLineNum)
 
         # Data type change: string to float
-        toFloat = lambda x: float(x) if tIsfloat(x) == True else x
+        toFloat = lambda x: self.forceType(x) if tIsfloat(x) == True else x
         for i, curDat in enumerate(self.datList):
             self.datList[i] = [toFloat(k) for k in curDat]
 
