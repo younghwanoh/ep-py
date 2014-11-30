@@ -25,16 +25,19 @@ for idx, val in enumerate(freq_data):
 # Assign data to style
 xpoints = range(len(PP.getDataArr(0)))
 core = ep.Group(PP, xpoints, "core", color="#a0a0a0", marker="o")
+core_void = ep.Group(None, [], [], color="#a0a0a0", marker="o")
 freq = ep.Group(PP, xpoints, "freq", color=mc["black"], marker="s")
 qpr_power = ep.Group(PP, xpoints, "power", color=mc["black"], marker="s")
 qpr_thput = ep.Group(PP, xpoints, "thput", color=mc["black"], marker="s")
 
 # FIXME: legend partially appears now
 # Assign legend to data
-# core.setLegend("# of active cores")
-# freq.setLegend("Frequency")
-# qpr_power.setLegend("QPR.js")
-# qpr_thput.setLegend("QPR.js")
+freq.setLegend("Frequency")
+core_void.setLegend("# of active cores")
+
+qpr_power.setLegend("QPR.js")
+
+qpr_thput.setLegend("QPR.js")
 
 # Subplotter for multiple plot
 SP = ep.SubPlotter(3, sharex=True, height=9.0)
@@ -42,6 +45,7 @@ SP.adjust(hspace=0.38)
 
 # Draw thput
 LP0 = ep.LinePlotter(axis=SP.getAxis(0), ylabel=["Throughput (1/s)", "bold", 14])
+LP0.setLegendStyle(ncol=4, frame=False, pos=[0.88, 1.23])
 LP0.setFigureStyle(ylim=[0.2,1.8], ylpos=[-0.07, 0.5], grid=True)
 LP0.annotate(["(i)"], [[24.15,-0.13]], fontsize=14)
 LP0.draw(qpr_thput)
@@ -51,20 +55,22 @@ LP0.finish()
 cf_axis = SP.getAxis(1)
 
 # Draw freq
-LP1_freq = ep.LinePlotter(axis=cf_axis, ylabel=["Frequency (GHz)", "bold", 14])
+LP1_freq = ep.LinePlotter(axis=cf_axis, ylabel=["Frequency (GHz)", "bold", 14], flushLegend=True)
+LP1_freq.setLegendStyle(ncol=2, frame=False, pos=[0.88, 1.23])
 LP1_freq.setFigureStyle(ylim=[0,3], ylpos=[-0.07, 0.5], grid=True)
 LP1_freq.annotate(["(ii)"], [[24.15,-0.13]], fontsize=14)
-LP1_freq.draw(freq)
+LP1_freq.draw(freq, core_void)
 LP1_freq.finish()
 
 # Draw core
-LP1_core = ep.LinePlotter(axis=cf_axis.twinx(), ylabel=["# of active cores", "bold", 14])
+LP1_core = ep.LinePlotter(axis=cf_axis.twinx(), ylabel=["# of active cores", "bold", 14], flushLegend=True)
 LP1_core.setFigureStyle(ylim=[0,4.99], ylpos=[1.06, 0.5])
 LP1_core.draw(core)
 LP1_core.finish()
 
 # Draw power
-LP2 = ep.LinePlotter(axis=SP.getAxis(2), ylabel=["Power (Watt)", "bold", 14], xlabel=["Iteration", "bold", 14])
+LP2 = ep.LinePlotter(axis=SP.getAxis(2), ylabel=["Power (Watt)", "bold", 14], xlabel=["Iteration", "bold", 14], flushLegend=True)
+LP2.setLegendStyle(ncol=2, frame=False, pos=[0.88, 1.23])
 LP2.setFigureStyle(ylim=[0,30], ylpos=[-0.07, 0.5], grid=True)
 
 LP2.annotate(["(iii)"], [[23.94,-0.36]], fontsize=14)

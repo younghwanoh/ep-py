@@ -320,11 +320,16 @@ class tickLabelInit:
 # Back-end plotter
 class LinePlotter(AbstractPlotter):
     """Draw line graph with grouped data or column-parsed data"""
-    # patch: graph obj lists, legend: legend lists
     patch = []
     legend = []
+    # patch: graph obj lists, legend: legend lists
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
+        tCheckArgsExists(kwargs, "flushLegend")
+        if kwargs["flushLegend"] is True:
+            LinePlotter.patch = []
+            LinePlotter.legend = []
+ 
         self.base = 0
         # self.ax.yaxis.grid(zorder=-1)
 
