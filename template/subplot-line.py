@@ -1,13 +1,48 @@
 #!/usr/bin/python
 
 import epic as ep
+
 mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292",
       "blue":"#4455D2", "white":"#FFFFFF", "ddwhite":"#B3B3B3", "dwhite":"#DFDFDF",
       "gray":"#AAAAAA", "dgray":"#3F3F3F", "black":"#111111"}
 
-# Parse data
-# text = ep.tRead("../dat/subplot-line/total.data")
-text = ep.tRead("../dat/subplot-line/syrk.data")
+# Parse arguments
+args = ep.parseCommandArgs() 
+if bool(args.outFile) == True:
+    output = args.outFile
+
+if bool(args.inFile) == True:
+    text = ep.tRead(args.inFile)
+
+polybench = "/home/papl-note/svnroot/projects/parallelJS/trunk/qpr.js/webkit/opt/polybench_js"
+benchmark = "syrk"
+# Parse data for governor ==========================================
+# Set performance
+text = ep.tRead("%s/%s/performance.data" % (polybench, benchmark))
+PP = ep.PatternParser(text)
+PP.PickKeyWith("row")
+PP.ParseWith("\t")
+power_perf = PP.getDataArr("power")
+thput_perf = PP.getDataArr("thput")
+
+# Set ondemand
+text = ep.tRead("%s/%s/ondemand.data" % (polybench, benchmark))
+PP = ep.PatternParser(text)
+PP.PickKeyWith("row")
+PP.ParseWith("\t")
+power_ond = PP.getDataArr("power")
+thput_ond = PP.getDataArr("thput")
+
+# Set powersave
+text = ep.tRead("%s/%s/powersave.data" % (polybench, benchmark))
+PP = ep.PatternParser(text)
+PP.PickKeyWith("row")
+PP.ParseWith("\t")
+power_save = PP.getDataArr("power")
+thput_save = PP.getDataArr("thput")
+
+# Parse optimizer and set data =====================================
+text = ep.tRead("%s/%s/optimizer.data" % (polybench, benchmark))
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t", forceType=float)
@@ -27,17 +62,17 @@ xpoints = range(len(PP.getDataArr(0)))
 core = ep.Group(PP, xpoints, "core", color="#a0a0a0", marker="o")
 core_void = ep.Group(None, [], [], color="#a0a0a0", marker="o")
 freq = ep.Group(PP, xpoints, "freq", color=mc["black"], marker="s")
-qpr_power = ep.Group(PP, xpoints, "power", color=mc["black"], marker="s")
-qpr_thput = ep.Group(PP, xpoints, "thput", color=mc["black"], marker="s")
+power_qpr = ep.Group(PP, xpoints, "power", color=mc["black"], marker="s")
+thput_qpr = ep.Group(PP, xpoints, "thput", color=mc["black"], marker="s")
 
 # FIXME: legend partially appears now
 # Assign legend to data
 freq.setLegend("Frequency")
 core_void.setLegend("# of active cores")
 
-qpr_power.setLegend("QPR.js")
+power_qpr.setLegend("QPR.js")
 
-qpr_thput.setLegend("QPR.js")
+thput_qpr.setLegend("QPR.js")
 
 # Subplotter for multiple plot
 SP = ep.SubPlotter(3, sharex=True, height=9.0)
@@ -48,7 +83,7 @@ LP0 = ep.LinePlotter(axis=SP.getAxis(0), ylabel=["Throughput (1/s)", "bold", 14]
 LP0.setLegendStyle(ncol=4, frame=False, pos=[0.88, 1.23])
 LP0.setFigureStyle(ylim=[0.2,1.8], ylpos=[-0.07, 0.5], grid=True)
 LP0.annotate(["(i)"], [[24.15,-0.13]], fontsize=14)
-LP0.draw(qpr_thput)
+LP0.draw(thput_qpr)
 LP0.finish()
 
 # Share subplots
@@ -76,8 +111,8 @@ LP2.setFigureStyle(ylim=[0,30], ylpos=[-0.07, 0.5], grid=True)
 LP2.annotate(["(iii)"], [[23.94,-0.36]], fontsize=14)
 LP2.setTicks(label=ep.TickLabel(None, range(0,51,5)), xspace=range(0,51,5))
 LP2.hline(y=8, xrange=[0, 50], color="#434343", linestyle="--")
-LP2.draw(qpr_power)
+LP2.draw(power_qpr)
 LP2.finish()
 
 # Save to pdf files
-SP.saveToPdf("subplot-line.pdf")
+SP.saveToPdf(args.outFile)
