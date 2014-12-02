@@ -65,9 +65,9 @@ class LegendProp(AbstractProp):
         if bool(self.loc[0]) is True:
             result["loc"] = self.loc[0]
         if bool(self.tight[0]) is True:
-            result["handlelength"] = 1.3
+            # result["handlelength"] = 1.3
             result["handletextpad"] = 0.3
-            result["columnspacing"] = 1
+            result["columnspacing"] = 0.8
         return result
 
     def dump(self):
