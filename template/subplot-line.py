@@ -14,11 +14,13 @@ if bool(args.outFile) == True:
 if bool(args.inFile) == True:
     text = ep.tRead(args.inFile)
 
-polybench = "/home/papl-note/svnroot/projects/parallelJS/trunk/qpr.js/webkit/opt/polybench_js"
-benchmark = "gemm"
+benchmark = "barkley"
+# root = "/home/papl-note/svnroot/projects/parallelJS/trunk/qpr.js/webkit/opt/polybench_js%s"
+#         % benchmark
+root = "../dat/subplot-line"
 # Parse data for governor ==========================================
 # Set performance
-text = ep.tRead("%s/%s/performance.data" % (polybench, benchmark))
+text = ep.tRead("%s/performance.data" % (root))
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
@@ -26,7 +28,7 @@ power_perf = PP.getDataArr("power")
 thput_perf = PP.getDataArr("thput")
 
 # Set ondemand
-text = ep.tRead("%s/%s/ondemand.data" % (polybench, benchmark))
+text = ep.tRead("%s/ondemand.data" % (root))
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
@@ -34,7 +36,7 @@ power_ond = PP.getDataArr("power")
 thput_ond = PP.getDataArr("thput")
 
 # Set powersave
-text = ep.tRead("%s/%s/powersave.data" % (polybench, benchmark))
+text = ep.tRead("%s/powersave.data" % (root))
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
@@ -42,20 +44,20 @@ power_save = PP.getDataArr("power")
 thput_save = PP.getDataArr("thput")
 
 # Parse optimizer and set data =====================================
-text = ep.tRead("%s/%s/optimizer.data" % (polybench, benchmark))
+text = ep.tRead("%s/optimizer.data" % (root))
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t", forceType=float)
 
 # Post processing of data
-core_data = PP.getDataArr("core")
-core_alias = {"0-3":4, "0-2":3, "0-1":2, 0.0:1}
-for idx, val in enumerate(core_data):
-    core_data[idx] = core_alias[val]
-
-freq_data = PP.getDataArr("freq")
-for idx, val in enumerate(freq_data):
-    freq_data[idx] = float(val.split(",")[0])/1000000
+# core_data = PP.getDataArr("core")
+# core_alias = {"0-3":4, "0-2":3, "0-1":2, 0.0:1}
+# for idx, val in enumerate(core_data):
+#     core_data[idx] = core_alias[val]
+#
+# freq_data = PP.getDataArr("freq")
+# for idx, val in enumerate(freq_data):
+#     freq_data[idx] = float(val.split(",")[0])/1000000
 
 # Assign data to style
 xpoints = range(len(PP.getDataArr(0)))
@@ -101,6 +103,11 @@ elif benchmark == "syrk":
 elif benchmark == "syr2k":
     ylim_thput = [0,0.9]
     ylim_power = [0,50]
+elif benchmark == "barkley":
+    ylim_freq  = [0,4]
+    ylim_core  = [0,4.99]
+    ylim_thput = [10,50]
+    ylim_power = [0,40]
 
 # Subplotter for multiple plot
 SP = ep.SubPlotter(3, sharex=True, height=9.0)
