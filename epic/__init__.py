@@ -15,6 +15,7 @@ def parseCommandArgs():
     argparser = argparse.ArgumentParser()
     argparser.add_argument("-i", "--inFile", help='Specify the name of input data file')
     argparser.add_argument("-si", "--signature", help='Specify the signature')
+    argparser.add_argument("-a", "--auxiliary", help='Auxiliary parameter')
     argparser.add_argument("-o","--outFile", help='Specify the name of output PDF file')
     argparser.add_argument("-s","--style", help='Specify the style of graphs')
 

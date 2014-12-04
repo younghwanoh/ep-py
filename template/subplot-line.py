@@ -1,50 +1,60 @@
 #!/usr/bin/python
 
+import os
 import epic as ep
 
 mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292",
       "blue":"#4455D2", "white":"#FFFFFF", "ddwhite":"#B3B3B3", "dwhite":"#DFDFDF",
       "gray":"#AAAAAA", "dgray":"#3F3F3F", "black":"#111111"}
 
+# initial parameters
+data = os.environ["platform"]
+# data = "non-unified"
+benchmark = "barkley"
+root = "/home/papl-note/svnroot/projects/parallelJS/trunk/qpr.js/webkit/opt/polybench_js/"
+# root = "../dat/subplot-line"
+
 # Parse arguments
 args = ep.parseCommandArgs() 
 if bool(args.outFile) == True:
     output = args.outFile
 
-if bool(args.inFile) == True:
-    text = ep.tRead(args.inFile)
+if bool(args.auxiliary) == True:
+    benchmark = args.auxiliary
 
-benchmark = "barkley"
-# root = "/home/papl-note/svnroot/projects/parallelJS/trunk/qpr.js/webkit/opt/polybench_js%s"
-#         % benchmark
-root = "../dat/subplot-line"
+if bool(args.inFile) == True:
+    root = args.inFile
+
+dat_root = root + benchmark + "/" + data
+print root
+
 # Parse data for governor ==========================================
 # Set performance
-text = ep.tRead("%s/performance.data" % (root))
+text = ep.tRead("%s/performance.data" % (dat_root))
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 power_perf = PP.getDataArr("power")
-thput_perf = PP.getDataArr("thput")
+metric_perf = PP.getDataArr("metric")
 
 # Set ondemand
-text = ep.tRead("%s/ondemand.data" % (root))
+text = ep.tRead("%s/ondemand.data" % (dat_root))
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 power_ond = PP.getDataArr("power")
-thput_ond = PP.getDataArr("thput")
+metric_ond = PP.getDataArr("metric")
 
 # Set powersave
-text = ep.tRead("%s/powersave.data" % (root))
+text = ep.tRead("%s/powersave.data" % (dat_root))
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 power_save = PP.getDataArr("power")
-thput_save = PP.getDataArr("thput")
+metric_save = PP.getDataArr("metric")
 
 # Parse optimizer and set data =====================================
-text = ep.tRead("%s/optimizer.data" % (root))
+text = ep.tRead("%s/optimizer.data" % (dat_root))
 PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t", forceType=float)
@@ -62,10 +72,10 @@ PP.ParseWith("\t", forceType=float)
 # Assign data to style
 xpoints = range(len(PP.getDataArr(0)))
 
-thput_qpr   = ep.Group(PP,   xpoints, "thput",    color="#000000", marker="s")
-thput_perf  = ep.Group(None, xpoints, thput_perf, color="#bbbbbb", marker="x")
-thput_ond   = ep.Group(None, xpoints, thput_ond,  color="#a0a0a0", marker="v")
-thput_save  = ep.Group(None, xpoints, thput_save, color="#5e5e5e", marker="o")
+metric_qpr   = ep.Group(PP,   xpoints, "metric",    color="#000000", marker="s")
+metric_perf  = ep.Group(None, xpoints, metric_perf, color="#bbbbbb", marker="x")
+metric_ond   = ep.Group(None, xpoints, metric_ond,  color="#a0a0a0", marker="v")
+metric_save  = ep.Group(None, xpoints, metric_save, color="#5e5e5e", marker="o")
 
 freq = ep.Group(PP, xpoints, "freq", color="#000000", marker="s")
 core = ep.Group(PP, xpoints, "core", color="#a0a0a0", marker="o")
@@ -83,42 +93,47 @@ core_void.setLegend("# of active cores")
 power_qpr.setLegend("QPR.js")
 power_ond.setLegend("Ondemand")
 
-thput_qpr.setLegend("QPR.js")
-thput_perf.setLegend("Performance")
-thput_ond.setLegend("Ondemand")
-thput_save.setLegend("Powersave")
+metric_qpr.setLegend("QPR.js")
+metric_perf.setLegend("Performance")
+metric_ond.setLegend("Ondemand")
+metric_save.setLegend("Powersave")
 
 # Custom figure styles over benchmarks
 ylim_freq  = [0,3]
 ylim_core  = [0,4.99]
 if benchmark   == "gesummv":
-    ylim_thput = [0.2,1.5]
+    ylim_metric = [0.2,1.5]
     ylim_power = [0,25]
+    ylabel_metric = ["Throughput (1/s)", "bold", 14]
 elif benchmark == "gemm":
-    ylim_thput = [0.2,2.5]
+    ylim_metric = [0.2,2.5]
     ylim_power = [0,50]
+    ylabel_metric = ["Throughput (1/s)", "bold", 14]
 elif benchmark == "syrk":
-    ylim_thput = [0.2,2.5]
+    ylim_metric = [0.2,2.5]
     ylim_power = [0,50]
+    ylabel_metric = ["Throughput (1/s)", "bold", 14]
 elif benchmark == "syr2k":
-    ylim_thput = [0,0.9]
+    ylim_metric = [0,0.9]
     ylim_power = [0,50]
+    ylabel_metric = ["Throughput (1/s)", "bold", 14]
 elif benchmark == "barkley":
     ylim_freq  = [0,4]
     ylim_core  = [0,4.99]
-    ylim_thput = [10,50]
+    ylim_metric = [10,50]
     ylim_power = [0,40]
+    ylabel_metric = ["FPS", "bold", 14]
 
 # Subplotter for multiple plot
 SP = ep.SubPlotter(3, sharex=True, height=9.0)
 SP.adjust(hspace=0.38)
 
-# Draw thput
-LP0 = ep.LinePlotter(axis=SP.getAxis(0), ylabel=["Throughput (1/s)", "bold", 14])
+# Draw metric
+LP0 = ep.LinePlotter(axis=SP.getAxis(0), ylabel=ylabel_metric)
 LP0.setLegendStyle(ncol=4, frame=False, pos=[1.03, 1.23], tight=True)
-LP0.setFigureStyle(ylim=ylim_thput, ylpos=[-0.07, 0.5], grid=True)
+LP0.setFigureStyle(ylim=ylim_metric, ylpos=[-0.07, 0.5], grid=True)
 LP0.annotate(["(i)"], [[24.15,-0.13]], fontsize=14)
-LP0.draw(thput_qpr, thput_perf, thput_ond, thput_save)
+LP0.draw(metric_qpr, metric_perf, metric_ond, metric_save)
 LP0.finish()
 
 # Share an axis of subplot
