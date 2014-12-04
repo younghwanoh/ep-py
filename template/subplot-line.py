@@ -8,11 +8,12 @@ mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292"
       "gray":"#AAAAAA", "dgray":"#3F3F3F", "black":"#111111"}
 
 # initial parameters
-data = os.environ["platform"]
+# data = os.environ["platform"]
 # data = "non-unified"
 benchmark = "barkley"
-root = "/home/papl-note/svnroot/projects/parallelJS/trunk/qpr.js/webkit/opt/polybench_js/"
-# root = "../dat/subplot-line"
+# root = "/home/papl-note/svnroot/projects/parallelJS/trunk/qpr.js/webkit/opt/polybench_js/"
+root = "../dat/subplot-line"
+output = "subplot-line.pdf"
 
 # Parse arguments
 args = ep.parseCommandArgs() 
@@ -25,7 +26,8 @@ if bool(args.auxiliary) == True:
 if bool(args.inFile) == True:
     root = args.inFile
 
-dat_root = root + benchmark + "/" + data
+# dat_root = root + benchmark + "/" + data
+dat_root = root
 print root
 
 # Parse data for governor ==========================================
@@ -165,4 +167,4 @@ LP2.draw(power_qpr, power_ond)
 LP2.finish()
 
 # Save to pdf files
-SP.saveToPdf(args.outFile)
+SP.saveToPdf(output)
