@@ -14,7 +14,12 @@ class PatternParser:
         self.RAWdata = argv[0]
         self.regionKey = False
         self.forceType = float
-
+        self.commentDict = {}
+        self.denotation = ""
+        if "denotation" in kwargs:
+            assert type(kwargs["denotation"]) is str, \
+                   "PP__init__::Comment denotation must be string"
+            self.denotation = kwargs["denotation"]
         # The case that keys are denoted in files.
         self.rowParse()
 
@@ -26,15 +31,20 @@ class PatternParser:
         if self.rowData[-1] == "":
             del self.rowData[-1]
 
-        self.rowData = self.deleteCommentIn(self.rowData)
+        self.rowData = self.parseComment(self.rowData)
 
-    def deleteCommentIn(self, target):
-        """Subtool: delete comment line starting with #"""
+    def parseComment(self, target):
+        """Subtool: parse comment line starting with #"""
         rowDataTemp = []
-        for eachRow in target:
+        for idx, eachRow in enumerate(target):
             if len(eachRow) > 0:
+                # Default: commentary is just skipped
                 if (eachRow[0] != "#") & (eachRow[0:2] != "//"):
                     rowDataTemp.append(eachRow)
+                # if self.denotation is set, find the matching row
+                elif (eachRow[0] == "#") & (eachRow == self.denotation):
+                    self.commentDict[self.denotation] = idx
+
         return rowDataTemp
 
     def colParse(self, delimiter):
