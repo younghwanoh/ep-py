@@ -363,7 +363,7 @@ class LinePlotter(AbstractPlotter):
         # set xtick point and label
         if self.manualBase == True:
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right",
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center",
                                     fontsize=self.fontsize)
 
 
@@ -469,13 +469,13 @@ class SBarPlotter(AbstractBarPlotter):
         # set xtick point and label
         if self.manualBase == False:
             self.ax.set_xticks(self.globalBase+self.barwidth/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right",
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center",
                                     fontsize=self.fontsize)
             for tick in self.ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(self.fontsize)
         else:
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right",
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center",
                                     fontsize=self.fontsize)
             for tick in self.ax.yaxis.get_major_ticks():
                 tick.label.set_fontsize(self.fontsize)
@@ -523,11 +523,11 @@ class CBarPlotter(AbstractBarPlotter):
         if self.manualBase is True:
             # set xtick point and label
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right")
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center")
         else:
             # set xtick point and label
             self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="right")
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center")
 
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)
