@@ -1,11 +1,11 @@
 # Timeline plot
 ./examples.py -s jaws-all -i dat/jaws/atax.share.log -o atax.share.all.pdf
-./examples.py -s jaws-all -i dat/jaws/syrk.share.log -o syrk.share.all.pdf
-./examples.py -s jaws-all -i dat/jaws/gemm.share.log -o gemm.share.all.pdf
-
-./examples.py -s jaws-all -i dat/jaws/atax.noshare.log -o atax.noshare.all.pdf
-./examples.py -s jaws-all -i dat/jaws/syrk.noshare.log -o syrk.noshare.all.pdf
-./examples.py -s jaws-all -i dat/jaws/gemm.noshare.log -o gemm.noshare.all.pdf
+# ./examples.py -s jaws-all -i dat/jaws/syrk.share.log -o syrk.share.all.pdf
+# ./examples.py -s jaws-all -i dat/jaws/gemm.share.log -o gemm.share.all.pdf
+#
+# ./examples.py -s jaws-all -i dat/jaws/atax.noshare.log -o atax.noshare.all.pdf
+# ./examples.py -s jaws-all -i dat/jaws/syrk.noshare.log -o syrk.noshare.all.pdf
+# ./examples.py -s jaws-all -i dat/jaws/gemm.noshare.log -o gemm.noshare.all.pdf
 
 # Pie plot
 # ./examples.py -s jaws-pie -i dat/jaws/atax.share.log -o atax.share.pie.pdf
