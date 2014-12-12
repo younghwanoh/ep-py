@@ -13,7 +13,7 @@ key = ["GPU comm0", "GPU comm1", "GPU memcp",
    "GPU exe", "CPU comm0", "CPU exe0",
    "CPU exe1", "CPU comm1", "GPU comm2"]
 # text = ep.tRead("dat/breakSM.dat")
-text = ep.tRead("dat/breakNoSM.dat")
+text = ep.tRead("../dat/breakNoSM.dat")
 
 # Use custom parser mode
 PP = ep.PatternParser(text);
