@@ -16,10 +16,21 @@ class PatternParser:
         self.forceType = float
         self.commentDict = {}
         self.denotation = ""
+        self.parseCommentRegion = False;
+
         if "denotation" in kwargs:
             assert type(kwargs["denotation"]) is str, \
                    "PP__init__::Comment denotation must be string"
             self.denotation = kwargs["denotation"]
+        if "start" in kwargs:
+            self.parseCommentRegion = True;
+            assert type(kwargs["start"]) is str, \
+                   "PP__init__::Comment start must be string"
+            self.startKey = kwargs["start"]
+        if "end" in kwargs:
+            assert type(kwargs["end"]) is str, \
+                   "PP__init__::Comment end must be string"
+            self.endKey = kwargs["end"]
         # The case that keys are denoted in files.
         self.rowParse()
 
@@ -35,15 +46,35 @@ class PatternParser:
 
     def parseComment(self, target):
         """Subtool: parse comment line starting with #"""
+        idx = 0
+        first = True
+        appendCurData = False
         rowDataTemp = []
-        for idx, eachRow in enumerate(target):
-            if len(eachRow) > 0:
-                # Default: commentary is just skipped
-                if (eachRow[0] != "#") & (eachRow[0:2] != "//"):
-                    rowDataTemp.append(eachRow)
-                # if self.denotation is set, find the matching row
-                elif (eachRow[0] == "#") & (eachRow == self.denotation):
-                    self.commentDict[self.denotation] = idx
+        for eachRow in target:
+            # First row parse for key
+            if first == True:
+                rowDataTemp.append(eachRow)
+                first = False
+            elif len(eachRow) > 0:
+                # Start/End commentary parsing
+                if self.parseCommentRegion == True:
+                    # After start commentary is encountered
+                    if (eachRow[0] != "#") & (eachRow[0:2] != "//") & (appendCurData == True):
+                        rowDataTemp.append(eachRow)
+                    # if matched start comment is find, turn on
+                    elif (eachRow[0] == "#") & (eachRow == self.startKey):
+                        appendCurData = True
+                    # if matched end comment is find, turn off
+                    elif (eachRow[0] == "#") & (eachRow == self.endKey):
+                        appendCurData = False
+                else:
+                    # Default: commentary is just skipped
+                    if (eachRow[0] != "#") & (eachRow[0:2] != "//"):
+                        rowDataTemp.append(eachRow)
+                        idx += 1
+                    # if self.denotation is set, find the matching row
+                    elif (eachRow[0] == "#") & (eachRow == self.denotation):
+                        self.commentDict[self.denotation] = idx - 1
 
         return rowDataTemp
 
