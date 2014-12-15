@@ -74,7 +74,9 @@ class PatternParser:
                         idx += 1
                     # if self.denotation is set, find the matching row
                     elif (eachRow[0] == "#") & (eachRow == self.denotation):
-                        self.commentDict[self.denotation] = idx - 1
+                        if not self.commentDict.has_key(self.denotation):
+                            self.commentDict[self.denotation] = []
+                        self.commentDict[self.denotation].append(idx)
 
         return rowDataTemp
 
