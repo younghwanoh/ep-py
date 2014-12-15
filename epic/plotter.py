@@ -221,16 +221,18 @@ class AbstractPlotter(object):
     def vline(self, **kwargs):
         if ("color" in kwargs) & ("linestyle" in kwargs):
             self.ax.axvline(x=kwargs["x"], ymin=kwargs["yrange"][0], ymax=kwargs["yrange"][1],
-            color=kwargs["color"], linestyle=kwargs["linestyle"])
+            color=kwargs["color"], linestyle=kwargs["linestyle"], zorder=100)
         else:
-            self.ax.axvline(y=kwargs["y"], xmin=kwargs["xrange"][0], xmax=kwargs["xrange"][1])
+            self.ax.axvline(x=kwargs["x"], ymin=kwargs["yrange"][0], ymax=kwargs["yrange"][1],
+            zorder=100)
 
     def hline(self, **kwargs):
         if ("color" in kwargs) & ("linestyle" in kwargs):
             self.ax.axhline(y=kwargs["y"], xmin=kwargs["xrange"][0], xmax=kwargs["xrange"][1],
             color=kwargs["color"], linestyle=kwargs["linestyle"], zorder=100)
         else:
-            self.ax.axhline(y=kwargs["y"], xmin=kwargs["xrange"][0], xmax=kwargs["xrange"][1], zorder=100)
+            self.ax.axhline(y=kwargs["y"], xmin=kwargs["xrange"][0], xmax=kwargs["xrange"][1],
+            zorder=100)
 
     def setFigureStyle(self, **kwargs):
         # set overall figure styles
