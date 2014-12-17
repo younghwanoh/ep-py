@@ -52,12 +52,13 @@ class PatternParser:
         rowDataTemp = []
         for eachRow in target:
             # First row parse for key
-            if first == True:
-                rowDataTemp.append(eachRow)
-                first = False
-            elif len(eachRow) > 0:
+            if len(eachRow) > 0:
                 # Start/End commentary parsing
                 if self.parseCommentRegion == True:
+                    if first == True:
+                        rowDataTemp.append(eachRow)
+                        first = False
+                        continue
                     # After start commentary is encountered
                     if (eachRow[0] != "#") & (eachRow[0:2] != "//") & (appendCurData == True):
                         rowDataTemp.append(eachRow)
