@@ -236,7 +236,7 @@ class PatternParser:
     #          if "initial" is None, first line's value is used for "initial"
     # key: key list to customly parse (or clustered)
     def cluster(self, initial, key, delimiter):
-        text = self.RAWdata.split("\n")
+        text = self.rowData
 
         # subtract all data to initial 0 row's data if flag is set
         if bool(initial) == True:
