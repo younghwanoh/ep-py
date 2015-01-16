@@ -449,7 +449,7 @@ class SBarPlotter(AbstractBarPlotter):
         left = self.base[-1] + self.baseOffset
         right = left + self.barwidth*(keyLen-1) + self.interMargin
         self.base = np.linspace(left, right, keyLen)
-        print("Offset: %d, Base: %s" % (self.baseOffset, self.base))
+        # print("Offset: %d, Base: %s" % (self.baseOffset, self.base))
 
         # Accumulate tick bases to global base
         self.globalBase = np.concatenate([self.globalBase, self.base])
