@@ -106,8 +106,8 @@ class Group:
         if "hatch" in kwargs:
             self.hatch = kwargs["hatch"]
 
-        self.legend = argv[0] if type(argv[0]) is str else []
-        # self.legend = []
+        # self.legend = argv[0] if type(argv[0]) is str else []
+        self.legend = []
 
         if bool(PP) is True:
             if PP.regionKey is True:
