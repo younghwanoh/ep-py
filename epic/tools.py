@@ -9,6 +9,24 @@ def tTranspose(arr):
     result = [list(i) for i in result]
     return result
 
+def tRGBToFloat(rgb):
+    r = float(int(rgb[1:3],16))/255
+    g = float(int(rgb[3:5],16))/255
+    b = float(int(rgb[5:7],16))/255
+    return (r,g,b)
+
+def tGenGradient(colorSeed, num):
+    fcolor = RGBToFloat(colorSeed)
+    gradient = []
+    for i in range(3):
+        grad_range = (1.0 - fcolor[i])
+        increment = grad_range/num
+        if grad_range != 0.0:
+            gradient.append(np.arange(fcolor[i], 1.0, increment))
+        else:
+            gradient.append(np.array([1.0 for i in range(num)]))
+    return ep.tTranspose(gradient)
+
 def tPopRow(arr, idx):
     temp = list(arr)
     popDat = temp.pop(idx)
