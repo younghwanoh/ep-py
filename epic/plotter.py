@@ -352,7 +352,7 @@ class LinePlotter(AbstractPlotter):
             self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=2, zorder=3,
                                           marker=argv[i].marker, markeredgecolor=argv[i].face,
                                           color=argv[i].color, mew=1, **p_plotterProp)
-            if len(argv[i].legend) > 0:
+            if bool(argv[i].legend):
                 self.legend.append(argv[i].legend)
 
     def m_setFigureStyle(self, **kwargs):
@@ -459,7 +459,7 @@ class SBarPlotter(AbstractBarPlotter):
                 accum = [accum[j] + data[i-1].Y[j] for j in range(keyLen)] if i > 0 else accum
                 self.patch.append(self.ax.bar(self.base, data[i].Y, self.barwidth, zorder=3,
                                   color=data[i].color, hatch=data[i].hatch, bottom=accum))
-                if data[i].legend != []:
+                if bool(data[i].legend):
                     self.legend.append(data[i].legend)
 
 
