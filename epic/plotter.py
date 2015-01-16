@@ -300,11 +300,26 @@ class AbstractPlotter(object):
         # Virtual function called before each draw methods is executed
         pass
 
+    def m_checkDuplicatedKeyIn(self, target, legend):
+        temp_legend = []
+        temp_target = []
+        referedKey = []
+        for patch, leg in zip(target, legend):
+            try:
+                referedKey.index(leg)
+            except:
+                referedKey.append(leg)
+                temp_legend.append(leg)
+                temp_target.append(patch)
+        return temp_legend, temp_target
+
     def m_drawLegend(self, target, legend):
         if len(legend) == 0:
             # No legend is specified
             return;
 
+        legend, target = self.m_checkDuplicatedKeyIn(target, legend)
+        
         # Get legend properties
         p_legendProp = self.legendProp.load()
         handler = self.ax.legend(target, legend, **p_legendProp)
