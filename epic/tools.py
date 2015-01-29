@@ -16,7 +16,7 @@ def tRGBToFloat(rgb):
     return (r,g,b)
 
 def tGenGradient(colorSeed, num):
-    fcolor = RGBToFloat(colorSeed)
+    fcolor = tRGBToFloat(colorSeed)
     gradient = []
     for i in range(3):
         grad_range = (1.0 - fcolor[i])
@@ -25,7 +25,7 @@ def tGenGradient(colorSeed, num):
             gradient.append(np.arange(fcolor[i], 1.0, increment))
         else:
             gradient.append(np.array([1.0 for i in range(num)]))
-    return ep.tTranspose(gradient)
+    return tTranspose(gradient)
 
 def tPopRow(arr, idx):
     temp = list(arr)
