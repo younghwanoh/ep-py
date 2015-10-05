@@ -176,6 +176,8 @@ elif style == "bar-clustered":
     D2 = ep.Group(PP, "cpu-only", color="blue")
     D3 = ep.Group(PP, "gpu-only", color="green", hatch="||")
     D4 = ep.Group(PP, "cpu+gpu",  color="black")
+    # print D1.X
+    print D1.Y
 
     D1.setLegend("SEQ") 
     D2.setLegend("CPU-only") 

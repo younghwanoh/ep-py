@@ -1,6 +1,9 @@
 #!/usr/bin/python
 
 import numpy as np
+import matplotlib
+import re
+import os
 
 # ad-hoc tools
 # Transpose matrix and make list other than tuple
@@ -8,6 +11,17 @@ def tTranspose(arr):
     result = zip(*arr)
     result = [list(i) for i in result]
     return result
+
+def tPopRow(arr, idx):
+    temp = list(arr)
+    popDat = temp.pop(idx)
+    return temp, popDat
+
+def tPopCol(arr, idx):
+    temp = tTranspose(arr)
+    popDat = temp.pop(idx)
+    temp = tTranspose(temp)
+    return temp, popDat
 
 def tRGBToFloat(rgb):
     r = float(int(rgb[1:3],16))/255
@@ -27,16 +41,17 @@ def tGenGradient(colorSeed, num):
             gradient.append(np.array([1.0 for i in range(num)]))
     return tTranspose(gradient)
 
-def tPopRow(arr, idx):
-    temp = list(arr)
-    popDat = temp.pop(idx)
-    return temp, popDat
-
-def tPopCol(arr, idx):
-    temp = tTranspose(arr)
-    popDat = temp.pop(idx)
-    temp = tTranspose(temp)
-    return temp, popDat
+def setHatchThickness(value):
+    libpath = matplotlib.__path__[0]
+    backend_pdf = libpath + "/backends/backend_pdf.py"
+    with open(backend_pdf, "r") as r:
+        code = r.read()
+        code = re.sub(r'self\.output\((\d+\.\d+|\d+)\,\ Op\.setlinewidth\)', "self.output(%s, Op.setlinewidth)" % str(value), code)
+        # code = re.sub(r'self.output\(\d+\.\d+|\d+, Op.setlinewidth\)', str(value), code)
+        with open('/tmp/hatch.tmp', "w") as w:
+            w.write(code)
+        print backend_pdf
+        os.system('sudo mv /tmp/hatch.tmp %s' % backend_pdf)
 
 def tRead(inFile):
     with open(inFile) as inputFile:
