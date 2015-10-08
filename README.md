@@ -9,8 +9,6 @@ Personal graph drawing library with high-level abstraction of python-matplotlib<
 
 
 * Dependent package: numpy, matplotlib
-For Ubuntu 12.04
-
 ```
 apt-get install python-numpy python-matplotlib
 ```
@@ -26,35 +24,35 @@ Mac may already have built-in python binary and matplotlib
 Top(or test) module to draw graphs using ep.py APIs
 User should denote specification of data layout and graph's layout.
 
-* Supported graph type
-  1) Line (line-key, line-raw, line-flat)
-  2) Normalized line (line-norm)
-  3) Clustered Bar (bar-clustered, bar-key-clustered)
-  4) Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)
-  5) Clustered Clustered Bar (bar-key-cc)
-  6) Stacked Bar (bar-stacked, bar-clustacked)
-  7) Box (box-key, box-time, box-multi-time)
-  8) Clustered Box (jaws-all, jaws)
-  9) Pie (jaws-pie)
-  10) Multiple subplot (Not yet)
-  11) CDF (Not yet)
-  12) etc...
+* Supported graph type<br>
+  1) Line (line-key, line-raw, line-flat)<br>
+  2) Normalized line (line-norm)<br>
+  3) Clustered Bar (bar-clustered, bar-key-clustered)<br>
+  4) Normalized Clustered Bar (bar-norm-clustered, bar-key-clustered)<br>
+  5) Clustered Clustered Bar (bar-key-cc)<br>
+  6) Stacked Bar (bar-stacked, bar-clustacked)<br>
+  7) Box (box-key, box-time, box-multi-time)<br>
+  8) Clustered Box (jaws-all, jaws)<br>
+  9) Pie (jaws-pie)<br>
+  10) Multiple subplot (Not yet)<br>
+  11) CDF (Not yet)<br>
+  12) etc...<br>
 
 ref. "jaws-\*" examples can be also tested with "draw.sh" styles
 
 ### Example usages
 
-* ./examples.py -i \[input\] \[attributes ...\]
-  1) ./examples.py -i dat/line.dat -s line-key
-  2) ./examples.py -i dat/line-norm.dat -s line-norm
-  3) ./examples.py -i dat/bar-clustered.dat -s bar-clustered
-  4) ./examples.py -i dat/bar-clustered.dat -s bar-norm-clustered
-  5) ./examples.py -i dat/bar-key-cc.dat -s bar-key-cc
-  6-1) ./examples.py -si atax -s bar-stacked
-  6-2) ./examples.py -s bar-clustacked
-  7) ./examples.py -i dat/box.dat -s box-key
-  8) ./examples.py -i dat/box.dat -s box-time
-  9) ./examples.py -i dat/jaws/atax.share.log -s jaws-pie
+* ./examples.py -i \[input\] \[attributes ...\]<br>
+  1) ./examples.py -i dat/line.dat -s line-key<br>
+  2) ./examples.py -i dat/line-norm.dat -s line-norm<br>
+  3) ./examples.py -i dat/bar-clustered.dat -s bar-clustered<br>
+  4) ./examples.py -i dat/bar-clustered.dat -s bar-norm-clustered<br>
+  5) ./examples.py -i dat/bar-key-cc.dat -s bar-key-cc<br>
+  6-1) ./examples.py -si atax -s bar-stacked<br>
+  6-2) ./examples.py -s bar-clustacked<br>
+  7) ./examples.py -i dat/box.dat -s box-key<br>
+  8) ./examples.py -i dat/box.dat -s box-time<br>
+  9) ./examples.py -i dat/jaws/atax.share.log -s jaws-pie<br>
 
 * Sub attributes
   - -f data format
