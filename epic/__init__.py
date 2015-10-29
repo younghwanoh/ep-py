@@ -14,9 +14,14 @@ import argparse
 def parseCommandArgs():
     argparser = argparse.ArgumentParser()
     argparser.add_argument("-i", "--inFile", help='Specify the name of input data file')
-    argparser.add_argument("-si", "--signature", help='Specify the signature')
-    argparser.add_argument("-a", "--auxiliary", help='Auxiliary parameter')
     argparser.add_argument("-o","--outFile", help='Specify the name of output PDF file')
     argparser.add_argument("-s","--style", help='Specify the style of graphs')
+    argparser.add_argument("-si", "--signature", help='Auxiliary parameter 1')
+    argparser.add_argument("-a", "--auxiliary", help='Auxiliary parameter 2')
 
-    return argparser.parse_args()
+    args = argparser.parse_args()
+    if len(sys.argv) < 2:
+	argparser.print_help()
+	sys.exit()
+
+    return args
