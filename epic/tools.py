@@ -46,8 +46,8 @@ def setHatchThickness(value):
     backend_pdf = libpath + "/backends/backend_pdf.py"
     with open(backend_pdf, "r") as r:
         code = r.read()
-        code = re.sub(r'self\.output\((\d+\.\d+|\d+)\,\ Op\.setlinewidth\)', "self.output(%s, Op.setlinewidth)" % str(value), code)
-        # code = re.sub(r'self.output\(\d+\.\d+|\d+, Op.setlinewidth\)', str(value), code)
+        code = re.sub(r'self\.output\((\d+\.\d+|\d+)\,\ Op\.setlinewidth\)',
+                       "self.output(%s, Op.setlinewidth)" % str(value), code)
         with open('/tmp/hatch.tmp', "w") as w:
             w.write(code)
         print backend_pdf
