@@ -139,6 +139,7 @@ class AbstractPlotter(object):
         self.fontsize = 12
         self.tickLabel = tickLabelInit()
         self.tickAngle = 0
+        self.tickAlign = "center"
         self.FigSideMargin = 0.12 
 
         # Property classes
@@ -155,17 +156,17 @@ class AbstractPlotter(object):
         if "ylabel" in kwargs:
             if type(kwargs["ylabel"]) is list:
                 ylabel = kwargs["ylabel"]
-                self.ax.set_ylabel(ylabel[0], ha="center",
+                self.ax.set_ylabel(ylabel[0], ha=self.tickAlign,
                                    fontweight=ylabel[1], fontsize=ylabel[2])
             else:
-                self.ax.set_ylabel(kwargs["ylabel"], ha="center")
+                self.ax.set_ylabel(kwargs["ylabel"], ha=self.tickAlign)
         if "xlabel" in kwargs:
             if type(kwargs["xlabel"]) is list:
                 xlabel = kwargs["xlabel"]
-                self.ax.set_xlabel(xlabel[0], ha="center",
+                self.ax.set_xlabel(xlabel[0], ha=self.tickAlign,
                                    fontweight=xlabel[1], fontsize=xlabel[2])
             else:
-                self.ax.set_xlabel(kwargs["xlabel"], ha="center")
+                self.ax.set_xlabel(kwargs["xlabel"], ha=self.tickAlign)
         if "title" in kwargs:
             self.ax.set_title(kwargs["title"])
         if ("width" in kwargs) & ("height" in kwargs):
@@ -201,6 +202,8 @@ class AbstractPlotter(object):
             self.tickLabel = kwargs["label"]
         if "angle" in kwargs:
             self.tickAngle = kwargs["angle"]
+        if "align" in kwargs:
+            self.tickAlign = kwargs["align"]
         if "fontsize" in kwargs:
             self.fontsize = kwargs["fontsize"]
 
@@ -239,6 +242,12 @@ class AbstractPlotter(object):
         # set overall figure styles
         if "bottomMargin" in kwargs:
             plt.gcf().subplots_adjust(bottom=kwargs["bottomMargin"])
+        if "topMargin" in kwargs:
+            plt.gcf().subplots_adjust(top=kwargs["topMargin"])
+        if "leftMargin" in kwargs:
+            plt.gcf().subplots_adjust(left=kwargs["leftMargin"])
+        if "rightMargin" in kwargs:
+            plt.gcf().subplots_adjust(right=kwargs["rightMargin"])
         if "fontsize" in kwargs:
             matplotlib.rcParams.update({'font.size': kwargs["fontsize"]})
         if "figmargin" in kwargs:
@@ -381,7 +390,7 @@ class LinePlotter(AbstractPlotter):
         # set xtick point and label
         if self.manualBase == True:
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center",
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
                                     fontsize=self.fontsize)
 
 
@@ -423,6 +432,10 @@ class SBarPlotter(AbstractBarPlotter):
     def __init__(self, **kwargs):
         AbstractBarPlotter.__init__(self, **kwargs)
         self.transposedStack = False
+        self.horizontal = False
+
+        if "horizontal" in kwargs:
+            self.horizontal = kwargs["horizontal"]
 
     def setStackStyle(self, **kwargs):
         # only used if transpose optiion is turned on
@@ -445,6 +458,7 @@ class SBarPlotter(AbstractBarPlotter):
             keyLen = len(argv)
         else:
             keyLen = len(argv[0].Y)
+
         # Calculate tick point
         left = self.base[-1] + self.baseOffset
         right = left + self.barwidth*(keyLen-1) + self.interMargin
@@ -460,20 +474,37 @@ class SBarPlotter(AbstractBarPlotter):
 
             stackLen = len(data)
             accum = np.array([0 for i in range(keyLen)])
+
             for i in range(stackLen):
+                # horizontal or vertical plot
+                if self.horizontal is True:
+                    drawer = self.ax.barh
+                    kwd_args = {"left":accum}
+                else:
+                    drawer = self.ax.bar
+                    kwd_args = {"bottom":accum}
                 accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
-                self.patch.append(self.ax.bar(self.base, data[i], self.barwidth, zorder=3,
-                                  color=self.colors[i], hatch=self.hatch[i], bottom=accum))
+                self.patch.append(drawer(self.base, data[i], self.barwidth, zorder=3,
+                                  color=self.colors[i], hatch=self.hatch[i], **kwd_args))
         else:
             # not transposed data
             data = argv
 
             stackLen = len(data)
             accum = np.array([0 for i in range(keyLen)])
+
             for i in range(stackLen):
                 accum = [accum[j] + data[i-1].Y[j] for j in range(keyLen)] if i > 0 else accum
-                self.patch.append(self.ax.bar(self.base, data[i].Y, self.barwidth, zorder=3,
-                                  color=data[i].color, hatch=data[i].hatch, bottom=accum))
+
+                # horizontal or vertical plot
+                if self.horizontal is True:
+                    drawer = self.ax.barh
+                    kwd_args = {"left":accum}
+                else:
+                    drawer = self.ax.bar
+                    kwd_args = {"bottom":accum}
+                self.patch.append(drawer(self.base, data[i].Y, self.barwidth, zorder=3,
+                                  color=data[i].color, hatch=data[i].hatch, **kwd_args))
                 if bool(data[i].legend):
                     self.legend.append(data[i].legend)
 
@@ -485,28 +516,59 @@ class SBarPlotter(AbstractBarPlotter):
         self.m_drawLegend(self.patch, self.legend);
 
         # set xtick point and label
-        if self.manualBase == False:
-            self.ax.set_xticks(self.globalBase+self.barwidth/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center",
-                                    fontsize=self.fontsize)
-            for tick in self.ax.yaxis.get_major_ticks():
-                tick.label.set_fontsize(self.fontsize)
+
+        if self.horizontal is True:
+            ticker = self.ax.set_yticks
+            labelTicker = self.ax.set_yticklabels
+            axis = self.ax.xaxis
+            figLimit = plt.ylim
         else:
-            self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center",
-                                    fontsize=self.fontsize)
-            for tick in self.ax.yaxis.get_major_ticks():
+            ticker = self.ax.set_xticks
+            labelTicker = self.ax.set_xticklabels
+            axis = self.ax.yaxis
+            figLimit = plt.xlim
+
+        if self.manualBase == False:
+            ticker(self.globalBase+self.barwidth/2)
+            labelTicker(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
+                        fontsize=self.fontsize)
+            for tick in axis.get_major_ticks():
                 tick.label.set_fontsize(self.fontsize)
 
-            for t, y in zip( self.ax.get_xticklabels( ), self.voffset ):
-                t.set_y( y )
+            # if self.horizontal is True:
+            #     for t, x in zip( self.ax.get_yticklabels( ), self.voffset ):
+            #         t.set_x( x )
+            # else:
+            #     for t, y in zip( self.ax.get_xticklabels( ), self.voffset ):
+            #         t.set_y( y )
+
+        else:
+            # Cannot draw horizontal plot in manual base mode
+            if ticker == self.ax.set_yticks:
+                print "SBP: Error! horizontal plot cannot be drawed in manual base mode"
+                import sys
+                sys.exit()
+
+            ticker(self.xspace)
+            labelTicker(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
+                        fontsize=self.fontsize)
+            for tick in axis.get_major_ticks():
+                tick.label.set_fontsize(self.fontsize)
+
+            if self.horizontal is True:
+                for t, x in zip( self.ax.get_yticklabels( ), self.voffset ):
+                    t.set_x( x )
+            else:
+                for t, y in zip( self.ax.get_xticklabels( ), self.voffset ):
+                    t.set_y( y )
             self.manualBase = True
 
         # set label's vertical padding
         # self.ax.xaxis.labelpad=-90
 
         LengthOfWholeBar = self.base[-1] + self.barwidth
-        plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
+        figLimit([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
+        # figLimit([0, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
 class CBarPlotter(AbstractBarPlotter):
@@ -541,11 +603,11 @@ class CBarPlotter(AbstractBarPlotter):
         if self.manualBase is True:
             # set xtick point and label
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center")
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign)
         else:
             # set xtick point and label
             self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha="center")
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign)
 
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)

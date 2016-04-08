@@ -21,7 +21,8 @@ def parseCommandArgs():
 
     args = argparser.parse_args()
     if len(sys.argv) < 2:
-	argparser.print_help()
-	sys.exit()
+        argparser.print_help()
+        print "Warning! No arguments"
+	# sys.exit()
 
     return args

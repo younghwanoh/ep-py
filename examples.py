@@ -608,7 +608,7 @@ elif style == "bar-stacked":
     L1 = ep.TickLabel(None, ["A", "B", "C", "D"])
 
     ## Draw box
-    SBP = ep.SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value")
+    SBP = ep.SBarPlotter(title="Stacked Bar", xlabel="Strategy", ylabel="Value", horizontal=True)
 
     # Set graph style
     SBP.setLegendStyle(ncol=3, size=10, frame=False, loc="upper center")
