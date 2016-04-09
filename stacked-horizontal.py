@@ -48,6 +48,7 @@ SBP = ep.SBarPlotter(width=10.2, height=5, xlabel="Percentage (%)", horizontal=T
 # Set graph style
 SBP.setLegendStyle(ncol=6, size=10.5, frame=False, pos=[1,1.16])
 SBP.setFigureStyle(figmargin=0, topMargin=0.8, interMargin=1.5, xlim=[0,100])
+SBP.setTicks(xspace=[0,10,20,30,40,50,60,70,80,90,100])
 
 # Draw
 SBP.setTicks(label=L1, voffset=[-0.01]*11, align="right")

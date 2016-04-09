@@ -135,7 +135,7 @@ class AbstractPlotter(object):
     def __init__(self, **kwargs):
         self.externalAxisMode = False
         self.manualYtick = False
-        self.manualBase = False
+        self.manualXtick = False
         self.fontsize = 12
         self.tickLabel = tickLabelInit()
         self.tickAngle = 0
@@ -193,7 +193,7 @@ class AbstractPlotter(object):
             self.yspace=kwargs["yspace"]
             #FIXME:: Maual ytick space settings supports only CBoxPlotter
         if "xspace" in kwargs:
-            self.manualBase = True
+            self.manualXtick = True
             self.xspace = kwargs["xspace"]
             #FIXME:: Maual xtick space settings aren't yet implemented for BoxPlotter
         if "voffset" in kwargs:
@@ -388,7 +388,7 @@ class LinePlotter(AbstractPlotter):
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)
         # set xtick point and label
-        if self.manualBase == True:
+        if self.manualXtick == True:
             self.ax.set_xticks(self.xspace)
             self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
                                     fontsize=self.fontsize)
@@ -476,6 +476,8 @@ class SBarPlotter(AbstractBarPlotter):
             accum = np.array([0 for i in range(keyLen)])
 
             for i in range(stackLen):
+                accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
+
                 # horizontal or vertical plot
                 if self.horizontal is True:
                     drawer = self.ax.barh
@@ -483,7 +485,6 @@ class SBarPlotter(AbstractBarPlotter):
                 else:
                     drawer = self.ax.bar
                     kwd_args = {"bottom":accum}
-                accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
                 self.patch.append(drawer(self.base, data[i], self.barwidth, zorder=3,
                                   color=self.colors[i], hatch=self.hatch[i], **kwd_args))
         else:
@@ -518,57 +519,69 @@ class SBarPlotter(AbstractBarPlotter):
         # set xtick point and label
 
         if self.horizontal is True:
-            ticker = self.ax.set_yticks
+            # Label axis: y, value axis: x
+            labelAxisTicker = self.ax.set_yticks
+            labelAxisSpace = self.yspace if self.manualYtick else False
+            getLabelAxisLabel = self.ax.get_yticklabels if self.manualYtick else False
+
+            valueAxisTicker = self.ax.set_xticks
+            valueAxisSpace = self.xspace if self.manualXtick else False
+            getValueAxisLabel = self.ax.get_xticklabels if self.manualXtick else False
+
             labelTicker = self.ax.set_yticklabels
             axis = self.ax.xaxis
             figLimit = plt.ylim
         else:
-            ticker = self.ax.set_xticks
+            # Label axis: x, value axis: y
+            labelAxisTicker = self.ax.set_xticks
+            labelAxisSpace = self.xspace if self.manualXtick else False
+            getLabelAxisLabel = self.ax.get_xticklabels if self.manualXtick else False
+
+            valueAxisTicker = self.ax.set_yticks
+            valueAxisSpace = self.yspace if self.manualYtick else False
+            getValueAxisLabel = self.ax.get_yticklabels if self.manualYtick else False
+
             labelTicker = self.ax.set_xticklabels
             axis = self.ax.yaxis
             figLimit = plt.xlim
 
-        if self.manualBase == False:
-            ticker(self.globalBase+self.barwidth/2)
+        if labelAxisSpace:
+            # Manually sets label axis
+            labelAxisTicker(labelAxisSpace)
             labelTicker(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
                         fontsize=self.fontsize)
-            for tick in axis.get_major_ticks():
-                tick.label.set_fontsize(self.fontsize)
-
-            # if self.horizontal is True:
-            #     for t, x in zip( self.ax.get_yticklabels( ), self.voffset ):
-            #         t.set_x( x )
-            # else:
-            #     for t, y in zip( self.ax.get_xticklabels( ), self.voffset ):
-            #         t.set_y( y )
-
+            for t, offset in zip( getLabelAxisLabel(), self.voffset ):
+                if self.horizontal is True:
+                    t.set_x( offset )
+                else:
+                    t.set_y( offset )
         else:
-            # Cannot draw horizontal plot in manual base mode
-            if ticker == self.ax.set_yticks:
-                print "SBP: Error! horizontal plot cannot be drawed in manual base mode"
-                import sys
-                sys.exit()
-
-            ticker(self.xspace)
+            # Automatically generate label axis
+            labelAxisTicker(self.globalBase+self.barwidth/2)
             labelTicker(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
                         fontsize=self.fontsize)
-            for tick in axis.get_major_ticks():
-                tick.label.set_fontsize(self.fontsize)
 
-            if self.horizontal is True:
-                for t, x in zip( self.ax.get_yticklabels( ), self.voffset ):
-                    t.set_x( x )
-            else:
-                for t, y in zip( self.ax.get_xticklabels( ), self.voffset ):
-                    t.set_y( y )
-            self.manualBase = True
+        if valueAxisSpace:
+            # Manually sets value axis
+            valueAxisTicker(valueAxisSpace)
+            for t, offset in zip( getValueAxisLabel(), self.voffset ):
+                if self.horizontal is True:
+                    t.set_x( offset )
+                else:
+                    t.set_y( offset )
+        else:
+            # Automatically generate label axis
+            pass
+
+        # Adjust fontsize as denoted
+        for tick in axis.get_major_ticks():
+            tick.label.set_fontsize(self.fontsize)
 
         # set label's vertical padding
-        # self.ax.xaxis.labelpad=-90
+        # self.ax.xaxis.labelpad=10.3
 
         LengthOfWholeBar = self.base[-1] + self.barwidth
         figLimit([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
-        # figLimit([0, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
 class CBarPlotter(AbstractBarPlotter):
@@ -600,7 +613,7 @@ class CBarPlotter(AbstractBarPlotter):
         # set legend
         self.m_drawLegend(self.patch, self.legend);
 
-        if self.manualBase is True:
+        if self.manualXtick is True:
             # set xtick point and label
             self.ax.set_xticks(self.xspace)
             self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign)
