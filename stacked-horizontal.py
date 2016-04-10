@@ -25,7 +25,6 @@ output = "bytecode-ratio.pdf"
 text = ep.tRead("dat/bytecode-ratio.dat")
 
 bench = [ "binarytree","fankuchredux","knucleotide","mandelbrot","nbody","spectralnorm","nsieve","random","fibo","ackermann","pidigits" ]
-bench.reverse()
 colors = [ mc["black"], mc["dgray"], mc["gray"], mc["white"]  , mc["white"], mc["ddwhite"], mc["white"], mc["white"], mc["white"], mc["white"], mc["white"]]
 hatchs = [""          , ""         , ""        , "\\\\\\\\\\\\", ".."        , ""           , "//////", "xxx"      , "++++"     , "...."          , ""]
 
