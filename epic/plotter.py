@@ -432,10 +432,10 @@ class SBarPlotter(AbstractBarPlotter):
     def __init__(self, **kwargs):
         AbstractBarPlotter.__init__(self, **kwargs)
         self.transposedStack = False
-        self.horizontal = False
+        self.vertical = True
 
-        if "horizontal" in kwargs:
-            self.horizontal = kwargs["horizontal"]
+        if "vertical" in kwargs:
+            self.vertical = kwargs["vertical"]
 
     def setStackStyle(self, **kwargs):
         # only used if transpose optiion is turned on
@@ -479,7 +479,7 @@ class SBarPlotter(AbstractBarPlotter):
                 accum = [accum[j] + data[i-1][j] for j in range(keyLen)] if i > 0 else accum
 
                 # horizontal or vertical plot
-                if self.horizontal is True:
+                if self.vertical is False:
                     drawer = self.ax.barh
                     kwd_args = {"left":accum}
                 else:
@@ -498,7 +498,7 @@ class SBarPlotter(AbstractBarPlotter):
                 accum = [accum[j] + data[i-1].Y[j] for j in range(keyLen)] if i > 0 else accum
 
                 # horizontal or vertical plot
-                if self.horizontal is True:
+                if self.vertical is False:
                     drawer = self.ax.barh
                     kwd_args = {"left":accum}
                 else:
@@ -518,7 +518,7 @@ class SBarPlotter(AbstractBarPlotter):
 
         # set xtick point and label
 
-        if self.horizontal is True:
+        if self.vertical is False:
             # Label axis: y, value axis: x
             labelAxisTicker = self.ax.set_yticks
             labelAxisSpace = self.yspace if self.manualYtick else False
@@ -551,7 +551,7 @@ class SBarPlotter(AbstractBarPlotter):
             labelTicker(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
                         fontsize=self.fontsize)
             for t, offset in zip( getLabelAxisLabel(), self.voffset ):
-                if self.horizontal is True:
+                if self.vertical is False:
                     t.set_x( offset )
                 else:
                     t.set_y( offset )
@@ -565,7 +565,7 @@ class SBarPlotter(AbstractBarPlotter):
             # Manually sets value axis
             valueAxisTicker(valueAxisSpace)
             for t, offset in zip( getValueAxisLabel(), self.voffset ):
-                if self.horizontal is True:
+                if self.vertical is True:
                     t.set_x( offset )
                 else:
                     t.set_y( offset )

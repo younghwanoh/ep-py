@@ -6,13 +6,6 @@ from sys import stdout
 import numpy as np
 import epic as ep
 
-import readline
-import rlcompleter
-if 'libedit' in readline.__doc__:
-    readline.parse_and_bind("bind ^I rl_complete")
-else:
-    readline.parse_and_bind("tab: complete")
-
 # args = ep.parseCommandArgs() 
 
 # color macro dictionary
@@ -42,7 +35,7 @@ for i in range(len(keys)):
 L1 = ep.TickLabel(None, bench)
 
 ## Draw box
-SBP = ep.SBarPlotter(width=10.2, height=5, xlabel="Percentage (%)", horizontal=True)
+SBP = ep.SBarPlotter(width=10.2, height=5, xlabel="Percentage (%)", vertical=False)
 
 # Set graph style
 SBP.setLegendStyle(ncol=6, size=10.5, frame=False, pos=[1,1.16])
