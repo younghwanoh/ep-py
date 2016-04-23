@@ -122,7 +122,7 @@ elif benchmark == "syr2k":
 elif benchmark == "barkley":
     ylim_freq  = [0,4]
     ylim_core  = [0,4.99]
-    ylim_metric = [10,50]
+    ylim_metric = [5,50]
     ylim_power = [0,40]
     ylabel_metric = ["FPS", "bold", 14]
 
@@ -134,7 +134,7 @@ SP.adjust(hspace=0.38)
 LP0 = ep.LinePlotter(axis=SP.getAxis(0), ylabel=ylabel_metric)
 LP0.setLegendStyle(ncol=4, frame=False, pos=[1.03, 1.23], tight=True)
 LP0.setFigureStyle(ylim=ylim_metric, ylpos=[-0.07, 0.5], grid=True)
-LP0.annotate(["(i)"], [[24.15,-0.13]], fontsize=14)
+LP0.annotate(["(i)"], [[39.15,-0.13]], fontsize=14)
 LP0.draw(metric_qpr, metric_perf, metric_ond, metric_save)
 LP0.finish()
 
@@ -145,7 +145,7 @@ cf_axis = SP.getAxis(1)
 LP1_freq = ep.LinePlotter(axis=cf_axis, ylabel=["Frequency (GHz)", "bold", 14], flushLegend=True)
 LP1_freq.setLegendStyle(ncol=2, frame=False, pos=[0.88, 1.23])
 LP1_freq.setFigureStyle(ylim=ylim_freq, ylpos=[-0.07, 0.5], grid=True)
-LP1_freq.annotate(["(ii)"], [[24.15,-0.13]], fontsize=14)
+LP1_freq.annotate(["(ii)"], [[39.15,-0.13]], fontsize=14)
 LP1_freq.draw(freq, core_void)
 LP1_freq.finish()
 
@@ -160,7 +160,7 @@ LP2 = ep.LinePlotter(axis=SP.getAxis(2), ylabel=["Power (Watt)", "bold", 14], xl
 LP2.setLegendStyle(ncol=2, frame=False, pos=[0.82, 1.23])
 LP2.setFigureStyle(ylim=ylim_power, ylpos=[-0.07, 0.5], grid=True)
 
-LP2.annotate(["(iii)"], [[23.94,-0.36]], fontsize=14)
+LP2.annotate(["(iii)"], [[38.94,-0.36]], fontsize=14)
 LP2.setTicks(label=ep.TickLabel(None, range(0,51,5)), xspace=range(0,51,5))
 LP2.hline(y=8, xrange=[0, 50], color="#434343", linestyle="--")
 LP2.draw(power_qpr, power_ond)
