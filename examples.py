@@ -43,6 +43,21 @@ if style == "dot-key":
     LP.draw(GPUdata, CPUdata)
     LP.saveToPdf(output);
 
+if style == "dot":
+    log = ep.tRead("dat/flat-dot.dat")
+
+    PP = ep.PatternParser(log)
+    PP.ParseWith("\n")
+    PP.keyList=range(len(PP.datList))
+
+    dots = ep.Group(None, PP.keyList, PP.datList, color="red", marker="o")
+    dots.setLegend("1st conv layer") 
+
+    DP = ep.DotPlotter(width=8, height=8, title="Weight distribution", xlabel="Weight ID", ylabel="Value")
+    # LP.setFigureStyle(xlim=[0, 1000], ylim=[0, 1000])
+    DP.draw(dots)
+    DP.saveToPdf(output);
+
 if style == "line-key":
     text = ep.tRead("dat/line.dat")
 
