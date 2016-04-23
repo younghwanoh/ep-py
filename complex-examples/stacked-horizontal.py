@@ -15,7 +15,7 @@ mc = {"green":"#225522", "yellow":"#FFBB00", "red":"#BC434C", "purple":"#B82292"
 
 # output file name
 output = "bytecode-ratio.pdf"
-text = ep.tRead("dat/bytecode-ratio.dat")
+text = ep.tRead("../dat/bytecode-ratio.dat")
 
 bench = [ "binarytree","fankuchredux","knucleotide","mandelbrot","nbody","spectralnorm","nsieve","random","fibo","ackermann","pidigits" ]
 colors = [ mc["black"], mc["dgray"], mc["gray"], mc["white"]  , mc["white"], mc["ddwhite"], mc["white"], mc["white"], mc["white"], mc["white"], mc["white"]]

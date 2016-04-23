@@ -30,8 +30,8 @@ NS_CPUresult = []
 
 # Reproduce data (Normalization, ...)
 for i in range(len(benchmarks)):
-    txt_share = ep.tRead("dat/jaws-merge/%s.share.log" % benchmarks[i])
-    txt_noshare = ep.tRead("dat/jaws-merge/%s.noshare.log" % benchmarks[i])
+    txt_share = ep.tRead("../dat/jaws-merge/%s.share.log" % benchmarks[i])
+    txt_noshare = ep.tRead("../dat/jaws-merge/%s.noshare.log" % benchmarks[i])
     
     # Parse text
     PP1 = ep.PatternParser(txt_share)
