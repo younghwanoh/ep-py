@@ -25,6 +25,24 @@ if bool(args.style) == True:
     style = args.style
 
 # line graph with special key
+if style == "dot-key":
+    text = ep.tRead("dat/line.dat")
+
+    PP = ep.PatternParser(text)
+    PP.PickKeyWith(": ")
+    PP.ParseWith(",")
+
+    GPUdata = ep.Group(PP, "GPUprofileQuantum", "GPUthput", color="red", marker="o")
+    CPUdata = ep.Group(PP, "CPUprofileQuantum", "CPUthput", color="blue", marker="x")
+
+    GPUdata.setLegend("GPU") 
+    CPUdata.setLegend("CPU") 
+
+    LP = ep.DotPlotter(width=5, height=5, title="DotPlot with key", xlabel="abc", ylabel="ee")
+    # LP.setFigureStyle(xlim=[0, 1000], ylim=[0, 1000])
+    LP.draw(GPUdata, CPUdata)
+    LP.saveToPdf(output);
+
 if style == "line-key":
     text = ep.tRead("dat/line.dat")
 

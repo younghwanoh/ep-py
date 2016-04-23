@@ -358,6 +358,7 @@ class LinePlotter(AbstractPlotter):
             LinePlotter.legend = []
  
         self.base = 0
+        self.linewidth = 2
         # self.ax.yaxis.grid(zorder=-1)
 
     def draw(self, *argv):
@@ -373,7 +374,7 @@ class LinePlotter(AbstractPlotter):
         self.base += self.baseOffset
         for i in range(keyLen):
             shiftedX = np.array(argv[i].X) + self.base 
-            self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=2, zorder=3,
+            self.patch[i], = self.ax.plot(shiftedX, argv[i].Y, linewidth=self.linewidth, zorder=3,
                                           marker=argv[i].marker, markeredgecolor=argv[i].face,
                                           color=argv[i].color, mew=1, **p_plotterProp)
             if bool(argv[i].legend):
@@ -393,6 +394,12 @@ class LinePlotter(AbstractPlotter):
             self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
                                     fontsize=self.fontsize)
 
+class DotPlotter(LinePlotter):
+    """Draw dot graph with grouped data or column-parsed data"""
+    def __init__(self, **kwargs):
+        # DotPlotter is exactly same with LinePlotter, but linewidth
+        LinePlotter.__init__(self, **kwargs)
+        self.linewidth=0
 
 class AbstractBarPlotter(AbstractPlotter):
     """Abstract class for Bar plotter"""
