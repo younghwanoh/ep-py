@@ -44,7 +44,7 @@ if style == "dot-key":
     LP.saveToPdf(output);
 
 if style == "dot":
-    log = ep.tRead("dat/flat-dot.dat")
+    log = ep.tRead("dat/flat-dots/W_fc1.dat")
 
     PP = ep.PatternParser(log)
     PP.ParseWith("\n")
