@@ -6,9 +6,13 @@ import matplotlib
 from matplotlib.backends.backend_pdf import PdfPages
 from tools import tTranspose, tMergeCrossSpace, tCheckArgsExists
 
+# Load Arial fonts as default
+# import matplotlib.font_manager as fm
+# arial_prop = fm.FontProperties(fname='./Arial.ttf')
+
 # matplotlib.rcParams['pdf.use14corefonts'] = True # Helvetica
 matplotlib.rcParams['pdf.fonttype'] = 42
-matplotlib.rcParams['font.family']='Arial'
+matplotlib.rcParams['font.family'] = 'Arial'
 
 class AbstractProp(object):
     """Holding properties"""
