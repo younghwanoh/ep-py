@@ -286,6 +286,7 @@ class AbstractPlotter(object):
         self.m_setFigureStyle(**kwargs)
 
     def finish(self):
+        # call finish maually for subplots
         self.m_finish()
 
     def saveToPdf(self, output):
@@ -718,7 +719,7 @@ class AbstractBoxPlotter(AbstractPlotter):
         AbstractPlotter.__init__(self, **kwargs)
         # Initial base point
         self.base = [0.0]
-
+        self.linewidth = 1.0
         self.boxwidth = 1.0
         self.vertical = True
 
@@ -731,11 +732,15 @@ class AbstractBoxPlotter(AbstractPlotter):
         if "boxwidth" in kwargs:
             # boxwidth can be assigned as a style over all bars
             self.boxwidth = float(kwargs["boxwidth"])
+        if "linewidth" in kwargs:
+            self.linewidth = float(kwargs["linewidth"])
 
     def m_beforeEveryDraw(self, **kwargs):
         # boxwidth can also be assigned to each different elem
         if "boxwidth" in kwargs:
             self.boxwidth = float(kwargs["boxwidth"])
+        if "linewidth" in kwargs:
+            self.linewidth = float(kwargs["linewidth"])
 
 
 class BoxPlotter(AbstractBoxPlotter):
@@ -744,7 +749,7 @@ class BoxPlotter(AbstractBoxPlotter):
         AbstractBoxPlotter.__init__(self, **kwargs)
 
     def draw(self, *argv, **kwargs):
-        self.m_beforeEveryDraw()
+        self.m_beforeEveryDraw(**kwargs)
 
         keyLen = len(argv)
 
@@ -758,10 +763,10 @@ class BoxPlotter(AbstractBoxPlotter):
             for j in range(datLen):
                 if self.vertical is True:
                     rect = plt.Rectangle([base[i], argv[i].X[j]], self.boxwidth, argv[i].Y[j] - argv[i].X[j],
-                                         facecolor=argv[i].color, hatch=argv[i].hatch)
+                                         facecolor=argv[i].color, hatch=argv[i].hatch, linewidth=self.linewidth)
                 else:
                     rect = plt.Rectangle([argv[i].X[j], base[i]], argv[i].Y[j] - argv[i].X[j], self.boxwidth,
-                                         facecolor=argv[i].color, hatch=argv[i].hatch)
+                                         facecolor=argv[i].color, hatch=argv[i].hatch, linewidth=self.linewidth)
                 self.ax.add_patch(rect)
             if bool(argv[i].legend):
                 self.patch.append(rect)

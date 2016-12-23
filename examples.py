@@ -296,7 +296,7 @@ elif style == "bar-key-clustered":
     # Draw bar
     CB = ep.CBarPlotter(title="BarPlot with key format", xlabel="Input Size", ylabel="Speedup")
     CB.setTicks(label=L1, angle=45)
-    CB.setFigureStyle(figmargin=0.05, xlim=[0, 10], ylim=[0, 5])
+    CB.setFigureStyle(figmargin=0.05, ylim=[0, 5]) # xlim option is deprecated
     CB.draw(D1,D2,D3,D4, barwidth=2)
     CB.saveToPdf(output)
 
