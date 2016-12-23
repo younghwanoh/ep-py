@@ -629,7 +629,6 @@ elif style == "jaws-pie":
 
 elif style == "bar-stacked":
 
-    PP = ep.PatternParser(" ")
     D1 = ep.Group(None, [1,2,3,4], color=mc["red"], hatch="")
     D2 = ep.Group(None, [2,4,5,3], color=mc["blue"], hatch="")
     D3 = ep.Group(None, [1,1,1,1], color=mc["yellow"], hatch="")
