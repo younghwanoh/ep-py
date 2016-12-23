@@ -27,6 +27,6 @@ BOP = ep.BoxPlotter(title="BoxPlot with start/end points", width=10, height=4,
              xlabel="Time", ylabel="Running Device")
 
 BOP.setLegendStyle(ncol=5, size=12, frame=False, loc="upper center") 
-BOP.setFigureStyle(vertical=False, timeline=False, figmargin=0.8)
+BOP.setFigureStyle(vertical=False, figmargin=0.8)
 BOP.draw(D1, D2, D3, D4, D5, boxwidth=2)
 BOP.saveToPdf(output)

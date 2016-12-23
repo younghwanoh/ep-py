@@ -43,7 +43,7 @@ CBOP = ep.CBoxPlotter(title="BoxPlot with start/end points", width=12, height=5,
                xlabel="Time (ms)")
 
 CBOP.setLegendStyle(ncol=5, size=13, frame=False, loc="upper center")
-CBOP.setFigureStyle(vertical=False, timeline=True, figmargin=0.4)
+CBOP.setFigureStyle(vertical=False, figmargin=0.4)
 CBOP.setTicks(label=L1)
 CBOP.draw(G1, G2, G3, boxwidth=2)
 CBOP.saveToPdf(output)

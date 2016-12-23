@@ -397,7 +397,7 @@ elif style == "box-key":
     # Draw box
     BOP = ep.BoxPlotter(title="BoxPlot with start/end points", xlabel="Device",
                      ylabel="Degree of process")
-    BOP.setFigureStyle(vertical=True, timeline=False, boxwidth=2)
+    BOP.setFigureStyle(vertical=True, boxwidth=2)
     BOP.setTicks(label=L1)
     BOP.draw(D1, D2, D3, D4, D5)
     BOP.saveToPdf(output)
@@ -428,7 +428,7 @@ elif style == "box-time":
                      xlabel="Time", ylabel="Running Device")
 
     BOP.setLegendStyle(ncol=5, size=12, frame=False, loc="upper center") 
-    BOP.setFigureStyle(vertical=False, timeline=True, figmargin=0.8)
+    BOP.setFigureStyle(vertical=False, figmargin=0.8)
     BOP.draw(D1, D2, D3, D4, D5, boxwidth=2)
     BOP.saveToPdf(output)
 
@@ -469,7 +469,7 @@ elif style == "box-multi-time":
                        xlabel="Time (ms)")
 
     CBOP.setLegendStyle(ncol=5, size=13, frame=False, loc="upper center")
-    CBOP.setFigureStyle(vertical=False, timeline=True, figmargin=0.4)
+    CBOP.setFigureStyle(vertical=False, figmargin=0.4)
     CBOP.setTicks(label=L1)
     CBOP.draw(G1, G2, G3, boxwidth=2)
     CBOP.saveToPdf(output)
