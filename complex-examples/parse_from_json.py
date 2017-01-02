@@ -46,15 +46,17 @@ with open(args.input, "r") as t:
                 task_info = log["Task Info"]
                 current_eid = task_info["Executor ID"]
                 current_tid = task_info["Task ID"]
+                stage_id = log["Stage ID"]
                 if current_eid in eid.keys():
-                    if current_tid in eid[current_eid].keys():
-                        eid[current_eid][current_tid][0].append(task_info["Launch Time"]-start_time)
-                        eid[current_eid][current_tid][1].append(task_info["Finish Time"]-start_time)
-                    else:
-                        eid[current_eid][current_tid]=[[task_info["Launch Time"]-start_time],
-                                                       [task_info["Finish Time"]-start_time]]
+                    # Append "new tid" and its elem
+                    eid[current_eid][current_tid]=[[task_info["Launch Time"]-start_time],
+                                                   [task_info["Finish Time"]-start_time],
+                                                   stage_id]
                 else:
-                    eid[current_eid]={current_tid:[[],[]]}
+                    # First time, initialize "tid Hash" wieh corresponding elem
+                    eid[current_eid]={current_tid:[[task_info["Launch Time"]-start_time],
+                                                   [task_info["Finish Time"]-start_time],
+                                                   stage_id]}
         except:
             pass
 
@@ -65,14 +67,29 @@ for k in range(args.max_eid):
     OrderedLog = OrderedDict(sorted(eid[str(k)].items(), key=lambda t: t[0], reverse=True))
 
     # Append dummy values to display graphs from 0
+    stage_min_max = {}
     D.append(ep.Group(None, [0], [100]))
     for tid, time_log in OrderedLog.iteritems():
         # Group(None, <Launch time>, <Finish Time>)
         D.append(ep.Group(None, time_log[0], time_log[1], color=mc["blue"]))
+        # Update min/max of each stages
+
+        if time_log[2] in stage_min_max.keys():
+            # find min
+            if stage_min_max[time_log[2]][0] > time_log[0][0]:
+                stage_min_max[time_log[2]][0] = time_log[0][0]
+            # find max
+            if stage_min_max[time_log[2]][1] < time_log[1][0]:
+                stage_min_max[time_log[2]][1] = time_log[1][0]
+        else:
+            # virtual max, min
+            stage_min_max[time_log[2]]=[99999999,-999]
 
     CBOP = ep.BoxPlotter(title="Timeline (for Executor %s)" % str(k), width=10, height=6,
                          xlabel="Time", ylabel="Task ID")
     CBOP.setLegendStyle(ncol=4, loc="upper center", frame=False)
     CBOP.setFigureStyle(vertical=False, figmargin=0.05)
+    for v in stage_min_max.values():
+        CBOP.vline(x=v[0], yrange=[0,100], color="black", linestyle="--")
     CBOP.draw(*D, boxwidth=.1, linewidth=.01)
     CBOP.saveToPdf("%s-%d.pdf" % (args.output,k))
