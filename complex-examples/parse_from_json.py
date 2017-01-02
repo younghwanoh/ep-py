@@ -89,7 +89,10 @@ for k in range(args.max_eid):
                          xlabel="Time", ylabel="Task ID")
     CBOP.setLegendStyle(ncol=4, loc="upper center", frame=False)
     CBOP.setFigureStyle(vertical=False, figmargin=0.05)
+
+    # Draw vertical line for stages
     for v in stage_min_max.values():
         CBOP.vline(x=v[0], yrange=[0,100], color="black", linestyle="--")
+
     CBOP.draw(*D, boxwidth=.1, linewidth=.01)
     CBOP.saveToPdf("%s-%d.pdf" % (args.output,k))
