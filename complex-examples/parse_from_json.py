@@ -93,6 +93,7 @@ for k in range(args.max_eid):
     # Draw vertical line for stages
     for v in stage_min_max.values():
         CBOP.vline(x=v[0], yrange=[0,100], color="black", linestyle="--")
+        CBOP.vline(x=v[1], yrange=[0,100], color="red", linestyle="--")
 
     CBOP.draw(*D, boxwidth=.1, linewidth=.01)
     CBOP.saveToPdf("%s-%d.pdf" % (args.output,k))
