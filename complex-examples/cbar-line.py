@@ -111,7 +111,7 @@ PP.ParseWith("\t")
 
 PLB = []
 for i, val in enumerate(poly_list):
-    PLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4, g_base[i]+6, g_base[i]+8 ], val,
+    PLB.append(ep.Group(PP, [g_base[i], g_base[i]+2, g_base[i]+4], val,
                             color=color, face=face, marker=marker))
 PLB[0].setLegend("Load Balance Factor")
 

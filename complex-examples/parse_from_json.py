@@ -17,7 +17,7 @@ argparser.add_argument("-i", "--input", default="../dat/json.dat",
      help='Specify the name of input data file')
 argparser.add_argument("-o","--output", default="output",
     help='Specify the name of output PDF file')
-argparser.add_argument("-m","--max_eid", default=4, type=int,
+argparser.add_argument("-m","--max_eid", default=1, type=int,
     help='Specify the maximum possible Executor IDs')
 args = argparser.parse_args()
 

@@ -20,8 +20,8 @@ def parseCommandArgs():
     argparser.add_argument("-a", "--auxiliary", help='Auxiliary parameter 2')
 
     args = argparser.parse_args()
-    if len(sys.argv) < 2:
-        argparser.print_help()
-        print "Warning! No arguments"
+    # if len(sys.argv) < 2:
+    #     argparser.print_help()
+    #     print "Warning! No arguments"
 
     return args
