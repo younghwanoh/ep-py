@@ -358,8 +358,8 @@ class LinePlotter(AbstractPlotter):
         AbstractPlotter.__init__(self, **kwargs)
         tCheckArgsExists(kwargs, "flushLegend")
         if kwargs["flushLegend"] is True:
-            LinePlotter.patch = []
-            LinePlotter.legend = []
+            self.patch = []
+            self.legend = []
  
         self.base = 0
         self.linewidth = 2
@@ -411,9 +411,13 @@ class AbstractBarPlotter(AbstractPlotter):
     patch = []
     legend = []
     globalBase = np.array([])
+    flushLegend = False
 
     def __init__(self, **kwargs):
         AbstractPlotter.__init__(self, **kwargs)
+        tCheckArgsExists(kwargs, "flushLegend")
+        if kwargs["flushLegend"] is True:
+            self.flushLegend = True
         # Initial base point
         self.base = [0.0]
         self.barwidth = 1.0
@@ -525,7 +529,8 @@ class SBarPlotter(AbstractBarPlotter):
         self.transposedStack = False
 
         # set legend
-        self.m_drawLegend(self.patch, self.legend);
+        if self.flushLegend == False:
+            self.m_drawLegend(self.patch, self.legend);
 
         # set xtick point and label
 
