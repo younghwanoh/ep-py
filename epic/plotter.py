@@ -185,12 +185,10 @@ class AbstractPlotter(object):
             return self.ax
 
     def annotate(self, text, xy, **kwargs):
-        if "fontsize" in kwargs:
-            fontsize = kwargs["fontsize"]
         for i in range(len(text)):
             trans = self.ax.get_xaxis_transform()
             self.ax.annotate(text[i], xy=xy[i], xycoords=trans,
-                             fontsize=fontsize, annotation_clip=False)
+                             annotation_clip=False, **kwargs)
 
     def setTicks(self, **kwargs):
         if "yspace" in kwargs:
