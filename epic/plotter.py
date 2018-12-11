@@ -99,10 +99,11 @@ class SubPlotter(object):
   
     def __init__(self, *argv, **kwargs):
         assert(len(argv) > 0), "Assign the number of subplots @ SubPlotter!"
+        self.numplots = argv[0]
         if "sharex" in kwargs:
-            self.fig, self.ax = plt.subplots(argv[0], sharex=kwargs["sharex"])
+            self.fig, self.ax = plt.subplots(self.numplots, sharex=kwargs["sharex"])
         else:
-            self.fig, self.ax = plt.subplots(argv[0])
+            self.fig, self.ax = plt.subplots(self.numplots)
         if "title" in kwargs:
             self.ax[0].set_title(kwargs["title"])
         if "height" in kwargs:
@@ -112,11 +113,13 @@ class SubPlotter(object):
 
     def getAxis(self, *argv, **kwargs):
         tCheckArgsExists(kwargs, "twinx")
-        assert(len(argv) > 0), "Assign the index ofi a subplot @ SubPlotter!"
+        assert(len(argv) > 0), "Assign the index of a subplot @ SubPlotter!"
+
+        axis = self.ax if self.numplots == 1 else self.ax[argv[0]]
         if kwargs["twinx"] is True:
-            return self.ax[argv[0]].twinx()
+            return axis.twinx()
         else:
-            return self.ax[argv[0]]
+            return axis
 
     def getFig(self):
         return self.fig
