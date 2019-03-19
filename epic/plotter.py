@@ -411,8 +411,6 @@ class DotPlotter(LinePlotter):
 class AbstractBarPlotter(AbstractPlotter):
     """Abstract class for Bar plotter"""
     # patch: graph obj lists, legend: legend lists
-    patch = []
-    legend = []
     globalBase = np.array([])
     flushLegend = False
 
@@ -451,6 +449,8 @@ class SBarPlotter(AbstractBarPlotter):
         AbstractBarPlotter.__init__(self, **kwargs)
         self.transposedStack = False
         self.vertical = True
+        self.patch = []
+        self.legend = []
 
         if "vertical" in kwargs:
             self.vertical = kwargs["vertical"]
@@ -608,6 +608,8 @@ class CBarPlotter(AbstractBarPlotter):
 
     def __init__(self, **kwargs):
         AbstractBarPlotter.__init__(self, **kwargs)
+        self.patch = []
+        self.legend = []
 
     def draw(self, *argv, **kwargs):
         self.m_beforeEveryDraw(**kwargs)
@@ -653,6 +655,8 @@ class CCBarPlotter(AbstractBarPlotter):
     """Draw clustered*2 bar graph with grouped parsed data"""
     def __init__(self, **kwargs):
         AbstractBarPlotter.__init__(self, **kwargs)
+        self.patch = []
+        self.legend = []
     
     def m_setFigureStyle(self, **kwargs):
         # set overall figure styles
