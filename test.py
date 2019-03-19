@@ -19,6 +19,6 @@ for i in tests:
 
 for i in additional_tests:
     print("\033[1;31m%s\033[m test !! ============================================" % i)
-    os.system('./%s.py' % i)
+    os.system('./complex-examples/%s.py -i ./dat/sc-bar/c1.dat' % i)
     print("\033[0;34mfinish !! ============================================\033[m")
     sleep(1)

@@ -593,7 +593,7 @@ class SBarPlotter(AbstractBarPlotter):
             # Automatically generate label axis
             pass
 
-        # Adjust fontsize as denoted
+        # Adjust fontsize as denoted (value axis, which is autogened)
         for tick in axis.get_major_ticks():
             tick.label.set_fontsize(self.fontsize)
 
@@ -638,14 +638,21 @@ class CBarPlotter(AbstractBarPlotter):
         if self.manualXtick is True:
             # set xtick point and label
             self.ax.set_xticks(self.xspace)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
+                                    fontsize=self.fontsize)
         else:
             # set xtick point and label
             self.ax.set_xticks(self.globalBase+(self.barwidth*self.keyLen)/2)
-            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign)
+            self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle, ha=self.tickAlign,
+                                    fontsize=self.fontsize)
+
+        # Adjust fontsize as denoted (value axis, which is autogened)
+        for tick in self.ax.yaxis.get_major_ticks():
+            tick.label.set_fontsize(self.fontsize)
 
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)
+
 
         LengthOfWholeBar = self.globalBase[-1] + (self.barwidth+self.interMargin)*self.keyLen
         self.ax.set_xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
@@ -707,6 +714,10 @@ class CCBarPlotter(AbstractBarPlotter):
                                               color=elem.color, hatch=elem.hatch, zorder=3))
                 if bool(elem.legend):
                     self.legend.append(elem.legend)
+
+        # Adjust fontsize as denoted
+        for tick in self.ax.yaxis.get_major_ticks():
+            tick.label.set_fontsize(self.fontsize)
 
         # Accumulate tick bases to global base
         self.cc_globalBase = np.concatenate([self.cc_globalBase, globalBase])

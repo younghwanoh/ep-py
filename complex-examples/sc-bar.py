@@ -22,13 +22,15 @@ if bool(args.outFile) == True:
 
 if bool(args.inFile) == True:
     text = ep.tRead(args.inFile)
+else:
+    text = ep.tRead("../dat/sc-bar/c1.dat")
 
 if bool(args.style) == True:
     style = args.style
 
 
 # parse ======================================================================
-PP = ep.PatternParser(ep.tRead("../dat/sc-bar/c1.dat"))
+PP = ep.PatternParser(text)
 PP.PickKeyWith("row")
 PP.ParseWith("\t")
 
