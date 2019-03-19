@@ -285,6 +285,12 @@ class AbstractPlotter(object):
         if "xlpos" in kwargs:
             self.ax.xaxis.set_label_coords(*kwargs["xlpos"])
 
+        # set label's vertical padding
+        if "xlabelpad" in kwargs:
+            self.ax.xaxis.labelpad = kwargs["xlabelpad"]
+        # set label's horizontal padding
+        if "ylabelpad" in kwargs:
+            self.ax.yaxis.labelpad = kwargs["ylabelpad"]
         # private virtual method that differs from Plotter classes
         self.m_setFigureStyle(**kwargs)
 
