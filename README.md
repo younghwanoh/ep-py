@@ -89,9 +89,3 @@ all styles of classes must be defined case by case. Here are the list of classes
   - SBarPlotter
   - PiePlotter
   - StackBarPlotter
-
-## Prefix of GIT log messages
-  - \*: Major version update
-  - +: Method or functionality update
-  - @: Bug and critical issues
-  - none: Minor update
