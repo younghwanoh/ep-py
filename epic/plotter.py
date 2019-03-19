@@ -256,6 +256,7 @@ class AbstractPlotter(object):
             plt.gcf().subplots_adjust(right=kwargs["rightMargin"])
         if "fontsize" in kwargs:
             matplotlib.rcParams.update({'font.size': kwargs["fontsize"]})
+            self.fontsize = kwargs["fontsize"]
         if "figmargin" in kwargs:
             self.FigSideMargin = kwargs["figmargin"]
 
