@@ -81,11 +81,10 @@ Because, program cannot know which of graph styles the programmer wants to draw,
 all styles of classes must be defined case by case. Here are the list of classes.
 
   - LinePlotter
-  - BoxPlotter
-  - CBoxPlotter
+  - BoxPlotter (Timeline)
+  - CBoxPlotter (Clustered timeline)
   - BarPlotter
-  - CBarPlotter
-  - CCBarPlotter
-  - SBarPlotter
+  - CBarPlotter (Clustered Bar)
+  - CCBarPlotter (Double-Clustered Bar)
+  - SBarPlotter (Stacked Bar)
   - PiePlotter
-  - StackBarPlotter
