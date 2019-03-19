@@ -623,8 +623,8 @@ class CBarPlotter(AbstractBarPlotter):
         self.globalBase = np.concatenate([self.globalBase, self.base])
 
         for i in range(keyLen):
-            self.patch.append(self.ax.bar(self.base+i*self.barwidth, argv[i].Y, self.barwidth,
-                                          color=argv[i].color, zorder=3, hatch=argv[i].hatch))
+            self.patch.append(self.ax.bar(self.base+i*(self.barwidth+self.interMargin), argv[i].Y,
+                                          self.barwidth, color=argv[i].color, zorder=3, hatch=argv[i].hatch))
             if bool(argv[i].legend):
                 self.legend.append(argv[i].legend)
 
@@ -644,7 +644,7 @@ class CBarPlotter(AbstractBarPlotter):
         if self.manualYtick is True:
             self.ax.set_yticks(self.yspace)
 
-        LengthOfWholeBar = self.globalBase[-1] + self.barwidth*self.keyLen
+        LengthOfWholeBar = self.globalBase[-1] + (self.barwidth+self.interMargin)*self.keyLen
         self.ax.set_xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
