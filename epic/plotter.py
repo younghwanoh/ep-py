@@ -101,9 +101,9 @@ class SubPlotter(object):
         assert(len(argv) > 0), "Assign the number of subplots @ SubPlotter!"
         self.numplots = argv[0]
         if "sharex" in kwargs:
-            self.fig, self.ax = plt.subplots(self.numplots, sharex=kwargs["sharex"])
+            self.fig, self.ax = plt.subplots(*self.numplots, sharex=kwargs["sharex"])
         else:
-            self.fig, self.ax = plt.subplots(self.numplots)
+            self.fig, self.ax = plt.subplots(*self.numplots)
         if "title" in kwargs:
             self.ax[0].set_title(kwargs["title"])
         if "height" in kwargs:
@@ -549,7 +549,7 @@ class SBarPlotter(AbstractBarPlotter):
 
             labelTicker = self.ax.set_yticklabels
             axis = self.ax.xaxis
-            figLimit = plt.ylim
+            figLimit = self.ax.set_ylim
         else:
             # Label axis: x, value axis: y
             labelAxisTicker = self.ax.set_xticks
@@ -562,7 +562,7 @@ class SBarPlotter(AbstractBarPlotter):
 
             labelTicker = self.ax.set_xticklabels
             axis = self.ax.yaxis
-            figLimit = plt.xlim
+            figLimit = self.ax.set_xlim
 
         if labelAxisSpace:
             # Manually sets label axis
@@ -645,7 +645,7 @@ class CBarPlotter(AbstractBarPlotter):
             self.ax.set_yticks(self.yspace)
 
         LengthOfWholeBar = self.globalBase[-1] + self.barwidth*self.keyLen
-        plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
+        self.ax.set_xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
 class CCBarPlotter(AbstractBarPlotter):
@@ -715,7 +715,7 @@ class CCBarPlotter(AbstractBarPlotter):
         self.ax.set_xticklabels(self.tickLabel, rotation=self.tickAngle)
 
         LengthOfWholeBar = self.cc_globalBase[-1] + self.barwidth*self.keyLen
-        plt.xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
+        self.ax.set_xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
 
 
 class AbstractBoxPlotter(AbstractPlotter):

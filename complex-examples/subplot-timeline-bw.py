@@ -121,7 +121,7 @@ for k in range(subplot_cnt):
             stage_min_max[time_log[2]]=[99999999,-999]
     Dall.append(D)
 
-SP = ep.SubPlotter(subplot_cnt+1, width=10, height=15, sharex=True)
+SP = ep.SubPlotter((1,subplot_cnt+1), width=10, height=15, sharex=True)
 SP.adjust(hspace=0.45)
 
 for k in range(max_eid_from_data):

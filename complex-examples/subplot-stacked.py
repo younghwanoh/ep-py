@@ -62,7 +62,7 @@ colors = ["#3a3a3a", mc["dwhite"]]
 hatch = ["", ""]
 
 
-SP = ep.SubPlotter(2, sharex=True, width=7, height=4)
+SP = ep.SubPlotter((2,1), sharex=True, width=7, height=4)
 SP.adjust(hspace=0.3)
 
 ## Draw box

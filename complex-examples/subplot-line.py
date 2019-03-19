@@ -127,7 +127,7 @@ elif benchmark == "barkley":
     ylabel_metric = ["FPS", "bold", 14]
 
 # Subplotter for multiple plot
-SP = ep.SubPlotter(3, sharex=True, height=9.0)
+SP = ep.SubPlotter((3,1), sharex=True, height=9.0)
 SP.adjust(hspace=0.38)
 
 # Draw metric
