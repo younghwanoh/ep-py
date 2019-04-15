@@ -212,6 +212,10 @@ class AbstractPlotter(object):
             self.tickAlign = kwargs["align"]
         if "fontsize" in kwargs:
             self.fontsize = kwargs["fontsize"]
+        if "xtickpad" in kwargs:
+            self.ax.tick_params(axis='x', which='major', pad=kwargs["xtickpad"])
+        if "ytickpad" in kwargs:
+            self.ax.tick_params(axis='y', which='major', pad=kwargs["ytickpad"])
 
         plt.tick_params(
             axis='x',          # changes apply to the x-axis
@@ -693,6 +697,10 @@ class CCBarPlotter(AbstractBarPlotter):
             self.tickAlign = kwargs["align"]
         if "fontsize" in kwargs:
             self.fontsize = kwargs["fontsize"]
+        if "xtickpad" in kwargs:
+            self.ax.tick_params(axis='x', which='major', pad=kwargs["xtickpad"])
+        if "ytickpad" in kwargs:
+            self.ax.tick_params(axis='y', which='major', pad=kwargs["ytickpad"])
 
     def draw(self, *argv, **kwargs):
         self.m_beforeEveryDraw(**kwargs)
