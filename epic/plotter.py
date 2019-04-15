@@ -689,6 +689,10 @@ class CCBarPlotter(AbstractBarPlotter):
             self.tickLabel = temp
         if "angle" in kwargs:
             self.tickAngle = kwargs["angle"]
+        if "align" in kwargs:
+            self.tickAlign = kwargs["align"]
+        if "fontsize" in kwargs:
+            self.fontsize = kwargs["fontsize"]
 
     def draw(self, *argv, **kwargs):
         self.m_beforeEveryDraw(**kwargs)
@@ -734,7 +738,8 @@ class CCBarPlotter(AbstractBarPlotter):
 
         # set xtick point and label
         self.ax.set_xticks(self.cc_globalBase)
-        self.ax.set_xticklabels(self.tickLabel, rotation=self.tickAngle)
+        self.ax.set_xticklabels(self.tickLabel, rotation=self.tickAngle, ha=self.tickAlign,
+                                fontsize=self.fontsize)
 
         LengthOfWholeBar = self.cc_globalBase[-1] + self.barwidth*self.keyLen
         self.ax.set_xlim([-LengthOfWholeBar*self.FigSideMargin, LengthOfWholeBar*(1+self.FigSideMargin)])
