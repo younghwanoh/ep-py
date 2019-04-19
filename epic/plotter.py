@@ -30,7 +30,7 @@ class AbstractProp(object):
             try:
                 ifnot.append(myVars[elem])
             except:
-                print("Warning! Current plotter doesn't have requested props. Remove it.")
+                print("Warning! Current plotter doesn't have requested props. Remove it. <{}>".format(elem))
                 kwargs.pop(elem)
 
         tCheckArgsExists(kwargs, *kwargs.keys(), ifnot=ifnot)
