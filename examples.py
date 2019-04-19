@@ -44,13 +44,12 @@ if style == "dot-key":
     LP.saveToPdf(output);
 
 if style == "dot":
-    log = ep.tRead("dat/flat-dots/W_fc1.dat")
+    log = ep.tRead("dat/flat-dots/W_conv1.dat")
 
     PP = ep.PatternParser(log)
     PP.ParseWith("\n")
-    PP.keyList=range(len(PP.datList))
 
-    dots = ep.Group(None, PP.keyList, PP.datList, color="red", marker="o")
+    dots = ep.Group(None, range(len(PP.datList)), PP.datList, color="blue", marker="o")
     dots.setLegend("1st conv layer") 
 
     DP = ep.DotPlotter(width=8, height=8, title="Weight distribution", xlabel="Weight ID", ylabel="Value")
