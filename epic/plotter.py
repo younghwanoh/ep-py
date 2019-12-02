@@ -190,7 +190,8 @@ class AbstractPlotter(object):
     def annotate(self, text, xy, **kwargs):
         for i in range(len(text)):
             trans = self.ax.get_xaxis_transform()
-            self.ax.annotate(text[i], xy=xy[i], xycoords=trans,
+            # self.ax.annotate(text[i], xy=xy[i], xycoords=trans,
+            self.ax.annotate(text[i], xy=xy[i], xycoords="axes fraction",
                              annotation_clip=False, **kwargs)
 
     def setTicks(self, **kwargs):
@@ -220,7 +221,7 @@ class AbstractPlotter(object):
         plt.tick_params(
             axis='x',          # changes apply to the x-axis
             which='both',      # both major and minor ticks are affected
-            bottom='off',      # ticks along the bottom edge are off
+            bottom='on',      # ticks along the bottom edge are off
             top='off'          # ticks along the top edge are off
         )
 
@@ -764,6 +765,11 @@ class AbstractBoxPlotter(AbstractPlotter):
         self.linewidth = 1.0
         self.boxwidth = 1.0
         self.vertical = True
+        self.flushLegend = False
+        self.interMargin = 1
+        tCheckArgsExists(kwargs, "flushLegend")
+        if kwargs["flushLegend"] is True:
+            self.flushLegend = True
 
     def getGlobalBase(self):
         return self.globalBase
@@ -776,6 +782,8 @@ class AbstractBoxPlotter(AbstractPlotter):
             self.boxwidth = float(kwargs["boxwidth"])
         if "linewidth" in kwargs:
             self.linewidth = float(kwargs["linewidth"])
+        if "interMargin" in kwargs:
+            self.interMargin = float(kwargs["interMargin"])
 
     def m_beforeEveryDraw(self, **kwargs):
         # boxwidth can also be assigned to each different elem
@@ -852,7 +860,7 @@ class CBoxPlotter(AbstractBoxPlotter):
             keyLen.append(argv[i].length)
 
         # By default, CBoxPlotter draws timeline
-        base = np.linspace(0, self.boxwidth*(GroupLen+1), GroupLen) + self.baseOffset
+        base = np.linspace(0, self.boxwidth*(GroupLen+1)*self.interMargin, GroupLen) + self.baseOffset
 
         # Accumulate tick bases to global base
         self.globalBase = np.concatenate([self.globalBase, base])
@@ -864,10 +872,10 @@ class CBoxPlotter(AbstractBoxPlotter):
                 for j in range(datLen):
                     if self.vertical is True:
                         rect = plt.Rectangle([base[z], arg[i].X[j]], self.boxwidth, arg[i].Y[j] - arg[i].X[j],
-                                             facecolor=arg[i].color, hatch=arg[i].hatch)
+                                             facecolor=arg[i].color, hatch=arg[i].hatch, edgecolor="black", linewidth=self.linewidth)
                     else:
                         rect = plt.Rectangle([arg[i].X[j], base[z]], arg[i].Y[j] - arg[i].X[j], self.boxwidth,
-                                             facecolor=arg[i].color, hatch=arg[i].hatch)
+                                             facecolor=arg[i].color, hatch=arg[i].hatch, edgecolor="black", linewidth=self.linewidth)
                     self.ax.add_patch(rect)
                 if bool(arg[i].legend):
                     self.patch.append(rect)
@@ -875,7 +883,8 @@ class CBoxPlotter(AbstractBoxPlotter):
 
     def m_finish(self):
         # set legend
-        self.m_drawLegend(self.patch, self.legend);
+        if self.flushLegend == False:
+            self.m_drawLegend(self.patch, self.legend);
 
         # set xtick point and label
         if self.vertical is True:
@@ -883,7 +892,7 @@ class CBoxPlotter(AbstractBoxPlotter):
             self.ax.set_xticklabels(self.tickLabel.content, rotation=self.tickAngle)
         else:
             self.ax.set_yticks(self.globalBase + self.boxwidth/2)
-            self.ax.set_yticklabels(self.tickLabel.content, rotation=self.tickAngle)
+            self.ax.set_yticklabels(self.tickLabel.content, rotation=self.tickAngle, fontdict={'fontsize':8})
 
         # set x / y-range
         if self.vertical is True:
