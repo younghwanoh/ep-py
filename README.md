@@ -2,11 +2,6 @@ ep-py ver. 0.3
 =====
 Personal graph drawing library with high-level abstraction of python-matplotlib<br>
 
-* Author information
-  - Young H. Oh.
-  - SungKyunKwan Univ, Suwon, Korea.<br>
-  - Parallel Architecture and Parallel Language(PAPL) Lab<br>
-
 
 * Dependent package: numpy, matplotlib
 ```
